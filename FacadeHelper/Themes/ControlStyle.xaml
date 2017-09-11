@@ -27,13 +27,8 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <Style TargetType="{x:Type Button}" x:Key="SubButtonStyle">
+    <Style TargetType="{x:Type Button}" x:Key="SubButtonStyle" BasedOn="{StaticResource ButtonBaseStyle}">
         <Setter Property="Background" Value="#f0f0f0" />
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect Color="LightGray" ShadowDepth="3" BlurRadius="10" Opacity="50" />
-            </Setter.Value>
-        </Setter> 
     </Style>
     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Background" Value="{x:Null}" />
@@ -55,7 +50,76 @@
             </Trigger>
         </Style.Triggers>
     </Style>
-    <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource baseStyle}" />
+
+    <SolidColorBrush x:Key="GroupBoxBorderBrush" Color="#808080"/>
+    <SolidColorBrush x:Key="GroupBoxHeaderBrush" Color="#404040"/>
+    <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
+
+    <Style TargetType="Expander" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="BorderBrush" Value="{StaticResource GroupBoxBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Expander}">
+                    <Grid SnapsToDevicePixels="true">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Border x:Name="Header" Grid.Row="0" Padding="5" Background="#C0C0C0" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <Grid SnapsToDevicePixels="False" Background="#C0C0C0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <ToggleButton Grid.Column="0" MinHeight="0" MinWidth="0" Name="HeaderToggle" Style="{DynamicResource ExpandCollapseToggleStyle}"
+                                    IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" >
+                                </ToggleButton>
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="true" TextElement.Foreground="{StaticResource GroupBoxHeaderBrush}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            </Grid>
+                        </Border>
+                        <ContentPresenter x:Name="ExpandSite" Visibility="Collapsed" Grid.Row="1" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Border Grid.Row="1" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}">
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="true">
+                            <Setter Property="Visibility" TargetName="ExpandSite" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ExpandCollapseToggleStyle" TargetType="ToggleButton">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Path Name="ExpandPath"
+                          Data="M0,5 L0,0 5,0 M12,6 L12,12 6,12 M0,12 L12,0"
+                          Stroke="#808080"
+                          Height="12" Width="12"
+                          Stretch="Fill" 
+                          VerticalAlignment="Center"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Data" TargetName="ExpandPath" Value="M0,12 L10,12 10,2 0,2Z M11,10 L12,10 12,0 2,0 2,1"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ExpandPath" Property="Stroke" Value="Gray" />
+                            <Setter Property="Data" TargetName="ExpandPath" Value=""/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}" />
 
     <Style TargetType="RadioButton" BasedOn="{StaticResource baseStyle}">
@@ -82,7 +146,8 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
+    <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}" />
+    <Style x:Key="ButtonBaseStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
         <Setter Property="Background" Value="#ffffff"/>
         <Setter Property="BorderBrush" Value="#cccccc"/>
@@ -158,17 +223,17 @@
                             </Border>
                             <Path Grid.Column="1"
                                 Name="PathTriangle"
-                                Data="M0,60 L20,60 20,40 z"
-                                Fill="#808080"
-                                Height="15"
-                                Stretch="Fill" Width="15"
+                                Data="M0,60 L20,60 20,40 M20,5 L5,45"
+                                Stroke="#808080"
+                                Height="10"
+                                Stretch="Fill" Width="10"
                                 VerticalAlignment="Bottom"/>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="BorderUnderline" Property="BorderBrush" Value="#cccccc" />
-                            <Setter TargetName="PathTriangle" Property="Fill" Value="#cccccc" />
+                            <Setter TargetName="PathTriangle" Property="Stroke" Value="#cccccc" />
                             <Setter Property="Foreground" Value="#cccccc" />
                         </Trigger>
                         <Trigger Property="IsFocused" Value="True">
@@ -179,7 +244,7 @@
                                                                 To="#55029cc7" Duration="0:0:0.3" />
                                         <ColorAnimation Storyboard.TargetName="BorderUnderline" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
                                                                 To="#029cc7" Duration="0:0:0.3" />
-                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Stroke).(SolidColorBrush.Color)"
                                                                 To="#029cc7" Duration="0:0:0.3"/>
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -191,7 +256,7 @@
                                                                 To="Transparent" Duration="0:0:0.3" />
                                         <ColorAnimation Storyboard.TargetName="BorderUnderline" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
                                                                 To="#808080" Duration="0:0:0.3" />
-                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
+                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Stroke).(SolidColorBrush.Color)"
                                                                 To="#808080" Duration="0:0:0.3"/>
                                     </Storyboard>
                                 </BeginStoryboard>
