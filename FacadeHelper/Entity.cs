@@ -88,6 +88,8 @@ namespace FacadeHelper
             #endregion
         }
 
+        public override string ToString() { return INF_Code; }
+
         public void ResolveZoneCode()
         {
             //Z-00-99-AA-99

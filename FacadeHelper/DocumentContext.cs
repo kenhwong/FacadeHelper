@@ -106,7 +106,7 @@ namespace FacadeHelper
         public DocumentContent()
         {
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 1, EClassName = "玻璃", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = true});
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = false});
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 3, EClassName = "鋁板", IsScheduled = true});
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true});
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true});

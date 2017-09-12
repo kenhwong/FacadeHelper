@@ -534,7 +534,7 @@ namespace FacadeHelper
             uidoc.Selection.Elements.Clear();
 
             List<ScheduleElementInfo> p_ScheduleElementList = new List<ScheduleElementInfo>();
-            listinfo.SelectedIndex = listinfo.Items.Add($"檢索分區[{zone.ZoneCode}]...");
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索分區[{zone.ZoneCode}]...");
             var _panelsinzone = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
                 .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
                 .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
@@ -543,7 +543,7 @@ namespace FacadeHelper
             foreach (CurtainPanelInfo _pi in _panelsinzone)
             {
                 processinfo.Text = $"[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"檢索幕墻嵌板[{_pi.INF_ElementId}]...");
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻嵌板[{_pi.INF_ElementId}]...");
                 Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
                 _pi.INF_Index = pindex;
                 _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
@@ -585,7 +585,7 @@ namespace FacadeHelper
                                 _schedule_element.INF_Type = -1;
                                 _haserror = true;
                                 _schedule_element.INF_ErrorInfo = "構件[分項]參數錯誤(INF_Type)";
-                                listinfo.SelectedIndex = listinfo.Items.Add($"[{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数错误...");
+                                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数错误...");
                                 uidoc.Selection.Elements.Add(_element);
                                 continue;
                             }
@@ -595,7 +595,7 @@ namespace FacadeHelper
                             _schedule_element.INF_Type = -2;
                             _haserror = true;
                             _schedule_element.INF_ErrorInfo = "構件[分項]參數未設置(INF_Type)";
-                            listinfo.SelectedIndex = listinfo.Items.Add($"[{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数未賦值...");
+                            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数未賦值...");
                             uidoc.Selection.Elements.Add(_element);
                             continue;
                         }
@@ -605,7 +605,7 @@ namespace FacadeHelper
                         _schedule_element.INF_Type = -3;
                         _haserror = true;
                         _schedule_element.INF_ErrorInfo = "構件[分項]參數未設置(INF_Type)";
-                        listinfo.SelectedIndex = listinfo.Items.Add($"[{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数未設置...");
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数未設置...");
                         uidoc.Selection.Elements.Add(_element);
                         continue;
                     }
@@ -673,7 +673,7 @@ namespace FacadeHelper
                 var sfe = SelectionFilterElement.Create(doc, $"ERROR-{zone.ZoneCode}");
                 sfe.AddSet(uidoc.Selection.GetElementIds());
                 trans.Commit();
-                listinfo.SelectedIndex = listinfo.Items.Add($"分區[{zone.ZoneCode}]參數錯誤的構件已保存至選擇集[ERROR-{zone.ZoneCode}]");
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分區[{zone.ZoneCode}]參數錯誤的構件已保存至選擇集[ERROR-{zone.ZoneCode}]");
             }
 
             //確定明細構件排序
