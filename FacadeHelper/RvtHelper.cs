@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using RvtApplication = Autodesk.Revit.ApplicationServices.Application;
@@ -490,6 +491,16 @@ namespace FacadeHelper
                 }
                 #endregion
 
+                #region 设置项目参数：分区序号
+                if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "分区序号"))
+                {
+                    CategorySet _catset = new CategorySet();
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    ParameterHelper.RawCreateProjectParameter(doc.Application, "分区序号", ParameterType.Integer, true, _catset, BuiltInParameterGroup.PG_DATA, true);
+                }
+                #endregion
+
                 #region 设置项目参数：分区区号
                 if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "分区区号"))
                 {
@@ -523,11 +534,32 @@ namespace FacadeHelper
 
         }
 
-    }
+    } 
 
     public static class ZoneHelper
     {
-        public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref TextBlock processinfo)
+        public static void FnSearch(UIDocument uidoc, 
+            string querystring,
+            ref List<ZoneInfoBase> relistzone, 
+            ref List<CurtainPanelInfo> relistpanel, 
+            ref List<ScheduleElementInfo> relistelement, 
+            bool hasrangezone,
+            bool hasrangepanel,
+            bool hasrangeelement,
+            ref ListBox listinfo)
+        {
+            var doc = uidoc.Document;
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索模型數據：[{querystring}]...");
+
+            if (hasrangezone && DateTime.TryParse(querystring, out DateTime querydatetime))
+                relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneStart.Equals(querydatetime) || z.ZoneFinish.Equals(querydatetime)));
+            
+            if (hasrangezone) relistzone.AddRange(Global.DocContent.ZoneList.Where(z => Regex.IsMatch(z.ZoneCode, querystring, RegexOptions.IgnoreCase)));
+            if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch(p.INF_Code,querystring, RegexOptions.IgnoreCase)));
+            if (hasrangeelement) relistelement.AddRange(Global.DocContent.ScheduleElementList.Where(e => Regex.IsMatch(e.INF_Code,querystring, RegexOptions.IgnoreCase)));
+        }
+
+        public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo)
         {
             var doc = uidoc.Document;
             bool _haserror = false;
@@ -542,7 +574,7 @@ namespace FacadeHelper
             //確定分區內嵌板數據及排序
             foreach (CurtainPanelInfo _pi in _panelsinzone)
             {
-                processinfo.Text = $"[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
+                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻嵌板[{_pi.INF_ElementId}]...");
                 Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
                 _pi.INF_Index = pindex;
@@ -661,7 +693,7 @@ namespace FacadeHelper
                     _schedule_element.INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y);
                     _schedule_element.INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z);
 
-                    processinfo.Text = $"[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({pindex}/{_panelsinzone.Count()})] - [構件：{_schedule_element.INF_ElementId}]";
+                    processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({pindex}/{_panelsinzone.Count()})] - [構件：{_schedule_element.INF_ElementId}]";
                     p_ScheduleElementList.Add(_schedule_element);
                     //Global.DocContent.ScheduleElementList.Add(_schedule_element);
                 }
@@ -686,7 +718,7 @@ namespace FacadeHelper
             {
                 eindex++;
                 ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}-{eindex:0000}";//构件编码
-                processinfo.Text = $"[分區：{zone.ZoneCode}] - [構件：{ele.INF_ElementId}({eindex}/{p_ScheduleElementList.Count})]";
+                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [構件：{ele.INF_ElementId}({eindex}/{p_ScheduleElementList.Count})]";
             }
 
             if (_haserror)

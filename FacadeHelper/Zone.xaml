@@ -37,10 +37,39 @@
             <Button x:Name="bnApplyParameters" Content="保存參數" DockPanel.Dock="Left" />
 
             <Button x:Name="bnTest" Content="測試" DockPanel.Dock="Left" Margin="50,0,10,0" Click="bnTest_Click" />
+            <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="實時進度" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
-            <TextBlock Text="當前處理進度：" />
-            <TextBlock x:Name="txtProcessInfo" />
+            <StackPanel DockPanel.Dock="Left">
+                <Label x:Name="txtProcessInfo" />
+                <Label x:Name="txtResultZone" Target="{x:Reference expDataGridZones}" />
+                <Label x:Name="txtResultPanel" Target="{x:Reference expDataGridPanels}" />
+                <Label x:Name="txtResultElement" Target="{x:Reference expDataGridScheduleElements}" />
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Right" Orientation="Vertical" VerticalAlignment="Bottom" Width="200">
+                <Grid Margin="0">
+                    <ProgressBar x:Name="progbarPanel" Height="15" FlowDirection="RightToLeft" />
+                    <TextBlock Foreground="#505050" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} / {1}">
+                                <Binding ElementName="progbarPanel" Path="Value" />
+                                <Binding ElementName="progbarPanel" Path="Maximum" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
+                <Grid Margin="0,5,0,0">
+                    <ProgressBar x:Name="progbarElement" Height="15" FlowDirection="RightToLeft" />
+                    <TextBlock Foreground="#505050" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock.Text>
+                            <MultiBinding StringFormat="{}{0} / {1}">
+                                <Binding ElementName="progbarElement" Path="Value" />
+                                <Binding ElementName="progbarElement" Path="Maximum" />
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                </Grid>
+            </StackPanel>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="10">
             <DockPanel DockPanel.Dock="Left" Width="250" x:Name="nav">
@@ -89,10 +118,10 @@
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <TextBox x:Name="txtSearchKeyword" Width="500" />
                     <Button x:Name="bnSearch" Content="搜索構件" DockPanel.Dock="Left" Margin="10,0,10,0" />
-                    <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=CurrentSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                    <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=CurrentSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                    <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=CurrentSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                    <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=CurrentSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                    <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                    <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                    <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                    <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
                 </StackPanel>
                 <DockPanel DockPanel.Dock="Top" LastChildFill="True" ScrollViewer.CanContentScroll="True">
 

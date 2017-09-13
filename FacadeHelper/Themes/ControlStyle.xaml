@@ -2,7 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-
     <Style TargetType="Control" x:Key="baseStyle">
         <Setter Property="FontSize"  Value="13"/>
     </Style>
@@ -29,10 +28,11 @@
     </Style>
     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Background" Value="{x:Null}" />
-        <Setter Property="Foreground" Value="#808080" />
+        <Setter Property="Foreground" Value="#505050" />
     </Style>
     <Style x:Key="MonitorScreen" TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
-        <Setter Property="Background" Value="#c0d8e0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background" Value="#e0e8e0" />
         <Setter Property="Foreground" Value="#3b8bc3" />
     </Style>
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource baseStyle}">
@@ -47,13 +47,21 @@
         </Style.Triggers>
     </Style>
 
-    <SolidColorBrush x:Key="GroupBoxBorderBrush" Color="#808080"/>
-    <SolidColorBrush x:Key="GroupBoxHeaderBrush" Color="#404040"/>
+    <SolidColorBrush x:Key="GroupBoxBorderBrush" Color="#A0A0A0"/>
+    <SolidColorBrush x:Key="GroupBoxHeaderBrush" Color="#505050"/>
+    <SolidColorBrush x:Key="GroupBoxHeaderBackgroundBrush" Color="#E0E0E0"/>
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
 
     <Style TargetType="Expander" BasedOn="{StaticResource baseStyle}">
         <Setter Property="BorderBrush" Value="{StaticResource GroupBoxBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Expander}">
@@ -62,8 +70,8 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Border x:Name="Header" Grid.Row="0" Padding="5" Background="#C0C0C0" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
-                            <Grid SnapsToDevicePixels="False" Background="#C0C0C0">
+                        <Border x:Name="Header" Grid.Row="0" Padding="5" Background="{StaticResource GroupBoxHeaderBackgroundBrush}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <Grid SnapsToDevicePixels="False" Background="{StaticResource GroupBoxHeaderBackgroundBrush}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="30" />
                                     <ColumnDefinition />
@@ -71,7 +79,7 @@
                                 <ToggleButton Grid.Column="0" MinHeight="0" MinWidth="0" Name="HeaderToggle" Style="{DynamicResource ExpandCollapseToggleStyle}"
                                     IsChecked="{Binding Path=IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" >
                                 </ToggleButton>
-                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="true" TextElement.Foreground="{StaticResource GroupBoxHeaderBrush}"
+                                <ContentPresenter Name="Presenter" ContentSource="Header" RecognizesAccessKey="true" TextElement.Foreground="{StaticResource GroupBoxHeaderBrush}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" />
                             </Grid>
                         </Border>
@@ -87,6 +95,13 @@
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                         </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter TargetName="Presenter" Property="TextElement.Foreground"  Value="#507070" />
+                            <Setter TargetName="Presenter" Property="TextElement.FontWeight" Value="Bold" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="true">
+                            <Setter TargetName="Presenter" Property="TextElement.Foreground"  Value="#507070" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -100,14 +115,14 @@
                     <Grid>
                         <Path Name="ExpandPathEdge"
                               Data="M0,0 L0,12 L12,12 L12,0z"
-                              Stroke="#C0C0C0"
+                              Stroke="{StaticResource GroupBoxHeaderBackgroundBrush}"
                               Height="12" Width="12"
                               Stretch="Fill"
-                              Fill="#C0C0C0"
+                              Fill="{StaticResource GroupBoxHeaderBackgroundBrush}"
                               VerticalAlignment="Center"/>
                         <Path Name="ExpandPath"
                               Data="M0,5 L0,0 5,0 M12,6 L12,12 6,12 M0,12 L12,0"
-                              Stroke="#808080"
+                              Stroke="{StaticResource GroupBoxHeaderBrush}"
                               Height="12" Width="12"
                               Stretch="Fill" 
                               VerticalAlignment="Center"/>
@@ -118,6 +133,7 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ExpandPath" Property="Stroke" Value="Gray" />
+                            <Setter TargetName="ExpandPathEdge" Property="Stroke" Value="Gray" />
                             <Setter Property="Data" TargetName="ExpandPath" Value=""/>
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -126,7 +142,14 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}" />
+    <Style TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="Foreground" Value="#808080" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style x:Key="AltRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Template">
@@ -157,7 +180,7 @@
         <Setter Property="Background" Value="#ffffff"/>
         <Setter Property="BorderBrush" Value="#cccccc"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Foreground" Value="#333333"/>
+        <Setter Property="Foreground" Value="#505050"/>
         <Setter Property="HorizontalContentAlignment" Value="Center"/>
         <Setter Property="VerticalContentAlignment" Value="Center"/>
         <Setter Property="Padding" Value="16,3,16,3"/>
@@ -213,6 +236,12 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Foreground" Value="#FF272727" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TextBoxBase}">
@@ -280,8 +309,15 @@
     <Style x:Key="CheckBaseStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Foreground" Value="#808080" />
         <Setter Property="Height" Value="30" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -755,4 +791,6 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+
 </ResourceDictionary>

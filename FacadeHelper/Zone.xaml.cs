@@ -34,19 +34,26 @@ namespace FacadeHelper
         private List<CurtainPanelInfo> SelectedCurtainPanelList = new List<CurtainPanelInfo>();
         private ZoneInfoBase CurrentZoneInfo;
 
+        private List<ZoneInfoBase> ResultZoneInfo = new List<ZoneInfoBase>();
+        private List<CurtainPanelInfo> ResultPanelInfo = new List<CurtainPanelInfo>();
+        private List<ScheduleElementInfo> ResultElementInfo = new List<ScheduleElementInfo>();
+
         public Window parentWin { get; set; }
 
         private int _currentZonePanelType = 51;
         public int CurrentZonePanelType { get { return _currentZonePanelType; } set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
 
-        private bool _currentSearchRangeZone = true;
-        private bool _currentSearchRangePanel = true;
-        private bool _currentSearchRangeElement = true;
-        private bool? _currentSearchRangeAll = true;
-        public bool CurrentSearchRangeZone { get { return _currentSearchRangeZone; } set { _currentSearchRangeZone = value; OnPropertyChanged(nameof(CurrentSearchRangeZone)); } }
-        public bool CurrentSearchRangePanel { get { return _currentSearchRangePanel; } set { _currentSearchRangePanel = value; OnPropertyChanged(nameof(CurrentSearchRangePanel)); } }
-        public bool CurrentSearchRangeElement { get { return _currentSearchRangeElement; } set { _currentSearchRangeElement = value; OnPropertyChanged(nameof(CurrentSearchRangeElement)); } }
-        public bool? CurrentSearchRangeAll { get { return _currentSearchRangeAll; } set { _currentSearchRangeAll = value; OnPropertyChanged(nameof(CurrentSearchRangeAll)); } }
+        private bool _isSearchRangeZone = true;
+        private bool _isSearchRangePanel = true;
+        private bool _isSearchRangeElement = true;
+        private bool? _isSearchRangeAll = true;
+        public bool IsSearchRangeZone { get { return _isSearchRangeZone; } set { _isSearchRangeZone = value; OnPropertyChanged(nameof(IsSearchRangeZone)); } }
+        public bool IsSearchRangePanel { get { return _isSearchRangePanel; } set { _isSearchRangePanel = value; OnPropertyChanged(nameof(IsSearchRangePanel)); } }
+        public bool IsSearchRangeElement { get { return _isSearchRangeElement; } set { _isSearchRangeElement = value; OnPropertyChanged(nameof(IsSearchRangeElement)); } }
+        public bool? IsSearchRangeAll { get { return _isSearchRangeAll; } set { _isSearchRangeAll = value; OnPropertyChanged(nameof(IsSearchRangeAll)); } }
+
+        private bool _isRealTimeProgress = true;
+        public bool IsRealTimeProgress { get { return _isRealTimeProgress; } set { _isRealTimeProgress = value; OnPropertyChanged(nameof(IsRealTimeProgress)); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -61,7 +68,6 @@ namespace FacadeHelper
             uiapp = commandData.Application;
             uidoc = uiapp.ActiveUIDocument;
             doc = uidoc.Document;
-
 
 
             Global.DataFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.data");
@@ -86,7 +92,6 @@ namespace FacadeHelper
 
 
         #region 初始化 Command
-        private RoutedCommand cmdApplyParameters = new RoutedCommand();
 
         private RoutedCommand cmdModelInit = new RoutedCommand();
         private RoutedCommand cmdSelectPanels = new RoutedCommand();
@@ -98,6 +103,9 @@ namespace FacadeHelper
 
         private RoutedCommand cmdLoadData = new RoutedCommand();
         private RoutedCommand cmdSaveData = new RoutedCommand();
+        private RoutedCommand cmdApplyParameters = new RoutedCommand();
+
+        private RoutedCommand cmdSearch = new RoutedCommand();
 
         private void InitializeCommand()
         {
@@ -164,6 +172,130 @@ namespace FacadeHelper
                     }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbSearch = new CommandBinding(cmdSearch,
+                (sender, e) =>
+                {
+                    #region 數據檢索
+                    if (!IsSearchRangeZone && !IsSearchRangePanel && !IsSearchRangeElement) return;
+                    ResultZoneInfo.Clear();
+                    ResultPanelInfo.Clear();
+                    ResultElementInfo.Clear();
+                    ZoneHelper.FnSearch(uidoc,
+                        txtSearchKeyword.Text.Trim(),
+                        ref ResultZoneInfo, ref ResultPanelInfo, ref ResultElementInfo,
+                        IsSearchRangeZone, IsSearchRangePanel, IsSearchRangeElement,
+                        ref listInformation);
+                    txtProcessInfo.Content = $"檢索結果：";
+                    if (IsSearchRangeZone)
+                    {
+                        txtResultZone.Content = $"[分區： {ResultZoneInfo.Count}]";
+                        datagridZones.ItemsSource = null;
+                        datagridZones.ItemsSource = ResultZoneInfo;
+                        expDataGridZones.Header = $"分區檢索結果： {ResultZoneInfo.Count}";
+                    }
+                    else
+                    {
+                        txtResultZone.Content = $"[分區： 不檢索]";
+                        datagridZones.ItemsSource = null;
+                        expDataGridZones.Header = $"分區檢索結果： 不檢索";
+                    }
+                    if (IsSearchRangePanel)
+                    {
+                        txtResultPanel.Content = $"[幕墻嵌板： {ResultPanelInfo.Count}]";
+                        datagridPanels.ItemsSource = null;
+                        datagridPanels.ItemsSource = ResultPanelInfo;
+                        expDataGridPanels.Header = $"幕墻嵌板檢索結果： {ResultPanelInfo.Count}";
+                    }
+                    else
+                    {
+                        txtResultPanel.Content = $"[幕墻嵌板： 不檢索]";
+                        datagridPanels.ItemsSource = null;
+                        expDataGridPanels.Header = $"幕墻嵌板檢索結果： 不檢索";
+                    }
+                    if (IsSearchRangeElement)
+                    {
+                        txtResultElement.Content = $"[明細構件： {ResultElementInfo.Count}]";
+                        datagridScheduleElements.ItemsSource = null;
+                        datagridScheduleElements.ItemsSource = ResultElementInfo;
+                        expDataGridScheduleElements.Header = $"分區檢索結果： {ResultElementInfo.Count}";
+                    }
+                    else
+                    {
+                        txtResultElement.Content = $"[明細構件： 不檢索]";
+                        datagridScheduleElements.ItemsSource = null;
+                        expDataGridScheduleElements.Header = $"分區檢索結果： 不檢索";
+                    }
+
+                    #endregion
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbApplyParameters = new CommandBinding(cmdApplyParameters,
+                (sender, e) => 
+                {
+                    //try
+                    {
+                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_CurtainPanels"))
+                        {
+                            trans.Start();
+                            progbarPanel.Maximum = Global.DocContent.CurtainPanelList.Count;
+                            progbarPanel.Value = 0;
+                            Global.DocContent.CurtainPanelList.ForEach(p =>
+                            {
+                                Element _element = doc.GetElement(new ElementId(p.INF_ElementId));
+                                _element.get_Parameter("立面朝向").Set(p.INF_Direction);
+                                _element.get_Parameter("立面系统").Set(p.INF_System);
+                                _element.get_Parameter("立面楼层").Set(p.INF_Level);
+                                _element.get_Parameter("构件分项").Set(p.INF_Type);
+                                _element.get_Parameter("分区序号").Set(p.INF_ZoneID);
+                                _element.get_Parameter("分区区号").Set(p.INF_ZoneCode);
+                                _element.get_Parameter("分区编码").Set(p.INF_Code);
+
+                                if (IsRealTimeProgress)
+                                {
+                                    txtProcessInfo.Content = $"當前處理進度：[分區：{p.INF_ZoneCode}] - [幕墻嵌板：{p.INF_ElementId}, {p.INF_Code})]";
+                                    progbarPanel.Value++;
+                                    System.Windows.Forms.Application.DoEvents();
+                                }
+                            });
+                            trans.Commit();
+                        }
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：嵌板 [{Global.DocContent.CurtainPanelList.Count}] 參數 [{Global.DocContent.CurtainPanelList.Count * 7}]");
+
+                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_ScheduleElements"))
+                        {
+                            trans.Start();
+                            progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
+                            progbarElement.Value = 0;
+                            Global.DocContent.ScheduleElementList.ForEach(ele =>
+                            {
+                                Element _element = doc.GetElement(new ElementId(ele.INF_ElementId));
+                                _element.get_Parameter("立面朝向").Set(ele.INF_Direction);
+                                _element.get_Parameter("立面系统").Set(ele.INF_System);
+                                _element.get_Parameter("立面楼层").Set(ele.INF_Level);
+                                _element.get_Parameter("构件分项").Set(ele.INF_Type);
+                                _element.get_Parameter("分区序号").Set(ele.INF_ZoneID);
+                                _element.get_Parameter("分区区号").Set(ele.INF_ZoneCode);
+                                _element.get_Parameter("分区编码").Set(ele.INF_Code);
+
+                                if (IsRealTimeProgress)
+                                {
+                                    txtProcessInfo.Content = $"當前處理進度：[嵌板：{ele.INF_HostCurtainPanel.INF_Code}] - [明細構件：{ele.INF_ElementId}, {ele.INF_Code})]";
+                                    progbarElement.Value++;
+                                    System.Windows.Forms.Application.DoEvents();
+                                }
+                            });
+                            trans.Commit();
+                        }
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：明細構件 [{Global.DocContent.ScheduleElementList.Count}] 參數 [{Global.DocContent.ScheduleElementList.Count * 7}]");
+                    }
+                    //catch (Exception ex)
+                    {
+                        //MessageBox.Show($"Source:{ex.Source}\nMessage:{ex.Message}\nTargetSite:{ex.TargetSite}\nStackTrace:{ex.StackTrace}");
+                    }
+                    //listboxOutput.SelectedIndex = listboxOutput.Items.Add($"写入[幕墙嵌板]:{Global.DocContent.CurtainPanelList.Count}，参数:{Global.DocContent.CurtainPanelList.Count * 6}...");
+
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
             bnModelInit.Command = cmdModelInit;
             bnSelectPanels.Command = cmdSelectPanels;
@@ -172,12 +304,16 @@ namespace FacadeHelper
             bnPanelResolve.Command = cmdPanelResolve;
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
+            bnApplyParameters.Command = cmdApplyParameters;
+            bnSearch.Command = cmdSearch;
 
             ProcZone.CommandBindings.Add(cbModelInit);
             ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbSelectPanels, cbSelectPanelsCheckData, cbSelectPanelsCreateSelectionSet });
             ProcZone.CommandBindings.Add(cbPanelResolve);
             ProcZone.CommandBindings.Add(cbNavZone);
             ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbLoadData, cbSaveData });
+            ProcZone.CommandBindings.Add(cbApplyParameters);
+            ProcZone.CommandBindings.Add(cbSearch);
         }
 
         private void navZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -329,7 +465,7 @@ namespace FacadeHelper
         private void bnTest_Click(object sender, RoutedEventArgs e)
         {
             //MessageBox.Show($"CurrentZonePanelType：{CurrentZonePanelType}");
-            MessageBox.Show($"Range Zone：{CurrentSearchRangeZone}\nRange Panel：{CurrentSearchRangePanel}\nRange Element：{CurrentSearchRangeElement}\nRange All：{CurrentSearchRangeAll}");
+            MessageBox.Show($"Range Zone：{IsSearchRangeZone}\nRange Panel：{IsSearchRangePanel}\nRange Element：{IsSearchRangeElement}\nRange All：{IsSearchRangeAll}");
         }
 
         private void listInformation_SelectionChanged(object sender, SelectionChangedEventArgs e) { var lb = sender as ListBox; lb.ScrollIntoView(lb.Items[lb.Items.Count - 1]); }
@@ -341,14 +477,14 @@ namespace FacadeHelper
                 switch (chkSearchRangeAll.IsChecked)
                 {
                     case true:
-                        CurrentSearchRangeZone = true;
-                        CurrentSearchRangePanel = true;
-                        CurrentSearchRangeElement = true;
+                        IsSearchRangeZone = true;
+                        IsSearchRangePanel = true;
+                        IsSearchRangeElement = true;
                         break;
                     case false:
-                        CurrentSearchRangeZone = false;
-                        CurrentSearchRangePanel = false;
-                        CurrentSearchRangeElement = false;
+                        IsSearchRangeZone = false;
+                        IsSearchRangePanel = false;
+                        IsSearchRangeElement = false;
                         break;
                     default:
                         break;
@@ -356,9 +492,9 @@ namespace FacadeHelper
             }
             else
             {
-                if (CurrentSearchRangeZone && CurrentSearchRangePanel && CurrentSearchRangeElement) CurrentSearchRangeAll = true;
-                else if (!CurrentSearchRangeZone && !CurrentSearchRangePanel && !CurrentSearchRangeElement) CurrentSearchRangeAll = false;
-                else CurrentSearchRangeAll = null;
+                if (IsSearchRangeZone && IsSearchRangePanel && IsSearchRangeElement) IsSearchRangeAll = true;
+                else if (!IsSearchRangeZone && !IsSearchRangePanel && !IsSearchRangeElement) IsSearchRangeAll = false;
+                else IsSearchRangeAll = null;
             }
             ((CheckBox)sender).GetBindingExpression(CheckBox.IsCheckedProperty).UpdateTarget();
         }
