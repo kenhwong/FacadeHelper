@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="FacadeHelper.Manual"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FacadeHelper"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="360">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes\DataGridStyle.xaml" />
+                <ResourceDictionary Source="Themes\ControlStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <DockPanel LastChildFill="False">
+            <ScrollViewer>
+            <RichTextBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0" BorderThickness="0" DockPanel.Dock="Top" Background="{x:Null}" IsReadOnly="True">
+                <FlowDocument LineHeight="20" FontSize="13" Foreground="#808080">
+                    <List MarkerStyle="Decimal">
+                        <ListItem>
+                            <Paragraph><Span>創建項目分區圖（AutoCAD），手動設置<Bold Foreground="DodgerBlue">分區編號</Bold> ，並設定分區分格，確定每個分格內重疊的不同工序嵌板的安裝<Bold Foreground="DodgerBlue">開始時間</Bold>
+                                    和<Bold Foreground="DodgerBlue">結束時間</Bold>；</Span></Paragraph>
+                        </ListItem>
+                        <ListItem>
+                            <Paragraph><Span>進入<Bold Foreground="DodgerBlue">Revit</Bold>/<Bold Foreground="DodgerBlue">附加模塊</Bold>/<Bold Foreground="DodgerBlue">分區處理</Bold>，對分部模型進行參數初始化：
+                                <Bold Foreground="DodgerBlue">模型初始</Bold>；</Span></Paragraph>
+                        </ListItem>
+                        <ListItem>
+                            <Paragraph><Span>關閉插件窗口，按分區圖選擇某一分區的所有嵌板，手動設置編號分佈至<Bold Foreground="Green">分區編號</Bold>參數；</Span></Paragraph>
+                        </ListItem>
+                        <ListItem>
+                            <Paragraph><Span>打開<Bold Foreground="DodgerBlue">分區處理</Bold>窗口，點擊<Bold Foreground="DodgerBlue">選擇嵌板</Bold>打開下屬按鈕區，選擇當前嵌板類型後，依次執行<Bold Foreground="DodgerBlue">
+                                檢查數據</Bold>和<Bold Foreground="DodgerBlue">生成集合</Bold>，以生成當前分區的嵌板分析數據，自動將當前分區名加入左側<Bold Foreground="DodgerBlue">項目分區</Bold>
+                                列表中，單擊列表項在右側表格中列表分區中的嵌板清單，並後臺保存分區內的嵌板至選擇集，選擇集名稱為分區編號；</Span></Paragraph>
+                        </ListItem>
+                        <ListItem>
+                            <Paragraph><Span>執行<Bold Foreground="DodgerBlue">嵌板分析</Bold>，處理嵌板內明細子構件數據，自動將處理后的嵌板加入左側<Bold Foreground="DodgerBlue">幕墻嵌板</Bold>列表中，單擊列表項在右側表格中列表嵌板中的明細子構件清單；</Span></Paragraph>
+                        </ListItem>
+                        <ListItem>
+                            <Paragraph><Span>執行<Bold Foreground="DodgerBlue">保存參數</Bold>，將處理后的嵌板和明細子構件數據寫入模型文件，包含其<Bold Foreground="Green">分區編碼</Bold>參數；</Span></Paragraph>
+                        </ListItem>
+                        <ListItem>
+                            <Paragraph><Span>後續分區的4D信息數據模塊待更新；</Span></Paragraph>
+                        </ListItem>
+
+                    </List>
+                </FlowDocument>
+            </RichTextBox>
+            </ScrollViewer>
+        </DockPanel>
+    </Grid>
+</UserControl>

@@ -58,6 +58,9 @@
                     <RotateTransform x:Name="TrFQSPop" />
                 </Canvas.RenderTransform>
                 <Path Stroke="#808080" StrokeThickness="0" Name="BalloonPath" Height="520" Stretch="None"  Width="400" >
+                    <Path.Effect>
+                        <DropShadowEffect Color="DarkGray" ShadowDepth="0" Direction="225"  BlurRadius="10" Opacity="1" />
+                    </Path.Effect>
                     <Path.Fill >
                         <SolidColorBrush Color="#f0f0f0"></SolidColorBrush>
                     </Path.Fill>
@@ -73,10 +76,13 @@
                     </Path.Data>
                 </Path>
                 <DockPanel Margin="20,40,20,20" Height="460" Width="360" LastChildFill="False">
-                    <DockPanel DockPanel.Dock="Top" Height="30" LastChildFill="False">
-                        <Label Content="操作手冊" DockPanel.Dock="Left" />
-                        <Button x:Name="bnPopupClose" Margin="0" DockPanel.Dock="Right">關閉手冊</Button>
-                    </DockPanel>
+                    <Border BorderBrush="#C0C0C0" DockPanel.Dock="Top" BorderThickness="0,0,0,1">
+                        <DockPanel Height="30" Margin="0,0,0,10" LastChildFill="False">
+                            <Label Content="操作手冊" DockPanel.Dock="Left" />
+                            <Button x:Name="bnPopupClose" Margin="0" DockPanel.Dock="Right">關閉手冊</Button>
+                        </DockPanel>
+                    </Border>
+                    <local:Manual />
 
                 </DockPanel>
 
