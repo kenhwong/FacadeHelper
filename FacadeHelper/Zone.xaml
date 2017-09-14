@@ -17,9 +17,21 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
+
     <DockPanel Margin="12,10,10,10">
         <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
-            <Button x:Name="bnModelInit" Content="模型初始" DockPanel.Dock="Left" Margin="0,0,10,0" />
+            <ToggleButton x:Name="bnQuickStart" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" Style="{DynamicResource CommonToggleButton}" IsChecked="False">
+                <ToggleButton.Triggers>
+                    <EventTrigger RoutedEvent="ToggleButton.Click">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <!--<DoubleAnimation Storyboard.TargetName="TrFQSPop" Storyboard.TargetProperty="(RotateTransform.Angle)" From="0" To="360" Duration="0:0:5" AutoReverse="True"/>-->
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ToggleButton.Triggers>
+            </ToggleButton>
+            <Button x:Name="bnModelInit" Content="模型初始" DockPanel.Dock="Left" Margin="20,0,10,0" />
             <Button x:Name="bnSelectPanels" Content="選擇嵌板" DockPanel.Dock="Left" Margin="0,0,10,0" />
             <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Left" Margin="10,0" Orientation="Horizontal" Visibility="Collapsed">
                 <Button x:Name="bnSelectPanels_CheckData" Content="檢查數據" DockPanel.Dock="Left" Margin="0,0,10,0" Style="{StaticResource SubButtonStyle}" />
@@ -39,6 +51,38 @@
             <Button x:Name="bnTest" Content="測試" DockPanel.Dock="Left" Margin="50,0,10,0" Click="bnTest_Click" />
             <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="實時進度" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
+        <Popup x:Name="popQS" Width="400" Height="520" HorizontalOffset="0" VerticalOffset="10" AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
+               StaysOpen="True" IsOpen="{Binding ElementName=bnQuickStart, Path=IsChecked}" PlacementTarget="{Binding ElementName=bnQuickStart}" Placement="Bottom">
+            <Canvas Name="Main">
+                <Canvas.RenderTransform>
+                    <RotateTransform x:Name="TrFQSPop" />
+                </Canvas.RenderTransform>
+                <Path Stroke="#808080" StrokeThickness="0" Name="BalloonPath" Height="520" Stretch="None"  Width="400" >
+                    <Path.Fill >
+                        <SolidColorBrush Color="#f0f0f0"></SolidColorBrush>
+                    </Path.Fill>
+                    <Path.Data>
+                        <CombinedGeometry GeometryCombineMode="Union">
+                            <CombinedGeometry.Geometry1>
+                                <RectangleGeometry Rect="0,20,400,500"/>
+                            </CombinedGeometry.Geometry1>
+                            <CombinedGeometry.Geometry2>
+                                <PathGeometry Figures="M0,20 L0,0 20,20Z" />
+                            </CombinedGeometry.Geometry2>
+                        </CombinedGeometry>
+                    </Path.Data>
+                </Path>
+                <DockPanel Margin="20,40,20,20" Height="460" Width="360" LastChildFill="False">
+                    <DockPanel DockPanel.Dock="Top" Height="30" LastChildFill="False">
+                        <Label Content="操作手冊" DockPanel.Dock="Left" />
+                        <Button x:Name="bnPopupClose" Margin="0" DockPanel.Dock="Right">關閉手冊</Button>
+                    </DockPanel>
+
+                </DockPanel>
+
+            </Canvas>
+        </Popup>
+
         <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
             <StackPanel DockPanel.Dock="Left">
                 <Label x:Name="txtProcessInfo" />

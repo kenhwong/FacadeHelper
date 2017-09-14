@@ -107,6 +107,8 @@ namespace FacadeHelper
 
         private RoutedCommand cmdSearch = new RoutedCommand();
 
+        private RoutedCommand cmdPopupClose = new RoutedCommand();
+
         private void InitializeCommand()
         {
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -230,8 +232,9 @@ namespace FacadeHelper
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbApplyParameters = new CommandBinding(cmdApplyParameters,
-                (sender, e) => 
+                (sender, e) =>
                 {
+                    #region 參數寫入
                     //try
                     {
                         using (Transaction trans = new Transaction(doc, "Apply_Parameters_CurtainPanels"))
@@ -294,6 +297,13 @@ namespace FacadeHelper
                     }
                     //listboxOutput.SelectedIndex = listboxOutput.Items.Add($"写入[幕墙嵌板]:{Global.DocContent.CurtainPanelList.Count}，参数:{Global.DocContent.CurtainPanelList.Count * 6}...");
 
+                    #endregion
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose,
+                (sender,e)=>
+                {
+                    bnQuickStart.IsChecked = false;
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -306,6 +316,7 @@ namespace FacadeHelper
             bnSaveData.Command = cmdSaveData;
             bnApplyParameters.Command = cmdApplyParameters;
             bnSearch.Command = cmdSearch;
+            bnPopupClose.Command = cmdPopupClose;
 
             ProcZone.CommandBindings.Add(cbModelInit);
             ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbSelectPanels, cbSelectPanelsCheckData, cbSelectPanelsCreateSelectionSet });
@@ -314,6 +325,7 @@ namespace FacadeHelper
             ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbLoadData, cbSaveData });
             ProcZone.CommandBindings.Add(cbApplyParameters);
             ProcZone.CommandBindings.Add(cbSearch);
+            ProcZone.CommandBindings.Add(cbPopupClose);
         }
 
         private void navZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -498,6 +510,7 @@ namespace FacadeHelper
             }
             ((CheckBox)sender).GetBindingExpression(CheckBox.IsCheckedProperty).UpdateTarget();
         }
+
     }
 
     public class IntToBoolConverter : IValueConverter
