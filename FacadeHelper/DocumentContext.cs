@@ -80,23 +80,11 @@ namespace FacadeHelper
         public Dictionary<int, double> LevelDictionary { get; set; } = new Dictionary<int, double>();
         public List<LevelInfo> LevelList { get; set; } = new List<LevelInfo>();
         public List<ScheduleElementInfo> ScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
-        public List<GeneralElementInfo> GeneralElementFullList { get; set; } = new List<GeneralElementInfo>();
         public List<DeepElementInfo> DeepElementList { get; set; } = new List<DeepElementInfo>();
-        public List<CurtainSystemInfo> CurtainSystemList { get; set; } = new List<CurtainSystemInfo>();
-        public List<WallInfo> WallList { get; set; } = new List<WallInfo>();
-
-        //public ObservableCollection<ZoneInfoBase> ZoneList { get { return _zoneList; } set { _zoneList = value; OnPropertyChanged(nameof(ZoneList)); } }
         public ObservableCollection<ZoneInfoBase> ZoneList { get; set; } = new ObservableCollection<ZoneInfoBase>();
-
-        public bool IsLevelsLoaded { get; set; } = false;
-        public bool IsCurtainsystemsLoaded { get; set; } = false;
-        public bool IsWallsLoaded { get; set; } = false;
-        public bool IsCurtainPanelsLoaded { get; set; } = false;
-        public bool IsDeepElementsInPanelsLoaded { get; set; } = false;
 
         [NonSerializableMember] public ILookup<string, CurtainPanelInfo> Lookup_CurtainPanels { get; set; }
         [NonSerializableMember] public ILookup<string, ScheduleElementInfo> Lookup_ScheduleElements { get; set; }
-        [NonSerializableMember] public ILookup<string, GeneralElementInfo> Lookup_GeneralElementsFull { get; set; }
         [NonSerializableMember] public List<ParameterHelper.RawProjectParameterInfo> ParameterInfoList { get; set; } = new List<ParameterHelper.RawProjectParameterInfo>();
 
         //public SQLContext CurrentDBContext;

@@ -14,10 +14,6 @@ namespace FacadeHelper
     {
         private double _inf_Width_Metric;
         private double _inf_Height_Metric;
-        //host
-        private int _inf_HostId;
-        private CurtainSystemInfo _inf_HostCurtainSystem;
-        private WallInfo _inf_HostWall;
         //subs
         private List<ScheduleElementInfo> _inf_ScheduleElements;
         private List<DeepElementInfo> _inf_DeepElements;
@@ -25,12 +21,6 @@ namespace FacadeHelper
 
         public double INF_Width_Metric { get { return _inf_Width_Metric; } set { _inf_Width_Metric = value; OnPropertyChanged(nameof(INF_Width_Metric)); } }
         public double INF_Height_Metric { get { return _inf_Height_Metric; } set { _inf_Height_Metric = value; OnPropertyChanged(nameof(INF_Height_Metric)); } }
-        //host
-        public int INF_HostId { get { return _inf_HostId; } set { _inf_HostId = value; OnPropertyChanged(nameof(INF_HostId)); } }
-        public int FK_CurtainPanelInfo_CurtainSystemInfo { get; set; }
-        public int FK_WallInfo_CurtainPanelInfo { get; set; }
-        public CurtainSystemInfo INF_HostCurtainSystem { get { return _inf_HostCurtainSystem; } set { _inf_HostCurtainSystem = value; OnPropertyChanged(nameof(INF_HostCurtainSystem)); } }
-        public WallInfo INF_HostWall { get { return _inf_HostWall; } set { _inf_HostWall = value; OnPropertyChanged(nameof(INF_HostWall)); } }
         //subs
         public List<ScheduleElementInfo> INF_ScheduleElements { get { return _inf_ScheduleElements; } set { _inf_ScheduleElements = value; OnPropertyChanged(nameof(INF_ScheduleElements)); } }
         public List<DeepElementInfo> INF_DeepElements { get { return _inf_DeepElements; } set { _inf_DeepElements = value; OnPropertyChanged(nameof(INF_DeepElements)); } }
@@ -98,111 +88,6 @@ namespace FacadeHelper
             INF_Direction = _array_field[3].Substring(0, 1);
             INF_Level = int.Parse(_array_field[2]);
             INF_ZoneID = int.Parse(_array_field[4]);
-        }
-    }
-
-    [SerializableType]
-    public class CurtainSystemInfo : ElementInfoBase
-    {
-        public List<CurtainPanelInfo> _inf_SubCurtainPanels;
-        public int _inf_CSMode;
-        public List<CurtainPanelInfo> INF_SubCurtainPanels { get { return _inf_SubCurtainPanels; } set { _inf_SubCurtainPanels = value; OnPropertyChanged(nameof(INF_SubCurtainPanels)); } }
-        public int INF_CSMode { get { return _inf_CSMode; } set { _inf_CSMode = value; OnPropertyChanged(nameof(INF_CSMode)); } }// = -1;// 面板嵌板：1，立柱嵌板：2
-
-        private CurtainSystem _cs;
-
-        public CurtainSystemInfo() { INF_SubCurtainPanels = new List<CurtainPanelInfo>(); }
-        public CurtainSystemInfo(CurtainSystem cs) : this()
-        {
-            #region GroupableCurtainSystem 初始化
-            _cs = cs;
-            INF_ElementId = cs.Id.IntegerValue;
-            INF_Name = cs.Name;
-            INF_CSMode = INF_Name.Contains("立柱幕墙") ? 2 : 1;
-
-            INF_ErrorInfo = $"{cs.Id}";
-            Parameter _param;
-            if ((_param = cs.get_Parameter("立面系统")).HasValue) INF_System = _param.AsString(); else INF_ErrorInfo += $"[参数未设置：立面系统]";
-            if ((_param = cs.get_Parameter("立面朝向")).HasValue) INF_Direction = _param.AsString(); else INF_ErrorInfo += $"[参数未设置：立面朝向]";
-            if ((_param = cs.get_Parameter("分区")).HasValue) INF_ZoneID = _param.AsInteger(); else INF_ErrorInfo += $"[参数未设置：分区]";
-
-            var _bxyz = cs.get_BoundingBox(cs.Document.ActiveView);
-            INF_OriginX_US = _bxyz.Min.X;
-            INF_OriginY_US = _bxyz.Min.Y;
-            INF_OriginZ_US = _bxyz.Min.Z;
-            INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _bxyz.Min.X);
-            INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _bxyz.Min.Y);
-            INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _bxyz.Min.Z);
-
-            if (!INF_ErrorInfo.Contains("["))
-            {
-                INF_CS_ReadAllSubCurtainPanels(); //如果 系统|方位|子分区 已设置，读取子嵌板信息
-            }
-            #endregion
-        }
-
-        public void INF_CS_ReadAllSubCurtainPanels()
-        {
-            foreach (CurtainGrid _cgrid in _cs.CurtainGrids)
-            {
-                ICollection<ElementId> _panelids = _cgrid.GetPanelIds();
-                foreach (ElementId eid in _panelids)
-                {
-                    RvtDB.Panel _p = _cs.Document.GetElement(eid) as RvtDB.Panel;
-                    if ((_p as FamilyInstance).Symbol.Family.Name != "系统嵌板") INF_SubCurtainPanels.Add(new CurtainPanelInfo(_p));
-                }
-
-            }
-        }
-    }
-
-    [SerializableType]
-    public class WallInfo : ElementInfoBase
-    {
-        private List<CurtainPanelInfo> _inf_SubCurtainPanels;
-        private int _inf_WallMode;
-        public List<CurtainPanelInfo> INF_SubCurtainPanels { get { return _inf_SubCurtainPanels; } set { _inf_SubCurtainPanels = value; OnPropertyChanged(nameof(INF_SubCurtainPanels)); } }
-        public int INF_WallMode { get { return _inf_WallMode; } set { _inf_WallMode = value; OnPropertyChanged(nameof(INF_WallMode)); } }// = -1;// 面板嵌板：1，立柱嵌板：2
-
-        private Wall _wall;
-
-        public WallInfo() { INF_SubCurtainPanels = new List<CurtainPanelInfo>(); }
-        public WallInfo(Wall wall) : this()
-        {
-            _wall = wall;
-            INF_ElementId = wall.Id.IntegerValue;
-            INF_Name = wall.Name;
-            INF_WallMode = INF_Name.Contains("立柱幕墙") ? 2 : 1;
-
-            INF_ErrorInfo = $"{wall.Id}";
-            Parameter _param;
-            if ((_param = wall.get_Parameter("立面系统")).HasValue) INF_System = _param.AsString(); else INF_ErrorInfo += $"[参数未设置：立面系统]";
-            if ((_param = wall.get_Parameter("立面朝向")).HasValue) INF_Direction = _param.AsString(); else INF_ErrorInfo += $"[参数未设置：立面朝向]";
-            if ((_param = wall.get_Parameter("分区")).HasValue) INF_ZoneID = _param.AsInteger(); else INF_ErrorInfo += $"[参数未设置：分区]";
-
-            var _bxyz = wall.get_BoundingBox(wall.Document.ActiveView);
-            INF_OriginX_US = _bxyz.Min.X;
-            INF_OriginY_US = _bxyz.Min.Y;
-            INF_OriginZ_US = _bxyz.Min.Z;
-            INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _bxyz.Min.X);
-            INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _bxyz.Min.Y);
-            INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _bxyz.Min.Z);
-
-            if (!INF_ErrorInfo.Contains("["))
-            {
-                INF_Wall_ReadAllSubCurtainPanels(); //如果 系统|方位|子分区 已设置，读取子嵌板信息
-            }
-
-        }
-
-        public void INF_Wall_ReadAllSubCurtainPanels()
-        {
-            ICollection<ElementId> _panelids = _wall.CurtainGrid.GetPanelIds();
-            foreach (ElementId eid in _panelids)
-            {
-                RvtDB.Panel _p = _wall.Document.GetElement(eid) as RvtDB.Panel;
-                if ((_p as FamilyInstance).Symbol.Family.Name != "系统嵌板") INF_SubCurtainPanels.Add(new CurtainPanelInfo(_p));
-            }
         }
     }
 

@@ -92,9 +92,6 @@
   <ItemGroup>
     <Compile Include="DocumentContext.cs" />
     <Compile Include="Entity.cs" />
-    <Compile Include="ProcessElements.xaml.cs">
-      <DependentUpon>ProcessElements.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -106,8 +103,6 @@
     <Compile Include="Themes\DataGridStyle.xaml.cs">
       <DependentUpon>DataGridStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Themes\LeftMarginMultiplierConverter.cs" />
-    <Compile Include="Themes\TreeViewItemExtensions.cs" />
     <Compile Include="Zone.xaml.cs">
       <DependentUpon>Zone.xaml</DependentUpon>
     </Compile>
@@ -116,10 +111,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="ProcessElements.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Themes\ControlStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -127,14 +118,6 @@
     <Page Include="Themes\DataGridStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\DataGridTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\Styles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Zone.xaml">
       <SubType>Designer</SubType>

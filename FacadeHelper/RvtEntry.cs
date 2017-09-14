@@ -120,29 +120,4 @@ namespace FacadeHelper
         }
     }
 
-    [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class ICommand_Document_Process_Elements : IExternalCommand
-    {
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
-        {
-            UIApplication uiapp = commandData.Application;
-
-            try
-            {
-                ProcessElements ucpe = new ProcessElements(commandData);
-                Window winaddin = new Window();
-                winaddin.Content = ucpe;
-                //winaddin.WindowStyle = WindowStyle.None;
-                winaddin.Padding = new Thickness(0);
-                winaddin.ShowDialog();
-            }
-            catch (Exception e)
-            {
-                TaskDialog.Show("Error", e.ToString());
-                return Result.Failed;
-            }
-
-            return Result.Succeeded;
-        }
-    }
 }

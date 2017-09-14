@@ -5,7 +5,8 @@
     <Style TargetType="Control" x:Key="baseStyle">
         <Setter Property="FontSize"  Value="13"/>
     </Style>
-    <!--定义按钮样式-->
+
+    <!--#region Button: DarkStyle-->
     <Style x:Key="DarkStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Background" Value="DarkGray"/>
@@ -26,6 +27,9 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <!--#endregion-->
+
+    <!--#region ListBox-->
     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Background" Value="{x:Null}" />
         <Setter Property="Foreground" Value="#505050" />
@@ -51,7 +55,9 @@
     <SolidColorBrush x:Key="GroupBoxHeaderBrush" Color="#505050"/>
     <SolidColorBrush x:Key="GroupBoxHeaderBackgroundBrush" Color="#E0E0E0"/>
     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
+    <!--#endregion-->
 
+    <!--#region Expander-->
     <Style TargetType="Expander" BasedOn="{StaticResource baseStyle}">
         <Setter Property="BorderBrush" Value="{StaticResource GroupBoxBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -84,8 +90,7 @@
                             </Grid>
                         </Border>
                         <ContentPresenter x:Name="ExpandSite" Visibility="Collapsed" Grid.Row="1" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <Border x:Name="ExpandEdge" Visibility="Collapsed" Grid.Row="1" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}">
-                        </Border>
+                        <Border x:Name="ExpandEdge" Visibility="Collapsed" Grid.Row="1" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="true">
@@ -97,7 +102,6 @@
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="true">
                             <Setter TargetName="Presenter" Property="TextElement.Foreground"  Value="#507070" />
-                            <Setter TargetName="Presenter" Property="TextElement.FontWeight" Value="Bold" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="true">
                             <Setter TargetName="Presenter" Property="TextElement.Foreground"  Value="#507070" />
@@ -141,7 +145,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--#endregion-->
 
+    <!--#region Label-->
     <Style TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Foreground" Value="#808080" />
         <Setter Property="Effect">
@@ -150,7 +156,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--#endregion-->
 
+    <!--#region Some Buttons-->
     <Style x:Key="AltRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Template">
             <Setter.Value>
@@ -226,11 +234,14 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}" />
     <Style TargetType="{x:Type Button}" x:Key="SubButtonStyle" BasedOn="{StaticResource ButtonBaseStyle}">
         <Setter Property="Background" Value="#f0f0f0" />
     </Style>
+    <!--#endregion-->
 
+    <!--#region TextBox-->
     <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -305,7 +316,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--#endregion-->
 
+    <!--#region CheckBox & RadioButton-->
     <Style x:Key="CheckBaseStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -443,7 +456,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--#endregion-->
 
+    <!--#region AndroidToggleButton-->
     <Style x:Key="AndroidToggleButton" TargetType="ToggleButton" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Background" Value="#d9d9d9"/>
         <Setter Property="Foreground" Value="White"/>
@@ -551,7 +566,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--#endregion-->
 
+    <!--#region AndroidRadioButtonStyle-->
     <Style x:Key="AndroidRadioButtonStyle" TargetType="RadioButton" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -640,8 +657,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--#endregion-->
 
-    <!--Slider Style-->
+    <!--#region AndroidSliderStyle-->
     <Style x:Key="AndroidSliderStyle" TargetType="{x:Type Slider}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource SliderFocusVisualStyte}" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -791,6 +809,19 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!--#endregion-->
 
-
+    <!--#region Geometry-->
+    <Geometry x:Key="MenuScrollDownArrowGeometry">M-0.7,5.2 L-2.2,6.7 3.6,12.6 9.5,6.7 8,5.2 3.6,9.6 z</Geometry>
+    <Geometry x:Key="MenuScrollUpArrowGeometry">M-2.2,10.9 L-0.7,12.4 3.7,8 8,12.4 9.5,10.9 3.7,5 z</Geometry>
+    <Geometry x:Key="Checkmark">M1.0E-41,4.2 L0,2.1 2.5,4.5 6.7,4.4E-47 6.7,2.3 2.5,6.7 z</Geometry>
+    <Geometry x:Key="CheckBoxCheckmark">M7.2,5 L5.5,7.16 4.16,6.3 3.5,6.7 5.5,8.4 8.6,5.25 C8.6,5.25 8,4.7 7.22,5</Geometry>
+    <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
+    <Geometry x:Key="ExpanderNormalArrow">M 1,1.5 L 4.5,5 L 8,1.5</Geometry>
+    <Geometry x:Key="ExpanderCheckedArrow">M 1,4.5  L 4.5,1  L 8,4.5</Geometry>
+    <Geometry x:Key="TabItemRoundedCorner">M6.5,2.6C4.767,0.973 2.509,0 0,0 0,0 0,19 0,19L23,19z</Geometry>
+    <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
+    <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
+    <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <!--#endregion-->
 </ResourceDictionary>

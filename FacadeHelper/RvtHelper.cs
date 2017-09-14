@@ -555,8 +555,8 @@ namespace FacadeHelper
                 relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneStart.Equals(querydatetime) || z.ZoneFinish.Equals(querydatetime)));
             
             if (hasrangezone) relistzone.AddRange(Global.DocContent.ZoneList.Where(z => Regex.IsMatch(z.ZoneCode, querystring, RegexOptions.IgnoreCase)));
-            if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch(p.INF_Code,querystring, RegexOptions.IgnoreCase)));
-            if (hasrangeelement) relistelement.AddRange(Global.DocContent.ScheduleElementList.Where(e => Regex.IsMatch(e.INF_Code,querystring, RegexOptions.IgnoreCase)));
+            if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch($"{p.INF_ElementId} # {p.INF_Code}",querystring, RegexOptions.IgnoreCase)));
+            if (hasrangeelement) relistelement.AddRange(Global.DocContent.ScheduleElementList.Where(e => Regex.IsMatch($"{e.INF_ElementId} # {e.INF_Code}", querystring, RegexOptions.IgnoreCase)));
         }
 
         public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo)

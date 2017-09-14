@@ -13,14 +13,10 @@ namespace FacadeHelper
         private void DataGridHostItem_GotFocus(object sender, RoutedEventArgs e)
         {
             DataGridRow hostrow = ((DataGridRow)sender);
-            if (hostrow.Item is CurtainSystemInfo)
+            if (hostrow.Item is CurtainPanelInfo)
             {
-                CurtainSystemInfo currentcs = hostrow.Item as CurtainSystemInfo;
+                CurtainPanelInfo currentcs = hostrow.Item as CurtainPanelInfo;
                 
-            }
-            if (hostrow.Item is WallInfo)
-            {
-                WallInfo currentwall = hostrow.Item as WallInfo;
             }
         }
     }

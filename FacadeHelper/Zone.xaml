@@ -48,8 +48,8 @@
             </StackPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Vertical" VerticalAlignment="Bottom" Width="200">
                 <Grid Margin="0">
-                    <ProgressBar x:Name="progbarPanel" Height="15" FlowDirection="RightToLeft" />
-                    <TextBlock Foreground="#505050" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ProgressBar x:Name="progbarPanel" Height="15" />
+                    <TextBlock Foreground="#808080" FontSize="10" FontWeight="Heavy"  HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="{}{0} / {1}">
                                 <Binding ElementName="progbarPanel" Path="Value" />
@@ -59,8 +59,8 @@
                     </TextBlock>
                 </Grid>
                 <Grid Margin="0,5,0,0">
-                    <ProgressBar x:Name="progbarElement" Height="15" FlowDirection="RightToLeft" />
-                    <TextBlock Foreground="#505050" FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ProgressBar x:Name="progbarElement" Height="15" />
+                    <TextBlock Foreground="#808080" FontSize="10" FontWeight="Heavy"  HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="{}{0} / {1}">
                                 <Binding ElementName="progbarElement" Path="Value" />
