@@ -444,6 +444,7 @@ namespace FacadeHelper
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "立面朝向", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -453,6 +454,7 @@ namespace FacadeHelper
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "立面系统", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -462,6 +464,7 @@ namespace FacadeHelper
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "立面楼层", ParameterType.Integer, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -471,6 +474,7 @@ namespace FacadeHelper
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "构件分项", ParameterType.Integer, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -479,6 +483,7 @@ namespace FacadeHelper
                 {
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "构件子项", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -487,6 +492,7 @@ namespace FacadeHelper
                 {
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "加工图号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -497,6 +503,7 @@ namespace FacadeHelper
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "分区序号", ParameterType.Integer, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -507,6 +514,7 @@ namespace FacadeHelper
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "分区区号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
@@ -517,6 +525,7 @@ namespace FacadeHelper
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "分区编码", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
