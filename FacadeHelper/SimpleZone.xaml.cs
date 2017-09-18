@@ -25,18 +25,19 @@ namespace FacadeHelper
     /// <summary>
     /// Interaction logic for Zone.xaml
     /// </summary>
-    public partial class Zone4D : UserControl, INotifyPropertyChanged
+    public partial class SimpleZone : UserControl, INotifyPropertyChanged
     {
         private UIApplication uiapp;
         private UIDocument uidoc;
         private Document doc;
         private ExternalCommandData cdata;
         private List<CurtainPanelInfo> SelectedCurtainPanelList = new List<CurtainPanelInfo>();
+        private List<MullionInfo> SelectedMullionList = new List<MullionInfo>();
         private ZoneInfoBase CurrentZoneInfo;
 
         private List<ZoneInfoBase> ResultZoneInfo = new List<ZoneInfoBase>();
         private List<CurtainPanelInfo> ResultPanelInfo = new List<CurtainPanelInfo>();
-        private List<ScheduleElementInfo> ResultElementInfo = new List<ScheduleElementInfo>();
+        private List<MullionInfo> ResultMullionInfo = new List<MullionInfo>();
 
         public Window parentWin { get; set; }
 
@@ -45,11 +46,11 @@ namespace FacadeHelper
 
         private bool _isSearchRangeZone = true;
         private bool _isSearchRangePanel = true;
-        private bool _isSearchRangeElement = true;
+        private bool _isSearchRangeMullion = true;
         private bool? _isSearchRangeAll = true;
         public bool IsSearchRangeZone { get { return _isSearchRangeZone; } set { _isSearchRangeZone = value; OnPropertyChanged(nameof(IsSearchRangeZone)); } }
         public bool IsSearchRangePanel { get { return _isSearchRangePanel; } set { _isSearchRangePanel = value; OnPropertyChanged(nameof(IsSearchRangePanel)); } }
-        public bool IsSearchRangeElement { get { return _isSearchRangeElement; } set { _isSearchRangeElement = value; OnPropertyChanged(nameof(IsSearchRangeElement)); } }
+        public bool IsSearchRangeMullion { get { return _isSearchRangeMullion; } set { _isSearchRangeMullion = value; OnPropertyChanged(nameof(IsSearchRangeMullion)); } }
         public bool? IsSearchRangeAll { get { return _isSearchRangeAll; } set { _isSearchRangeAll = value; OnPropertyChanged(nameof(IsSearchRangeAll)); } }
 
         private bool _isRealTimeProgress = true;
@@ -58,7 +59,7 @@ namespace FacadeHelper
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        public Zone4D(ExternalCommandData commandData)
+        public SimpleZone(ExternalCommandData commandData)
         {
             InitializeComponent();
             DataContext = this;
@@ -95,8 +96,7 @@ namespace FacadeHelper
 
         private RoutedCommand cmdModelInit = new RoutedCommand();
         private RoutedCommand cmdSelectPanels = new RoutedCommand();
-        private RoutedCommand cmdSelectPanelsCheckData = new RoutedCommand();
-        private RoutedCommand cmdSelectPanelsCreateSelectionSet = new RoutedCommand();
+        private RoutedCommand cmdSelectMullions = new RoutedCommand();
         private RoutedCommand cmdPanelResolve = new RoutedCommand();
 
         private RoutedCommand cmdNavZone = new RoutedCommand();
@@ -112,18 +112,8 @@ namespace FacadeHelper
         private void InitializeCommand()
         {
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbSelectPanels = new CommandBinding(cmdSelectPanels,
-                (sender, e) =>
-                {
-                    if (subbuttongroup_SelectPanels.Visibility == System.Windows.Visibility.Visible)
-                        subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
-                    else
-                        subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Visible;
-                    listInformation.Items.Clear();
-                },
-                (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbSelectPanelsCheckData = new CommandBinding(cmdSelectPanelsCheckData, cbSelectPanelsCheckData_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbSelectPanelsCreateSelectionSet = new CommandBinding(cmdSelectPanelsCreateSelectionSet, cbSelectPanelsCreateSelectionSet_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbSelectPanels = new CommandBinding(cmdSelectPanels, cbSelectPanels_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbSelectMullions = new CommandBinding(cmdSelectMullions, cbSelectMullions_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPanelResolve = new CommandBinding(cmdPanelResolve,
                 (sender, e) =>
                 {
@@ -178,14 +168,14 @@ namespace FacadeHelper
                 (sender, e) =>
                 {
                     #region 數據檢索
-                    if (!IsSearchRangeZone && !IsSearchRangePanel && !IsSearchRangeElement) return;
+                    if (!IsSearchRangeZone && !IsSearchRangePanel && !IsSearchRangeMullion) return;
                     ResultZoneInfo.Clear();
                     ResultPanelInfo.Clear();
-                    ResultElementInfo.Clear();
+                    ResultMullionInfo.Clear();
                     ZoneHelper.FnSearch(uidoc,
                         txtSearchKeyword.Text.Trim(),
-                        ref ResultZoneInfo, ref ResultPanelInfo, ref ResultElementInfo,
-                        IsSearchRangeZone, IsSearchRangePanel, IsSearchRangeElement,
+                        ref ResultZoneInfo, ref ResultPanelInfo, ref ResultMullionInfo,
+                        IsSearchRangeZone, IsSearchRangePanel, IsSearchRangeMullion,
                         ref listInformation);
                     txtProcessInfo.Content = $"檢索結果：";
                     if (IsSearchRangeZone)
@@ -214,12 +204,12 @@ namespace FacadeHelper
                         datagridPanels.ItemsSource = null;
                         expDataGridPanels.Header = $"幕墻嵌板檢索結果： 不檢索";
                     }
-                    if (IsSearchRangeElement)
+                    if (IsSearchRangeMullion)
                     {
-                        txtResultElement.Content = $"[明細構件： {ResultElementInfo.Count}]";
+                        txtResultElement.Content = $"[幕墻竪梃： {ResultMullionInfo.Count}]";
                         datagridScheduleElements.ItemsSource = null;
-                        datagridScheduleElements.ItemsSource = ResultElementInfo;
-                        expDataGridScheduleElements.Header = $"分區檢索結果： {ResultElementInfo.Count}";
+                        datagridScheduleElements.ItemsSource = ResultMullionInfo;
+                        expDataGridScheduleElements.Header = $"分區檢索結果： {ResultMullionInfo.Count}";
                     }
                     else
                     {
@@ -301,7 +291,7 @@ namespace FacadeHelper
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose,
-                (sender,e)=>
+                (sender, e) =>
                 {
                     bnQuickStart.IsChecked = false;
                 },
@@ -309,8 +299,7 @@ namespace FacadeHelper
 
             bnModelInit.Command = cmdModelInit;
             bnSelectPanels.Command = cmdSelectPanels;
-            bnSelectPanels_CheckData.Command = cmdSelectPanelsCheckData;
-            bnSelectPanels_CreateSelectionSet.Command = cmdSelectPanelsCreateSelectionSet;
+            bnSelectMullions.Command = cmdSelectMullions;
             bnPanelResolve.Command = cmdPanelResolve;
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
@@ -319,7 +308,7 @@ namespace FacadeHelper
             bnPopupClose.Command = cmdPopupClose;
 
             ProcZone.CommandBindings.Add(cbModelInit);
-            ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbSelectPanels, cbSelectPanelsCheckData, cbSelectPanelsCreateSelectionSet });
+            ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbSelectPanels, cbSelectMullions });
             ProcZone.CommandBindings.Add(cbPanelResolve);
             ProcZone.CommandBindings.Add(cbNavZone);
             ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbLoadData, cbSaveData });
@@ -366,12 +355,9 @@ namespace FacadeHelper
         }
 
 
-        private void cbSelectPanelsCheckData_Executed(object sender, ExecutedRoutedEventArgs e)
+        #region Command -- bnSelectPanels : 嵌板歸類
+        private void cbSelectPanels_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //parentWin.Hide();
-            //var _p_sel_list = uidoc.Selection.PickObjects(ObjectType.Element, "選擇同一分區的所有嵌板");
-            //parentWin.Visibility = System.Windows.Visibility.Visible;
-
             ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
             if (ids.Count == 0)
             {
@@ -379,29 +365,28 @@ namespace FacadeHelper
                 return;
             }
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前選擇 {ids.Count} 構件");
-            FilteredElementCollector collector = new FilteredElementCollector(doc, ids);
-            LogicalAndFilter cwpanel_InstancesFilter =
+            FilteredElementCollector collectorpanels = new FilteredElementCollector(doc, ids);
+            LogicalAndFilter panel_InstancesFilter =
                 new LogicalAndFilter(
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
-            var eles = collector
-                .WherePasses(cwpanel_InstancesFilter)
-                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板");
+            var panels = collectorpanels.WherePasses(panel_InstancesFilter);
+            //.Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板");
 
-            if (eles.Count() == 0)
+            if (panels.Count() == 0)
             {
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前未選擇幕墻嵌板。");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {eles.Count()} 幕墻嵌板");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {panels.Count()} 幕墻嵌板");
             SelectedCurtainPanelList.Clear();
             int errorcount_zonecode = 0;
             CurrentZoneInfo = new ZoneInfoBase("Z-00-00-ZZ-00");
-            foreach (var _ele in eles)
+            foreach (var _ele in panels)
             {
-                CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
-                _gp.INF_Type = CurrentZonePanelType;
-                SelectedCurtainPanelList.Add(_gp);
+                CurtainPanelInfo _p = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
+                _p.INF_Type = CurrentZonePanelType;
+                SelectedCurtainPanelList.Add(_p);
                 Parameter _param = _ele.get_Parameter("分区区号");
                 if (!_param.HasValue)
                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 未設置分區區號");
@@ -412,21 +397,26 @@ namespace FacadeHelper
                         CurrentZoneInfo = new ZoneInfoBase(_zc);
                     else if (CurrentZoneInfo.ZoneCode != _zc)
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
-                    _gp.INF_ZoneInfo = CurrentZoneInfo;
+                    _p.INF_ZoneInfo = CurrentZoneInfo;
                 }
 
             }
-            if (errorcount_zonecode == 0) listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{eles.Count()}幕墻嵌板均已設置相同的分區區號");
+            datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
             expDataGridPanels.Header = "選擇區域幕墻嵌板數據列表";
+            if (errorcount_zonecode == 0)
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{panels.Count()}幕墻嵌板均已設置相同的分區區號");
+            else if (MessageBox.Show(
+                $"選擇的{panels.Count()}幕墻嵌板設置的分區區號不相同或有未設置等錯誤，是否繼續？",
+                "錯誤 - 幕墻嵌板 - 分區區號",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation,
+                MessageBoxResult.No) == MessageBoxResult.No) return;
 
             uidoc.Selection.Elements.Clear();
-            foreach (var _ele in eles) uidoc.Selection.Elements.Add(_ele);
-        }
+            foreach (var _ele in panels) uidoc.Selection.Elements.Add(_ele);
 
-        private void cbSelectPanelsCreateSelectionSet_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            using (Transaction trans = new Transaction(doc, "CreateGroup"))
+            using (Transaction trans = new Transaction(doc, "CreatePanelGroup"))
             {
                 trans.Start();
                 var sfe = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
@@ -435,32 +425,106 @@ namespace FacadeHelper
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{sfe.GetElementIds().Count}幕墻嵌板已保存至選擇集[{CurrentZoneInfo.FilterName}]");
             }
 
-            /**
-            ListBoxItem _zoneitem = new ListBoxItem();
-            _zoneitem.Content = CurrentZoneInfo;
-            _zoneitem.Name = CurrentZoneInfo.ZoneCode.Replace("-", ""); 
-            _zoneitem.Tag = CurrentZoneInfo;
-            **/
-
             MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));
             mbind.CommandParameter = SelectedCurtainPanelList;
             mbind.CommandTarget = datagridPanels;
-            //_zoneitem.InputBindings.Add(mbind);
-            //navZone.Items.Add(_zoneitem);
 
-            Global.DocContent.ZoneList.Add(CurrentZoneInfo);
-            Global.DocContent.CurtainPanelList.AddRange(SelectedCurtainPanelList);
+            Global.DocContent.ZoneList.AddEx(CurrentZoneInfo);
+            Global.DocContent.CurtainPanelList.AddRangeEx(SelectedCurtainPanelList);
 
             ZoneHelper.FnContentSerialize();
             expZone.IsExpanded = true;
             subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
         }
+        #endregion
+
+        #region Command -- bnSelectMullions : 竪梃歸類
+        private void cbSelectMullions_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
+            if (ids.Count == 0)
+            {
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前無選擇。");
+                return;
+            }
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前選擇 {ids.Count} 構件");
+            FilteredElementCollector collectormullions = new FilteredElementCollector(doc, ids);
+            LogicalAndFilter mullion_InstancesFilter =
+                new LogicalAndFilter(
+                    new ElementClassFilter(typeof(FamilyInstance)),
+                    new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallMullions));
+            //.Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板");
+            var mullions = collectormullions.WherePasses(mullion_InstancesFilter);
+
+            if (mullions.Count() == 0)
+            {
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前未選擇幕墻竪梃。");
+                return;
+            }
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {mullions.Count()} 幕墻竪梃");
+            SelectedMullionList.Clear();
+            int errorcount_zonecode = 0;
+            CurrentZoneInfo = new ZoneInfoBase("Z-00-00-ZZ-00");
+            foreach (var _ele in mullions)
+            {
+                MullionInfo _m = new MullionInfo(_ele as Mullion);
+                SelectedMullionList.Add(_m);
+                Parameter _param = _ele.get_Parameter("分区区号");
+                if (!_param.HasValue)
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻竪梃[{_ele.Id.IntegerValue}] 未設置分區區號");
+                else
+                {
+                    var _zc = _param.AsString();
+                    if (CurrentZoneInfo.ZoneIndex == 0)
+                        CurrentZoneInfo = new ZoneInfoBase(_zc);
+                    else if (CurrentZoneInfo.ZoneCode != _zc)
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻竪梃[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
+                    _m.INF_ZoneInfo = CurrentZoneInfo;
+                }
+
+            }
+            datagridMullions.ItemsSource = null;
+            datagridMullions.ItemsSource = SelectedMullionList;
+            expDataGridPanels.Header = "選擇區域幕墻竪梃數據列表";
+            if (errorcount_zonecode == 0)
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{mullions.Count()}幕墻竪梃均已設置相同的分區區號");
+            else if (MessageBox.Show(
+                $"選擇的{mullions.Count()}幕墻竪梃設置的分區區號不相同或有未設置等錯誤，是否繼續？",
+                "錯誤 - 幕墻竪梃 - 分區區號",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation,
+                MessageBoxResult.No) == MessageBoxResult.No) return;
+
+            uidoc.Selection.Elements.Clear();
+            foreach (var _ele in mullions) uidoc.Selection.Elements.Add(_ele);
+
+            using (Transaction trans = new Transaction(doc, "CreateMullionGroup"))
+            {
+                trans.Start();
+                var sfe = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
+                sfe.AddSet(uidoc.Selection.GetElementIds());
+                trans.Commit();
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{sfe.GetElementIds().Count}幕墻竪梃已保存至選擇集[{CurrentZoneInfo.FilterName}]");
+            }
+
+            MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));
+            mbind.CommandParameter = SelectedMullionList;
+            mbind.CommandTarget = datagridMullions;
+
+            Global.DocContent.ZoneList.AddEx(CurrentZoneInfo);
+            Global.DocContent.MullionList.AddRangeEx(SelectedMullionList);
+
+            ZoneHelper.FnContentSerialize();
+            expZone.IsExpanded = true;
+            subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
+        }
+        #endregion
 
         private void expDataGrid_Expanded(object sender, RoutedEventArgs e)
         {
-            if (((Expander)sender).Name == "expDataGridZones") { expDataGridPanels.IsExpanded = false; expDataGridScheduleElements.IsExpanded = false; }
-            if (((Expander)sender).Name == "expDataGridPanels") { expDataGridZones.IsExpanded = false; expDataGridScheduleElements.IsExpanded = false; }
-            if (((Expander)sender).Name == "expDataGridScheduleElements") { expDataGridZones.IsExpanded = false; expDataGridPanels.IsExpanded = false; }
+            if (((Expander)sender).Name == "expDataGridZones") { expDataGridPanels.IsExpanded = false; expDataGridMullions.IsExpanded = false; }
+            if (((Expander)sender).Name == "expDataGridPanels") { expDataGridZones.IsExpanded = false; expDataGridMullions.IsExpanded = false; }
+            if (((Expander)sender).Name == "expDataGridMullions") { expDataGridZones.IsExpanded = false; expDataGridPanels.IsExpanded = false; }
         }
 
         private void cbModelInit_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -474,12 +538,6 @@ namespace FacadeHelper
         }
         #endregion
 
-        private void bnTest_Click(object sender, RoutedEventArgs e)
-        {
-            //MessageBox.Show($"CurrentZonePanelType：{CurrentZonePanelType}");
-            MessageBox.Show($"Range Zone：{IsSearchRangeZone}\nRange Panel：{IsSearchRangePanel}\nRange Element：{IsSearchRangeElement}\nRange All：{IsSearchRangeAll}");
-        }
-
         private void listInformation_SelectionChanged(object sender, SelectionChangedEventArgs e) { var lb = sender as ListBox; lb.ScrollIntoView(lb.Items[lb.Items.Count - 1]); }
 
         private void chkbox_Checked(object sender, RoutedEventArgs e)
@@ -491,12 +549,12 @@ namespace FacadeHelper
                     case true:
                         IsSearchRangeZone = true;
                         IsSearchRangePanel = true;
-                        IsSearchRangeElement = true;
+                        IsSearchRangeMullion = true;
                         break;
                     case false:
                         IsSearchRangeZone = false;
                         IsSearchRangePanel = false;
-                        IsSearchRangeElement = false;
+                        IsSearchRangeMullion = false;
                         break;
                     default:
                         break;
@@ -504,8 +562,8 @@ namespace FacadeHelper
             }
             else
             {
-                if (IsSearchRangeZone && IsSearchRangePanel && IsSearchRangeElement) IsSearchRangeAll = true;
-                else if (!IsSearchRangeZone && !IsSearchRangePanel && !IsSearchRangeElement) IsSearchRangeAll = false;
+                if (IsSearchRangeZone && IsSearchRangePanel && IsSearchRangeMullion) IsSearchRangeAll = true;
+                else if (!IsSearchRangeZone && !IsSearchRangePanel && !IsSearchRangeMullion) IsSearchRangeAll = false;
                 else IsSearchRangeAll = null;
             }
             ((CheckBox)sender).GetBindingExpression(CheckBox.IsCheckedProperty).UpdateTarget();

@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -543,18 +544,14 @@ namespace FacadeHelper
 
         }
 
-    } 
+    }
 
     public static class ZoneHelper
     {
-        public static void FnSearch(UIDocument uidoc, 
+        public static void FnSearch(UIDocument uidoc,
             string querystring,
-            ref List<ZoneInfoBase> relistzone, 
-            ref List<CurtainPanelInfo> relistpanel, 
-            ref List<ScheduleElementInfo> relistelement, 
-            bool hasrangezone,
-            bool hasrangepanel,
-            bool hasrangeelement,
+            ref List<ZoneInfoBase> relistzone, ref List<CurtainPanelInfo> relistpanel, ref List<ScheduleElementInfo> relistelement,
+            bool hasrangezone, bool hasrangepanel, bool hasrangeelement,
             ref ListBox listinfo)
         {
             var doc = uidoc.Document;
@@ -562,10 +559,19 @@ namespace FacadeHelper
 
             if (hasrangezone && DateTime.TryParse(querystring, out DateTime querydatetime))
                 relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneStart.Equals(querydatetime) || z.ZoneFinish.Equals(querydatetime)));
-            
+
             if (hasrangezone) relistzone.AddRange(Global.DocContent.ZoneList.Where(z => Regex.IsMatch(z.ZoneCode, querystring, RegexOptions.IgnoreCase)));
-            if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch($"{p.INF_ElementId} # {p.INF_Code}",querystring, RegexOptions.IgnoreCase)));
+            if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch($"{p.INF_ElementId} # {p.INF_Code}", querystring, RegexOptions.IgnoreCase)));
             if (hasrangeelement) relistelement.AddRange(Global.DocContent.ScheduleElementList.Where(e => Regex.IsMatch($"{e.INF_ElementId} # {e.INF_Code}", querystring, RegexOptions.IgnoreCase)));
+        }
+
+        public static void FnSearch(UIDocument uidoc,
+            string querystring,
+            ref List<ZoneInfoBase> relistzone, ref List<CurtainPanelInfo> relistpanel, ref List<MullionInfo> relistmullion,
+            bool hasrangezone, bool hasrangepanel, bool hasrangeelement,
+            ref ListBox listinfo)
+        {
+
         }
 
         public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo)
@@ -772,6 +778,25 @@ namespace FacadeHelper
             }
         }
 
+        public static void AddRangeEx<T>(this List<T> SourceList, IEnumerable<T> SubList) where T : ElementInfoBase
+        {
+            foreach (var ei in SubList)
+            {
+                SourceList.RemoveAll(__e => __e.INF_ElementId == ei.INF_ElementId);
+                SourceList.Add(ei);
+            }
+        }
+
+        public static void AddEx<T>(this ObservableCollection<T> SourceList, T NewItem) where T : ZoneInfoBase
+        {
+            foreach (ZoneInfoBase z in SourceList)
+                if (z.ZoneCode == NewItem.ZoneCode)
+                {
+                    SourceList.Remove((T)z);
+                    SourceList.Add(NewItem);
+                    return;
+                }
+        }
     }
 
     public static class StreamHelper

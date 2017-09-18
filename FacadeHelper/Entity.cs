@@ -82,13 +82,75 @@ namespace FacadeHelper
 
         public void ResolveZoneCode()
         {
+            INF_ZoneCode = INF_ZoneCode.ToUpper();
             //Z-00-99-AA-99
             var _array_field = INF_ZoneCode.Split('-');
+            INF_ZoneType = int.Parse(_array_field[1]);
             INF_System = _array_field[3].Substring(1, 1);
             INF_Direction = _array_field[3].Substring(0, 1);
             INF_Level = int.Parse(_array_field[2]);
             INF_ZoneID = int.Parse(_array_field[4]);
         }
+    }
+
+    [SerializableType]
+    public class MullionInfo : ElementInfoBase
+    {
+        private double _inf_MullionLength_Metric = 0;
+        public double INF_MullionLength_Metric { get { return _inf_MullionLength_Metric; } set { _inf_MullionLength_Metric = value; OnPropertyChanged(nameof(INF_MullionLength_Metric)); } }
+        public MullionInfo() { INF_Type = 1; }
+        /// <summary>
+        /// 按竪梃方向初始化
+        /// </summary>
+        /// <param name="mulliontype">竪梃方向，1: 立柱，2：橫樑</param>
+        public MullionInfo(int mulliontype) { INF_Type = mulliontype; }
+        public MullionInfo(Mullion mu)
+        {
+            #region MullionInfo 初始化
+            INF_ElementId = mu.Id.IntegerValue;
+            INF_Name = mu.Name;
+            INF_Type = 0;
+            if (INF_Name.StartsWith("H")) INF_Type = 2;
+            if (INF_Name.StartsWith("V")) INF_Type = 1;
+
+            INF_ErrorInfo = $"{mu.Id}";
+
+            INF_MullionLength_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, mu.get_Parameter(BuiltInParameter.CURVE_ELEM_LENGTH).AsDouble());
+            XYZ _xyzOrigin = mu.GetTransform().Origin;
+            INF_OriginX_US = _xyzOrigin.X;
+            INF_OriginY_US = _xyzOrigin.Y;
+            INF_OriginZ_US = _xyzOrigin.Z;
+            INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.X);
+            INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y);
+            INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z);
+
+
+            Parameter _param;
+            if ((_param = mu.get_Parameter("分区区号")).HasValue)
+            {
+                INF_ZoneCode = _param.AsString();
+                ResolveZoneCode();
+            }
+            else INF_ErrorInfo += $"[参数未设置：分区区号]";
+            //立面楼层，分区区号 未读取
+            #endregion
+        }
+        public MullionInfo(Mullion mu, int mulliontype) : this(mu) { INF_Type = mulliontype; }
+
+        public override string ToString() { return INF_Code; }
+
+        public void ResolveZoneCode()
+        {
+            INF_ZoneCode = INF_ZoneCode.ToUpper();
+            //Z-00-99-AA-99
+            var _array_field = INF_ZoneCode.Split('-');
+            INF_ZoneType = int.Parse(_array_field[1]);
+            INF_System = _array_field[3].Substring(1, 1);
+            INF_Direction = _array_field[3].Substring(0, 1);
+            INF_Level = int.Parse(_array_field[2]);
+            INF_ZoneID = int.Parse(_array_field[4]);
+        }
+
     }
 
     [SerializableType]
@@ -139,13 +201,15 @@ namespace FacadeHelper
         private ZoneInfoBase _inf_ZoneInfo;
         private int _inf_ZoneID;
         private string _inf_ZoneCode;
-        private string _inf_Type_ZoneCode;
+        private int _inf_ZoneType;
         private int _inf_Index;
         private string _inf_Code;
         private string _inf_Error_info;
 
         private uint _inf_TaskID;
         private int _inf_TaskLevel;
+        private DateTime _inf_TaskStart;
+        private DateTime _inf_TaskFinish;
         private string _inf_TaskDuration;
         private uint _inf_TaskID_PreProcess;
 
@@ -165,13 +229,15 @@ namespace FacadeHelper
         public ZoneInfoBase INF_ZoneInfo { get { return _inf_ZoneInfo; } set { _inf_ZoneInfo = value; OnPropertyChanged(nameof(INF_ZoneInfo)); } }
         public int INF_ZoneID { get { return _inf_ZoneID; } set { _inf_ZoneID = value; OnPropertyChanged(nameof(INF_ZoneID)); } }
         public string INF_ZoneCode { get { return _inf_ZoneCode; } set { _inf_ZoneCode = value; OnPropertyChanged(nameof(INF_ZoneCode)); } }
-        public string INF_Type_ZoneCode { get { return _inf_Type_ZoneCode; } set { _inf_Type_ZoneCode = value; OnPropertyChanged(nameof(INF_Type_ZoneCode)); } }
+        public int INF_ZoneType { get { return _inf_ZoneType; } set { _inf_ZoneType = value; OnPropertyChanged(nameof(INF_ZoneType)); } }
         public int INF_Index { get { return _inf_Index; } set { _inf_Index = value; OnPropertyChanged(nameof(INF_Index)); } }
         public string INF_Code { get { return _inf_Code; } set { _inf_Code = value; OnPropertyChanged(nameof(INF_Code)); } }
         public string INF_ErrorInfo { get { return _inf_Error_info; } set { _inf_Error_info = value; OnPropertyChanged(nameof(INF_ErrorInfo)); } }
 
         public uint INF_TaskID { get { return _inf_TaskID; } set { _inf_TaskID = value; OnPropertyChanged(nameof(INF_TaskID)); } }
         public int INF_TaskLevel { get { return _inf_TaskLevel; } set { _inf_TaskLevel = value; OnPropertyChanged(nameof(INF_TaskLevel)); } }
+        public DateTime INF_TaskStart { get { return _inf_TaskStart; } set { _inf_TaskStart = value; OnPropertyChanged(nameof(INF_TaskStart)); } }
+        public DateTime INF_TaskFinish { get { return _inf_TaskFinish; } set { _inf_TaskFinish = value; OnPropertyChanged(nameof(INF_TaskFinish)); } }
         public string INF_TaskDuration { get { return _inf_TaskDuration; } set { _inf_TaskDuration = value; OnPropertyChanged(nameof(INF_TaskDuration)); } }
         public uint INF_TaskID_PreProcess { get { return _inf_TaskID_PreProcess; } set { _inf_TaskID_PreProcess = value; OnPropertyChanged(nameof(INF_TaskID_PreProcess)); } }
 
@@ -221,9 +287,9 @@ namespace FacadeHelper
         private string _zoneCode;
         private DateTime _zoneStart;
         private DateTime _zoneFinish;
-        private int _zoneDurationHours;
+        private double _zoneDurationHours;
 
-        private int _zoneType;
+        private int _zoneType = 0;
         private int _zoneLevel;
         private string _zoneDirection;
         private string _zoneSystem;
@@ -234,9 +300,9 @@ namespace FacadeHelper
         public string ZoneCode { get { return _zoneCode; } set { _zoneCode = value; OnPropertyChanged(nameof(ZoneCode)); } }
         public DateTime ZoneStart { get { return _zoneStart; } set { _zoneStart = value; OnPropertyChanged(nameof(ZoneStart)); } }
         public DateTime ZoneFinish { get { return _zoneFinish; } set { _zoneFinish = value; OnPropertyChanged(nameof(ZoneFinish)); } }
-        public int ZoneDurationHours { get { return _zoneDurationHours; } set { _zoneDurationHours = value; OnPropertyChanged(nameof(ZoneDurationHours)); } }
+        public double ZoneDurationHours { get { return _zoneDurationHours; } set { _zoneDurationHours = value; OnPropertyChanged(nameof(ZoneDurationHours)); } }
 
-        public int ZoneType { get { return _zoneType; } set { _zoneType = value; OnPropertyChanged(nameof(ZoneType)); } } //0,1,2
+        public int ZoneType { get { return _zoneType; } set { _zoneType = value; OnPropertyChanged(nameof(ZoneType)); } } //1,2,3,4; Preset 0 = All
         public int ZoneLevel { get { return _zoneLevel; } set { _zoneLevel = value; OnPropertyChanged(nameof(ZoneLevel)); } }
         public string ZoneDirection { get { return _zoneDirection; } set { _zoneDirection = value; OnPropertyChanged(nameof(ZoneDirection)); } }
         public string ZoneSystem { get { return _zoneSystem; } set { _zoneSystem = value; OnPropertyChanged(nameof(ZoneSystem)); } }

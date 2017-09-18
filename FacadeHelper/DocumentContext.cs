@@ -82,6 +82,7 @@ namespace FacadeHelper
         public List<ScheduleElementInfo> ScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
         public List<DeepElementInfo> DeepElementList { get; set; } = new List<DeepElementInfo>();
         public ObservableCollection<ZoneInfoBase> ZoneList { get; set; } = new ObservableCollection<ZoneInfoBase>();
+        public List<MullionInfo> MullionList { get; set; } = new List<MullionInfo>();
 
         [NonSerializableMember] public ILookup<string, CurtainPanelInfo> Lookup_CurtainPanels { get; set; }
         [NonSerializableMember] public ILookup<string, ScheduleElementInfo> Lookup_ScheduleElements { get; set; }

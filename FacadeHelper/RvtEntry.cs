@@ -27,10 +27,10 @@ namespace FacadeHelper
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
             PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
             PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
-            PushButtonData bndata_zone4d = new PushButtonData("cmdZone4D", "4D分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone4D");
+            PushButtonData bndata_zone4d = new PushButtonData("cmdZone4D", "簡化分區", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone4D");
             bndata_process_elements.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "se32.png")));
-            bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
+            bndata_zone4d.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             //rpanel.AddItem(bndata_process_elements);
             rpanel.AddItem(bndata_zone);
             rpanel.AddItem(bndata_zone4d);
@@ -132,7 +132,7 @@ namespace FacadeHelper
 
             try
             {
-                Zone4D ucpe4d = new Zone4D(commandData);
+                SimpleZone ucpe4d = new SimpleZone(commandData);
                 Window winaddin = new Window();
                 ucpe4d.parentWin = winaddin;
                 winaddin.Content = ucpe4d;
