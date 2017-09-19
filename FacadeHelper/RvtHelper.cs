@@ -574,6 +574,42 @@ namespace FacadeHelper
 
         }
 
+        internal static void FnResolveSimpleZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo)
+        {
+            var doc = uidoc.Document;
+            uidoc.Selection.Elements.Clear();
+
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索分區[{zone.ZoneCode}]...");
+            var _panelsinzone = Global.DocContent.CurtainPanelList
+                .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+            int pindex = 0;
+            //確定分區內嵌板數據及排序
+            foreach (CurtainPanelInfo _pi in _panelsinzone)
+            {
+                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻嵌板[{_pi.INF_ElementId}]...");
+                _pi.INF_Index = pindex;
+                _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
+            }
+
+            var _mullionsinzone = Global.DocContent.MullionList
+                .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                .OrderBy(p1 => p1.INF_Type)
+                .OrderBy(p2 => Math.Round(p2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                .ThenBy(p3 => Math.Round(p3.INF_OriginX_Metric / Constants.RVTPrecision));
+            pindex = 0;
+            //確定分區內竪梃數據及排序
+            foreach (MullionInfo _mi in _mullionsinzone)
+            {
+                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻竪梃：{_mi.INF_ElementId}({++pindex}/{_mullionsinzone.Count()})]";
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻竪梃[{_mi.INF_ElementId}]...");
+                _mi.INF_Index = pindex;
+                _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{pindex:0000}";
+            }
+        }
+
         public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo)
         {
             var doc = uidoc.Document;
@@ -797,6 +833,7 @@ namespace FacadeHelper
                     return;
                 }
         }
+
     }
 
     public static class StreamHelper

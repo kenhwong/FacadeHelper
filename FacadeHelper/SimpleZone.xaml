@@ -33,7 +33,7 @@
             <Button x:Name="bnModelInit" Content="模型初始" DockPanel.Dock="Left" Margin="20,0,10,0" />
             <Button x:Name="bnSelectPanels" Content="嵌板歸類" DockPanel.Dock="Left" Margin="0,0,10,0" />
             <Button x:Name="bnSelectMullions" Content="竪梃歸類" DockPanel.Dock="Left" Margin="0,0,10,0" />
-            <Button x:Name="bnPanelResolve" Content="嵌板分析" DockPanel.Dock="Left" Margin="0,0,10,0" />
+            <Button x:Name="bnPanelResolve" Content="構件分析" DockPanel.Dock="Left" Margin="0,0,10,0" />
 
             <Button x:Name="bnLoadData" Content="加載數據" DockPanel.Dock="Left" Margin="20,0,10,0" />
             <Button x:Name="bnSaveData" Content="保存修改" DockPanel.Dock="Left" Margin="0,0,10,0" />
@@ -106,7 +106,7 @@
                     </TextBlock>
                 </Grid>
                 <Grid Margin="0,5,0,0">
-                    <ProgressBar x:Name="progbarElement" Height="15" />
+                    <ProgressBar x:Name="progbarMullion" Height="15" />
                     <TextBlock Foreground="#808080" FontSize="10" FontWeight="Heavy"  HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="{}{0} / {1}">
@@ -140,10 +140,10 @@
                         </ScrollViewer>
                     </Expander.Content>
                 </Expander>
-                <Expander x:Name="expPanel" ExpandDirection="Down" Header="幕墻嵌板" DockPanel.Dock="Top" Margin="5" Padding="5">
+                <Expander x:Name="expPanel" ExpandDirection="Down" Header="幕墻嵌板" DockPanel.Dock="Top" Margin="5" Padding="5" Visibility="Collapsed">
                     <Expander.Content>
                         <ScrollViewer>
-                            <ListBox x:Name="navPanels" ItemsSource="{Binding}" SelectionChanged="navPanels_SelectionChanged" IsSynchronizedWithCurrentItem="False">
+                            <ListBox x:Name="navPanels" ItemsSource="{Binding}" IsSynchronizedWithCurrentItem="False">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Padding="15,0,0,0" Text="{Binding INF_Code}" />

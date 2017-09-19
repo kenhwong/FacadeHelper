@@ -114,14 +114,14 @@ namespace FacadeHelper
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSelectPanels = new CommandBinding(cmdSelectPanels, cbSelectPanels_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSelectMullions = new CommandBinding(cmdSelectMullions, cbSelectMullions_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
             CommandBinding cbPanelResolve = new CommandBinding(cmdPanelResolve,
                 (sender, e) =>
                 {
-                    Global.DocContent.ScheduleElementList.Clear();
-                    Global.DocContent.DeepElementList.Clear();
-                    foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveZone(uidoc, zn, ref listInformation, ref txtProcessInfo);
+                    foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveSimpleZone(uidoc, zn, ref listInformation, ref txtProcessInfo);
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
 
             CommandBinding cbNavZone = new CommandBinding(cmdNavZone,
                 (sender, e) =>
@@ -254,32 +254,32 @@ namespace FacadeHelper
                         }
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：嵌板 [{Global.DocContent.CurtainPanelList.Count}] 參數 [{Global.DocContent.CurtainPanelList.Count * 7}]");
 
-                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_ScheduleElements"))
+                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_Mullions"))
                         {
                             trans.Start();
-                            progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
-                            progbarElement.Value = 0;
-                            Global.DocContent.ScheduleElementList.ForEach(ele =>
+                            progbarMullion.Maximum = Global.DocContent.MullionList.Count;
+                            progbarMullion.Value = 0;
+                            Global.DocContent.MullionList.ForEach(mi =>
                             {
-                                Element _element = doc.GetElement(new ElementId(ele.INF_ElementId));
-                                _element.get_Parameter("立面朝向").Set(ele.INF_Direction);
-                                _element.get_Parameter("立面系统").Set(ele.INF_System);
-                                _element.get_Parameter("立面楼层").Set(ele.INF_Level);
-                                _element.get_Parameter("构件分项").Set(ele.INF_Type);
-                                _element.get_Parameter("分区序号").Set(ele.INF_ZoneID);
-                                _element.get_Parameter("分区区号").Set(ele.INF_ZoneCode);
-                                _element.get_Parameter("分区编码").Set(ele.INF_Code);
+                                Element _element = doc.GetElement(new ElementId(mi.INF_ElementId));
+                                _element.get_Parameter("立面朝向").Set(mi.INF_Direction);
+                                _element.get_Parameter("立面系统").Set(mi.INF_System);
+                                _element.get_Parameter("立面楼层").Set(mi.INF_Level);
+                                _element.get_Parameter("构件分项").Set(mi.INF_Type);
+                                _element.get_Parameter("分区序号").Set(mi.INF_ZoneID);
+                                _element.get_Parameter("分区区号").Set(mi.INF_ZoneCode);
+                                _element.get_Parameter("分区编码").Set(mi.INF_Code);
 
                                 if (IsRealTimeProgress)
                                 {
-                                    txtProcessInfo.Content = $"當前處理進度：[嵌板：{ele.INF_HostCurtainPanel.INF_Code}] - [明細構件：{ele.INF_ElementId}, {ele.INF_Code})]";
-                                    progbarElement.Value++;
+                                    txtProcessInfo.Content = $"當前處理進度：[分區：{mi.INF_ZoneCode}] - [幕墻竪梃：{mi.INF_ElementId}, {mi.INF_Code})]";
+                                    progbarMullion.Value++;
                                     System.Windows.Forms.Application.DoEvents();
                                 }
                             });
                             trans.Commit();
                         }
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：明細構件 [{Global.DocContent.ScheduleElementList.Count}] 參數 [{Global.DocContent.ScheduleElementList.Count * 7}]");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：竪梃 [{Global.DocContent.MullionList.Count}] 參數 [{Global.DocContent.MullionList.Count * 7}]");
                     }
                     //catch (Exception ex)
                     {
@@ -327,33 +327,16 @@ namespace FacadeHelper
                 var _plist = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneCode == zi.ZoneCode);
                 datagridPanels.ItemsSource = _plist;
                 expDataGridPanels.Header = $"分區[{zi.ZoneCode}]幕墻嵌板數據列表，數量 {_plist.Count()}";
-                expDataGridPanels.IsExpanded = true;
-                navPanels.ItemsSource = _plist;
-                expPanel.Header = $"幕墻嵌板：{_plist.Count()}，分區[{zi.ZoneCode}]";
-                expPanel.IsExpanded = true;
-                datagridScheduleElements.ItemsSource = null;
-                var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_ZoneCode == zi.ZoneCode);
-                datagridScheduleElements.ItemsSource = _elist;
-                expDataGridScheduleElements.Header = $"分區[{zi.ZoneCode}]明細構件數據列表，數量 {_elist.Count()}";
+                if (_plist.Count() > 0) expDataGridPanels.IsExpanded = true;
+
+                datagridMullions.ItemsSource = null;
+                var _mlist = Global.DocContent.MullionList.Where(ele => ele.INF_ZoneCode == zi.ZoneCode);
+                datagridMullions.ItemsSource = _mlist;
+                expDataGridMullions.Header = $"分區[{zi.ZoneCode}]幕墻竪梃數據列表，數量 {_mlist.Count()}";
+                if (_mlist.Count() > 0) expDataGridMullions.IsExpanded = true;
                 navZone.SelectedItem = null;
             }
         }
-
-        private void navPanels_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var _addeditem = e.AddedItems;
-            if (_addeditem.Count > 0)
-            {
-                var pi = _addeditem[0] as CurtainPanelInfo;
-                datagridScheduleElements.ItemsSource = null;
-                var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_HostCurtainPanel.INF_ElementId == pi.INF_ElementId);
-                datagridScheduleElements.ItemsSource = _elist;
-                expDataGridScheduleElements.Header = $"分區[{pi.INF_ZoneCode}]，嵌板[{pi.INF_Code}]明細構件數據列表，數量 {_elist.Count()}";
-                expDataGridScheduleElements.IsExpanded = true;
-                navPanels.SelectedItem = null;
-            }
-        }
-
 
         #region Command -- bnSelectPanels : 嵌板歸類
         private void cbSelectPanels_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -371,7 +354,6 @@ namespace FacadeHelper
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
             var panels = collectorpanels.WherePasses(panel_InstancesFilter);
-            //.Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板");
 
             if (panels.Count() == 0)
             {
@@ -404,6 +386,7 @@ namespace FacadeHelper
             datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
             expDataGridPanels.Header = "選擇區域幕墻嵌板數據列表";
+            expDataGridPanels.IsExpanded = true;
             if (errorcount_zonecode == 0)
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{panels.Count()}幕墻嵌板均已設置相同的分區區號");
             else if (MessageBox.Show(
@@ -419,10 +402,14 @@ namespace FacadeHelper
             using (Transaction trans = new Transaction(doc, "CreatePanelGroup"))
             {
                 trans.Start();
-                var sfe = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
-                sfe.AddSet(uidoc.Selection.GetElementIds());
+                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                ICollection<Element> typecollection = collector.OfClass(typeof(SelectionFilterElement)).ToElements();
+                SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == CurrentZoneInfo.ZoneCode);
+                if (selectset != null) selectset.Clear();
+                else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
+                selectset.AddSet(uidoc.Selection.GetElementIds());
                 trans.Commit();
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{sfe.GetElementIds().Count}幕墻嵌板已保存至選擇集[{CurrentZoneInfo.FilterName}]");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{selectset.GetElementIds().Count}幕墻嵌板已保存至選擇集[{CurrentZoneInfo.FilterName}]");
             }
 
             MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));
@@ -501,10 +488,14 @@ namespace FacadeHelper
             using (Transaction trans = new Transaction(doc, "CreateMullionGroup"))
             {
                 trans.Start();
-                var sfe = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
-                sfe.AddSet(uidoc.Selection.GetElementIds());
+                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                ICollection<Element> typecollection = collector.OfClass(typeof(SelectionFilterElement)).ToElements();
+                SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == CurrentZoneInfo.ZoneCode);
+                if (selectset != null) selectset.Clear();
+                else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
+                selectset.AddSet(uidoc.Selection.GetElementIds());
                 trans.Commit();
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{sfe.GetElementIds().Count}幕墻竪梃已保存至選擇集[{CurrentZoneInfo.FilterName}]");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{selectset.GetElementIds().Count}幕墻竪梃已保存至選擇集[{CurrentZoneInfo.FilterName}]");
             }
 
             MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));

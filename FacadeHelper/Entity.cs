@@ -110,8 +110,8 @@ namespace FacadeHelper
             INF_ElementId = mu.Id.IntegerValue;
             INF_Name = mu.Name;
             INF_Type = 0;
-            if (INF_Name.StartsWith("H")) INF_Type = 2;
-            if (INF_Name.StartsWith("V")) INF_Type = 1;
+            if (INF_Name.StartsWith("H")) INF_Type = 7;
+            if (INF_Name.StartsWith("V")) INF_Type = 8;
 
             INF_ErrorInfo = $"{mu.Id}";
 
