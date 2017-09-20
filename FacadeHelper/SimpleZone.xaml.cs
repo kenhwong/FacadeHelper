@@ -301,7 +301,6 @@ namespace FacadeHelper
             CommandBinding cbExportElementSchedule = new CommandBinding(cmdExportElementSchedule,
                 (sender, e) =>
                 {
-
                     using (StreamWriter writer = new StreamWriter(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.4dzone.csv"), false))
                     {
                         int idtask = 0;
