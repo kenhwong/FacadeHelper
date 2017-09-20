@@ -97,6 +97,7 @@ namespace FacadeHelper
         private RoutedCommand cmdModelInit = new RoutedCommand();
         private RoutedCommand cmdSelectPanels = new RoutedCommand();
         private RoutedCommand cmdSelectMullions = new RoutedCommand();
+        private RoutedCommand cmdZonedPnM = new RoutedCommand();
         private RoutedCommand cmdPanelResolve = new RoutedCommand();
 
         private RoutedCommand cmdNavZone = new RoutedCommand();
@@ -114,6 +115,7 @@ namespace FacadeHelper
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSelectPanels = new CommandBinding(cmdSelectPanels, cbSelectPanels_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSelectMullions = new CommandBinding(cmdSelectMullions, cbSelectMullions_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbZonedPnM = new CommandBinding(cmdZonedPnM, cbZonedPnM_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
             CommandBinding cbPanelResolve = new CommandBinding(cmdPanelResolve,
                 (sender, e) =>
@@ -242,6 +244,8 @@ namespace FacadeHelper
                                 _element.get_Parameter("分区序号").Set(p.INF_ZoneID);
                                 _element.get_Parameter("分区区号").Set(p.INF_ZoneCode);
                                 _element.get_Parameter("分区编码").Set(p.INF_Code);
+                                _element.get_Parameter("安装开始").Set(p.INF_TaskStart.ToString("MM-dd-yy HH:mm:ss"));
+                                _element.get_Parameter("安装结束").Set(p.INF_TaskFinish.ToString("MM-dd-yy HH:mm:ss"));
 
                                 if (IsRealTimeProgress)
                                 {
@@ -252,7 +256,7 @@ namespace FacadeHelper
                             });
                             trans.Commit();
                         }
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：嵌板 [{Global.DocContent.CurtainPanelList.Count}] 參數 [{Global.DocContent.CurtainPanelList.Count * 7}]");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：嵌板 [{Global.DocContent.CurtainPanelList.Count}] 參數 [{Global.DocContent.CurtainPanelList.Count * 9}]");
 
                         using (Transaction trans = new Transaction(doc, "Apply_Parameters_Mullions"))
                         {
@@ -269,6 +273,8 @@ namespace FacadeHelper
                                 _element.get_Parameter("分区序号").Set(mi.INF_ZoneID);
                                 _element.get_Parameter("分区区号").Set(mi.INF_ZoneCode);
                                 _element.get_Parameter("分区编码").Set(mi.INF_Code);
+                                _element.get_Parameter("安装开始").Set(mi.INF_TaskStart.ToString("MM-dd-yy HH:mm:ss"));
+                                _element.get_Parameter("安装结束").Set(mi.INF_TaskFinish.ToString("MM-dd-yy HH:mm:ss"));
 
                                 if (IsRealTimeProgress)
                                 {
@@ -279,7 +285,7 @@ namespace FacadeHelper
                             });
                             trans.Commit();
                         }
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：竪梃 [{Global.DocContent.MullionList.Count}] 參數 [{Global.DocContent.MullionList.Count * 7}]");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：竪梃 [{Global.DocContent.MullionList.Count}] 參數 [{Global.DocContent.MullionList.Count * 9}]");
                     }
                     //catch (Exception ex)
                     {
@@ -300,6 +306,7 @@ namespace FacadeHelper
             bnModelInit.Command = cmdModelInit;
             bnSelectPanels.Command = cmdSelectPanels;
             bnSelectMullions.Command = cmdSelectMullions;
+            bnZonedPnM.Command = cmdZonedPnM;
             bnPanelResolve.Command = cmdPanelResolve;
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
@@ -308,7 +315,7 @@ namespace FacadeHelper
             bnPopupClose.Command = cmdPopupClose;
 
             ProcZone.CommandBindings.Add(cbModelInit);
-            ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbSelectPanels, cbSelectMullions });
+            ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbSelectPanels, cbSelectMullions, cbZonedPnM });
             ProcZone.CommandBindings.Add(cbPanelResolve);
             ProcZone.CommandBindings.Add(cbNavZone);
             ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbLoadData, cbSaveData });
@@ -337,6 +344,155 @@ namespace FacadeHelper
                 navZone.SelectedItem = null;
             }
         }
+
+        #region Command -- bnZonedPnM : 嵌板和竪梃歸類
+        private void cbZonedPnM_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
+            if (ids.Count == 0)
+            {
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前無選擇。");
+                return;
+            }
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前選擇 {ids.Count} 構件");
+            FilteredElementCollector collectorpanels = new FilteredElementCollector(doc, ids);
+            FilteredElementCollector collectormullions = new FilteredElementCollector(doc, ids);
+            LogicalAndFilter panel_InstancesFilter = new LogicalAndFilter(
+                    new ElementClassFilter(typeof(FamilyInstance)),
+                    new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
+            LogicalAndFilter mullion_InstancesFilter = new LogicalAndFilter(
+                new ElementClassFilter(typeof(FamilyInstance)),
+                new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallMullions));
+
+            var panels = collectorpanels.WherePasses(panel_InstancesFilter);
+            var mullions = collectormullions.WherePasses(mullion_InstancesFilter);
+
+            //處理嵌板
+            if (panels.Count() == 0)
+            {
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前未選擇幕墻嵌板。");
+                return;
+            }
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {panels.Count()} 幕墻嵌板");
+            SelectedCurtainPanelList.Clear();
+            int errorcount_zonecode = 0;
+            CurrentZoneInfo = new ZoneInfoBase("Z-00-00-ZZ-00");
+            foreach (var _ele in panels)
+            {
+                CurtainPanelInfo _p = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
+                _p.INF_Type = CurrentZonePanelType;
+                SelectedCurtainPanelList.Add(_p);
+                Parameter _param = _ele.get_Parameter("分区区号");
+                if (!_param.HasValue)
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 未設置分區區號");
+                else
+                {
+                    var _zc = _param.AsString();
+                    if (CurrentZoneInfo.ZoneIndex == 0)
+                        CurrentZoneInfo = new ZoneInfoBase(_zc);
+                    else if (CurrentZoneInfo.ZoneCode != _zc)
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
+                    _p.INF_ZoneInfo = CurrentZoneInfo;
+                }
+
+            }
+            datagridPanels.ItemsSource = null;
+            datagridPanels.ItemsSource = SelectedCurtainPanelList;
+            expDataGridPanels.Header = "選擇區域幕墻嵌板數據列表";
+            expDataGridPanels.IsExpanded = true;
+            if (errorcount_zonecode == 0)
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{panels.Count()}幕墻嵌板均已設置相同的分區區號");
+            else if (MessageBox.Show(
+                $"選擇的{panels.Count()}幕墻嵌板設置的分區區號不相同或有未設置等錯誤，是否繼續？",
+                "錯誤 - 幕墻嵌板 - 分區區號",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation,
+                MessageBoxResult.No) == MessageBoxResult.No) return;
+
+            uidoc.Selection.Elements.Clear();
+            foreach (var _ele in panels) uidoc.Selection.Elements.Add(_ele);
+
+            using (Transaction trans = new Transaction(doc, "CreatePanelGroup"))
+            {
+                trans.Start();
+                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                ICollection<Element> typecollection = collector.OfClass(typeof(SelectionFilterElement)).ToElements();
+                SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == CurrentZoneInfo.ZoneCode);
+                if (selectset != null) selectset.Clear();
+                else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
+                selectset.AddSet(uidoc.Selection.GetElementIds());
+                trans.Commit();
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{selectset.GetElementIds().Count}幕墻嵌板已保存至選擇集[{CurrentZoneInfo.FilterName}]");
+            }
+
+            Global.DocContent.ZoneList.AddEx(CurrentZoneInfo);
+            Global.DocContent.CurtainPanelList.AddRangeEx(SelectedCurtainPanelList);
+
+            //處理竪梃
+            if (mullions.Count() == 0)
+            {
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前未選擇幕墻竪梃。");
+                return;
+            }
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {mullions.Count()} 幕墻竪梃");
+            SelectedMullionList.Clear();
+            errorcount_zonecode = 0;
+            CurrentZoneInfo = new ZoneInfoBase("Z-00-00-ZZ-00");
+            foreach (var _ele in mullions)
+            {
+                MullionInfo _m = new MullionInfo(_ele as Mullion);
+                SelectedMullionList.Add(_m);
+                Parameter _param = _ele.get_Parameter("分区区号");
+                if (!_param.HasValue)
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻竪梃[{_ele.Id.IntegerValue}] 未設置分區區號");
+                else
+                {
+                    var _zc = _param.AsString();
+                    if (CurrentZoneInfo.ZoneIndex == 0)
+                        CurrentZoneInfo = new ZoneInfoBase(_zc);
+                    else if (CurrentZoneInfo.ZoneCode != _zc)
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻竪梃[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
+                    _m.INF_ZoneInfo = CurrentZoneInfo;
+                }
+
+            }
+            datagridMullions.ItemsSource = null;
+            datagridMullions.ItemsSource = SelectedMullionList;
+            expDataGridPanels.Header = "選擇區域幕墻竪梃數據列表";
+            if (errorcount_zonecode == 0)
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{mullions.Count()}幕墻竪梃均已設置相同的分區區號");
+            else if (MessageBox.Show(
+                $"選擇的{mullions.Count()}幕墻竪梃設置的分區區號不相同或有未設置等錯誤，是否繼續？",
+                "錯誤 - 幕墻竪梃 - 分區區號",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation,
+                MessageBoxResult.No) == MessageBoxResult.No) return;
+
+            uidoc.Selection.Elements.Clear();
+            foreach (var _ele in mullions) uidoc.Selection.Elements.Add(_ele);
+
+            using (Transaction trans = new Transaction(doc, "CreateMullionGroup"))
+            {
+                trans.Start();
+                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                ICollection<Element> typecollection = collector.OfClass(typeof(SelectionFilterElement)).ToElements();
+                SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == CurrentZoneInfo.ZoneCode);
+                if (selectset != null) selectset.Clear();
+                else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
+                selectset.AddSet(uidoc.Selection.GetElementIds());
+                trans.Commit();
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{selectset.GetElementIds().Count}幕墻竪梃已保存至選擇集[{CurrentZoneInfo.FilterName}]");
+            }
+
+            Global.DocContent.ZoneList.AddEx(CurrentZoneInfo);
+            Global.DocContent.MullionList.AddRangeEx(SelectedMullionList);
+
+            ZoneHelper.FnContentSerialize();
+            expZone.IsExpanded = true;
+            subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
+        }
+        #endregion
+
 
         #region Command -- bnSelectPanels : 嵌板歸類
         private void cbSelectPanels_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -526,6 +682,22 @@ namespace FacadeHelper
         private void InitModelData()
         {
             ParameterHelper.InitProjectParameters(ref doc);
+
+            //加載分區進度數據
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile);
+            ofd.DefaultExt = "*.txt";
+            ofd.Filter = "Schedule Text Files(*.txt)|*.txt|All(*.*)|*.*";
+            if (ofd.ShowDialog() == true)
+                if (MessageBox.Show($"加載新分區進度文件 {ofd.FileName}？\n\n現有数据将被新數據覆蓋，且不可恢復。單擊確認繼續，取消則不會有任何操作。", "加載新進度數據...",
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.OK) == MessageBoxResult.OK)
+                {
+                    ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 加載新分區進度文件{ofd.FileName}.");
+                }
+
         }
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using AqlaSerializer;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -75,6 +76,7 @@ namespace FacadeHelper
     public class DocumentContent// : INotifyPropertyChanged
     {
         //private ObservableCollection<ZoneInfoBase> _zoneList = new ObservableCollection<ZoneInfoBase>();
+        public List<ZoneScheduleInfo> ZoneScheduleList { get; set; } = new List<ZoneScheduleInfo>();
 
         public List<CurtainPanelInfo> CurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public Dictionary<int, double> LevelDictionary { get; set; } = new Dictionary<int, double>();
@@ -128,6 +130,16 @@ namespace FacadeHelper
         }
     }
 
+    [SerializableType]
+    public class ZoneScheduleInfo
+    {
+        public string ZoneCode { get; set; }
+        public int ZoneType { get; set; }
+        public DateTime ZoneStart { get; set; }
+        public DateTime ZoneFinish { get; set; }
+    }
+
+    [SerializableType]
     public class ElementClass
     {
         public int EClassIndex { get; set; }

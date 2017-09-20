@@ -530,6 +530,39 @@ namespace FacadeHelper
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "分区编码", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
+
+                #region 设置项目参数：進場時間
+                if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "进场时间"))
+                {
+                    CategorySet _catset = new CategorySet();
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
+                    ParameterHelper.RawCreateProjectParameter(doc.Application, "进场时间", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_PHASING, true);
+                }
+                #endregion
+
+                #region 设置项目参数：安裝開始
+                if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "安装开始"))
+                {
+                    CategorySet _catset = new CategorySet();
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
+                    ParameterHelper.RawCreateProjectParameter(doc.Application, "安装开始", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_PHASING, true);
+                }
+                #endregion
+
+                #region 设置项目参数：安裝結束
+                if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "安装结束"))
+                {
+                    CategorySet _catset = new CategorySet();
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
+                    ParameterHelper.RawCreateProjectParameter(doc.Application, "安装结束", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_PHASING, true);
+                }
+                #endregion
                 Global.DocContent.ParameterInfoList = ParameterHelper.RawGetProjectParametersInfo(doc);
                 trans.Commit();
 
@@ -548,6 +581,34 @@ namespace FacadeHelper
 
     public static class ZoneHelper
     {
+        public static void FnLoadZoneScheduleData(string ZoneScheduleDataFile)
+        {
+            Global.DocContent.ZoneScheduleList.Clear();
+            using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
+            {
+                string dataline;
+                reader.ReadLine();
+                while ((dataline = reader.ReadLine()) != null)
+                {
+                    string[] rowdata = dataline.Split('\t');
+                    Global.DocContent.ZoneScheduleList.Add(new ZoneScheduleInfo
+                    {
+                        ZoneCode = rowdata[2],
+                        ZoneType = int.Parse(rowdata[2].Substring(2, 2)),
+                        ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}"),
+                        ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}"),
+                    });
+                    Global.DocContent.ZoneScheduleList.Add(new ZoneScheduleInfo
+                    {
+                        ZoneCode = rowdata[5],
+                        ZoneType = int.Parse(rowdata[5].Substring(2, 2)),
+                        ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}"),
+                        ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}"),
+                    });
+                }
+            }
+        }
+
         public static void FnSearch(UIDocument uidoc,
             string querystring,
             ref List<ZoneInfoBase> relistzone, ref List<CurtainPanelInfo> relistpanel, ref List<ScheduleElementInfo> relistelement,
@@ -578,12 +639,40 @@ namespace FacadeHelper
         {
             var doc = uidoc.Document;
             uidoc.Selection.Elements.Clear();
+            IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
+            IOrderedEnumerable<MullionInfo> _mullionsinzone = null;
+
+            var zsi = Global.DocContent.ZoneScheduleList.FirstOrDefault(zs => zs.ZoneCode == zone.ZoneCode);
+            int zonedays = (zsi.ZoneFinish - zsi.ZoneStart).Days + 1;
+            int zonehours = zonedays * Global.OptionHoursPerDay;
 
             listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索分區[{zone.ZoneCode}]...");
-            var _panelsinzone = Global.DocContent.CurtainPanelList
-                .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
-                .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+
+            #region CurtainPanelList 排序
+            if (zone.ZoneDirection == "S")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "N")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "E")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "W")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+
+            #endregion
+
+            double v_hours_per_panel = 1.0 * zonehours / _panelsinzone.Count();
             int pindex = 0;
             //確定分區內嵌板數據及排序
             foreach (CurtainPanelInfo _pi in _panelsinzone)
@@ -592,13 +681,39 @@ namespace FacadeHelper
                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻嵌板[{_pi.INF_ElementId}]...");
                 _pi.INF_Index = pindex;
                 _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
+                _pi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * (pindex - 1));
+                _pi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * pindex);
             }
 
-            var _mullionsinzone = Global.DocContent.MullionList
-                .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
-                .OrderBy(p1 => p1.INF_Type)
-                .OrderBy(p2 => Math.Round(p2.INF_OriginZ_Metric / Constants.RVTPrecision))
-                .ThenBy(p3 => Math.Round(p3.INF_OriginX_Metric / Constants.RVTPrecision));
+            #region MullionList 排序
+            if (zone.ZoneDirection == "S")
+                _mullionsinzone = Global.DocContent.MullionList
+                    .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .ThenBy(m3 => Math.Round(m3.INF_OriginX_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "N")
+                _mullionsinzone = Global.DocContent.MullionList
+                    .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .OrderByDescending(m3 => Math.Round(m3.INF_OriginX_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "E")
+                _mullionsinzone = Global.DocContent.MullionList
+                    .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .ThenBy(m3 => Math.Round(m3.INF_OriginY_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "W")
+                _mullionsinzone = Global.DocContent.MullionList
+                    .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .OrderByDescending(m3 => Math.Round(m3.INF_OriginY_Metric / Constants.RVTPrecision));
+
+            #endregion
+
+            double v_hours_per_mullion = 1.0 * zonehours / _mullionsinzone.Count();
             pindex = 0;
             //確定分區內竪梃數據及排序
             foreach (MullionInfo _mi in _mullionsinzone)
@@ -607,6 +722,10 @@ namespace FacadeHelper
                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻竪梃[{_mi.INF_ElementId}]...");
                 _mi.INF_Index = pindex;
                 _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{pindex:0000}";
+
+                _mi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * (pindex - 1));
+                _mi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * pindex);
+
             }
         }
 
@@ -829,11 +948,19 @@ namespace FacadeHelper
                 if (z.ZoneCode == NewItem.ZoneCode)
                 {
                     SourceList.Remove((T)z);
-                    SourceList.Add(NewItem);
-                    return;
+                    break;
                 }
+            SourceList.Add(NewItem);
+            return;
         }
 
+        public static DateTime GetDeadTime(DateTime timestart, double durationhours)
+        {
+            int num_days = Convert.ToInt32(Math.Floor(durationhours / Global.OptionHoursPerDay));
+            double rest_hours = durationhours - num_days * Global.OptionHoursPerDay;
+            if (rest_hours > 4) rest_hours++;
+            return (timestart + new TimeSpan(num_days, 0, 0, 0)).AddHours(8 + rest_hours);
+        }
     }
 
     public static class StreamHelper
