@@ -38,7 +38,8 @@
 
             <Button x:Name="bnLoadData" Content="加載數據" DockPanel.Dock="Left" Margin="20,0,10,0" />
             <Button x:Name="bnSaveData" Content="保存修改" DockPanel.Dock="Left" Margin="0,0,10,0" />
-            <Button x:Name="bnApplyParameters" Content="保存參數" DockPanel.Dock="Left" />
+            <Button x:Name="bnApplyParameters" Content="保存參數" DockPanel.Dock="Left" Margin="0,0,10,0" />
+            <Button x:Name="bnExportElementSchedule" Content="导出构件计划" DockPanel.Dock="Left" />
             <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Left" Margin="10,0" Orientation="Horizontal" Visibility="Visible">
                 <RadioButton Content="玻璃" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 51}" />
                 <RadioButton Content="石材" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 52}" />
@@ -111,8 +112,8 @@
                     <TextBlock Foreground="#808080" FontSize="10" FontWeight="Heavy"  HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="{}{0} / {1}">
-                                <Binding ElementName="progbarElement" Path="Value" />
-                                <Binding ElementName="progbarElement" Path="Maximum" />
+                                <Binding ElementName="progbarMullion" Path="Value" />
+                                <Binding ElementName="progbarMullion" Path="Maximum" />
                             </MultiBinding>
                         </TextBlock.Text>
                     </TextBlock>

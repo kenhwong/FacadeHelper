@@ -714,18 +714,30 @@ namespace FacadeHelper
             #endregion
 
             double v_hours_per_mullion = 1.0 * zonehours / _mullionsinzone.Count();
+            int tindex = 0;
             pindex = 0;
-            //確定分區內竪梃數據及排序
-            foreach (MullionInfo _mi in _mullionsinzone)
+            //確定分區內V竪梃(8)數據及排序
+            foreach (MullionInfo _mi in _mullionsinzone.Where(m=>m.INF_Type == 8))
             {
-                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻竪梃：{_mi.INF_ElementId}({++pindex}/{_mullionsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻竪梃[{_mi.INF_ElementId}]...");
+                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [V 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索V幕墻竪梃[{_mi.INF_ElementId}]...");
                 _mi.INF_Index = pindex;
-                _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{pindex:0000}";
+                _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{tindex:0000}";
 
-                _mi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * (pindex - 1));
-                _mi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * pindex);
+                _mi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * (tindex - 1));
+                _mi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * tindex);
+            }
+            pindex = 0;
+            //確定分區內V竪梃(8)數據及排序
+            foreach (MullionInfo _mi in _mullionsinzone.Where(m => m.INF_Type == 7))
+            {
+                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [H 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索H幕墻竪梃[{_mi.INF_ElementId}]...");
+                _mi.INF_Index = pindex;
+                _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{tindex:0000}";
 
+                _mi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * (tindex - 1));
+                _mi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * tindex);
             }
         }
 

@@ -106,6 +106,8 @@ namespace FacadeHelper
         private RoutedCommand cmdSaveData = new RoutedCommand();
         private RoutedCommand cmdApplyParameters = new RoutedCommand();
 
+        private RoutedCommand cmdExportElementSchedule = new RoutedCommand();
+
         private RoutedCommand cmdSearch = new RoutedCommand();
 
         private RoutedCommand cmdPopupClose = new RoutedCommand();
@@ -296,6 +298,26 @@ namespace FacadeHelper
                     #endregion
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbExportElementSchedule = new CommandBinding(cmdExportElementSchedule,
+                (sender, e) =>
+                {
+
+                    using (StreamWriter writer = new StreamWriter(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.4dzone.csv"), false))
+                    {
+                        int idtask = 0;
+                        writer.WriteLine($"Id,Name,Start,Finish,Outline Level");
+                        foreach (var zone in Global.DocContent.ZoneList)
+                        {
+                            var _plist = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneCode == zone.ZoneCode);
+                            var _mlist = Global.DocContent.MullionList.Where(m => m.INF_ZoneCode == zone.ZoneCode);
+                            writer.WriteLine($"{++idtask},{zone.ZoneCode},,,1");
+
+                            foreach (var p in _plist) writer.WriteLine($"{++idtask},{p.INF_Code},{p.INF_TaskStart},{p.INF_TaskFinish},2");
+                            foreach (var m in _mlist) writer.WriteLine($"{++idtask},{m.INF_Code},{m.INF_TaskStart},{m.INF_TaskFinish},2");
+                        }
+                    }
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose,
                 (sender, e) =>
                 {
@@ -311,6 +333,7 @@ namespace FacadeHelper
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
             bnApplyParameters.Command = cmdApplyParameters;
+            bnExportElementSchedule.Command = cmdExportElementSchedule;
             bnSearch.Command = cmdSearch;
             bnPopupClose.Command = cmdPopupClose;
 
@@ -320,6 +343,7 @@ namespace FacadeHelper
             ProcZone.CommandBindings.Add(cbNavZone);
             ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbLoadData, cbSaveData });
             ProcZone.CommandBindings.Add(cbApplyParameters);
+            ProcZone.CommandBindings.Add(cbExportElementSchedule);
             ProcZone.CommandBindings.Add(cbSearch);
             ProcZone.CommandBindings.Add(cbPopupClose);
         }
