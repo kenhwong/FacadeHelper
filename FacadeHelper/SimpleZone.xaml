@@ -135,7 +135,7 @@
                             <ListBox x:Name="navZone" ItemsSource="{Binding}" SelectionChanged="navZone_SelectionChanged" IsSynchronizedWithCurrentItem="False">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Padding="15,0,0,0" Text="{Binding ZoneCode}" />
+                                        <TextBlock Padding="15,0,0,0" Text="{Binding ZoneCode}" Tag="{Binding DataContext, ElementName=ProcZone}" />
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
