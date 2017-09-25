@@ -444,8 +444,8 @@ namespace FacadeHelper
                 if (selectset != null) selectset.Clear();
                 else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
                 selectset.AddSet(uidoc.Selection.GetElementIds());
-                trans.Commit();
                 doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
+                trans.Commit();
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{selectset.GetElementIds().Count}幕墻嵌板已保存至選擇集[{CurrentZoneInfo.FilterName}]");
             }
 
@@ -504,8 +504,8 @@ namespace FacadeHelper
                 if (selectset != null) selectset.Clear();
                 else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
                 selectset.AddSet(uidoc.Selection.GetElementIds());
-                trans.Commit();
                 doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
+                trans.Commit();
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{selectset.GetElementIds().Count}幕墻竪梃已保存至選擇集[{CurrentZoneInfo.FilterName}]");
             }
 
