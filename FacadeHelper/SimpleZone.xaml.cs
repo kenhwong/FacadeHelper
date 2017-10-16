@@ -41,7 +41,7 @@ namespace FacadeHelper
 
         public Window parentWin { get; set; }
 
-        private int _currentZonePanelType = 51;
+        private int _currentZonePanelType = 52;
         public int CurrentZonePanelType { get { return _currentZonePanelType; } set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
 
         private bool _isSearchRangeZone = true;
@@ -387,7 +387,7 @@ namespace FacadeHelper
                 new ElementClassFilter(typeof(FamilyInstance)),
                 new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallMullions));
 
-            var panels = collectorpanels.WherePasses(panel_InstancesFilter);
+            var panels = collectorpanels.WherePasses(panel_InstancesFilter).Where(x => (x as FamilyInstance).Symbol.Name != "空嵌板"); ;
             var mullions = collectormullions.WherePasses(mullion_InstancesFilter);
 
             //處理嵌板

@@ -83,7 +83,6 @@ namespace FacadeHelper
                 }
             }
 
-            if (Global.DocContent.CurtainPanelList.Count > 0) Global.DocContent.Lookup_CurtainPanels = Global.DocContent.CurtainPanelList.ToLookup(g => g.INF_ZoneCode);
             Global.DocContent.ParameterInfoList = ParameterHelper.RawGetProjectParametersInfo(doc);
 
             navZone.ItemsSource = Global.DocContent.ZoneList;
@@ -94,16 +93,15 @@ namespace FacadeHelper
         #region 初始化 Command
 
         private RoutedCommand cmdModelInit = new RoutedCommand();
-        private RoutedCommand cmdSelectPanels = new RoutedCommand();
-        private RoutedCommand cmdSelectPanelsCheckData = new RoutedCommand();
-        private RoutedCommand cmdSelectPanelsCreateSelectionSet = new RoutedCommand();
-        private RoutedCommand cmdPanelResolve = new RoutedCommand();
+        private RoutedCommand cmdElementClassify = new RoutedCommand();
+        private RoutedCommand cmdElementResolve = new RoutedCommand();
 
         private RoutedCommand cmdNavZone = new RoutedCommand();
 
         private RoutedCommand cmdLoadData = new RoutedCommand();
         private RoutedCommand cmdSaveData = new RoutedCommand();
         private RoutedCommand cmdApplyParameters = new RoutedCommand();
+        private RoutedCommand cmdExportElementSchedule = new RoutedCommand();
 
         private RoutedCommand cmdSearch = new RoutedCommand();
 
@@ -112,23 +110,11 @@ namespace FacadeHelper
         private void InitializeCommand()
         {
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbSelectPanels = new CommandBinding(cmdSelectPanels,
-                (sender, e) =>
-                {
-                    if (subbuttongroup_SelectPanels.Visibility == System.Windows.Visibility.Visible)
-                        subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
-                    else
-                        subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Visible;
-                    listInformation.Items.Clear();
-                },
-                (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbSelectPanelsCheckData = new CommandBinding(cmdSelectPanelsCheckData, cbSelectPanelsCheckData_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbSelectPanelsCreateSelectionSet = new CommandBinding(cmdSelectPanelsCreateSelectionSet, cbSelectPanelsCreateSelectionSet_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbPanelResolve = new CommandBinding(cmdPanelResolve,
+            CommandBinding cbElementClassify = new CommandBinding(cmdElementClassify, cbElementClassify_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbElementResolve = new CommandBinding(cmdElementResolve,
                 (sender, e) =>
                 {
                     Global.DocContent.ScheduleElementList.Clear();
-                    Global.DocContent.DeepElementList.Clear();
                     foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveZone(uidoc, zn, ref listInformation, ref txtProcessInfo);
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -138,7 +124,7 @@ namespace FacadeHelper
                 {
                     datagridPanels.ItemsSource = null;
                     datagridPanels.ItemsSource = e.Parameter as List<CurtainPanelInfo>;
-                    expDataGridPanels.Header = $"分區[{((navZone.SelectedItem as ListBoxItem).Tag as ZoneInfoBase).ZoneCode}]幕墻嵌板數據列表";
+                    expDataGridPanels.Header = $"分区[{((navZone.SelectedItem as ListBoxItem).Tag as ZoneInfoBase).ZoneCode}]幕墙嵌板数据列表";
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -150,27 +136,27 @@ namespace FacadeHelper
                     ofd.DefaultExt = "*.data";
                     ofd.Filter = "Data Files(*.data)|*.data|Data Backup Files(*.bak)|*.bak|All(*.*)|*.*";
                     if (ofd.ShowDialog() == true)
-                        if (MessageBox.Show($"確認加載新數據文件 {ofd.FileName}？\n\n現有数据将被新數據覆蓋，且不可恢復，但不会影响模型文件。單擊確認繼續，取消則不會有任何操作。", "加載新數據...",
+                        if (MessageBox.Show($"确认加载新的数据文件 {ofd.FileName}？\n\n现有数据将被新的数据覆盖，且不可恢复，但不会影响模型文件。选择确认继续，取消则不会有任何操作。", "加载新的数据文件...",
                             MessageBoxButton.OKCancel,
                             MessageBoxImage.Question,
                             MessageBoxResult.OK) == MessageBoxResult.OK)
                         {
                             ZoneHelper.FnContentDeserialize(ofd.FileName);
-                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 加載新數據文件{ofd.FileName}.");
+                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 加载新的数据文件{ofd.FileName}.");
                         }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSaveData = new CommandBinding(cmdSaveData,
                 (sender, e) =>
                 {
-                    if (MessageBox.Show($"確認更新改動的數據？\n\n更新的數據將保存至 {Global.DataFile}，現有數據將創建備份，不会影响模型文件。單擊確認繼續，取消則不會有任何操作。", "更新數據修改...",
+                    if (MessageBox.Show($"确认更新数据的更改？\n\n更新的数据将保存至 {Global.DataFile}，现有数据将创建备份，不会影响模型文件。选择确认继续，取消则不会有任何操作。", "更新数据修改...",
                         MessageBoxButton.OKCancel,
                         MessageBoxImage.Question,
                         MessageBoxResult.OK) == MessageBoxResult.OK)
                     {
                         ZoneHelper.FnContentSerializeWithBackup();
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 備份數據文件 {Global.DataFile}.bak.");
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 更新數據文件 {Global.DataFile}.");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 备份数据文件 {Global.DataFile}.bak.");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 更新数据文件 {Global.DataFile}.");
                     }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -300,32 +286,54 @@ namespace FacadeHelper
                     #endregion
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbExportElementSchedule = new CommandBinding(cmdExportElementSchedule,
+                (sender, e) =>
+                {
+                    using (StreamWriter writer = new StreamWriter(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.4dzone.csv"), false))
+                    {
+                        int idtask = 0;
+                        writer.WriteLine($"Id,Name,Start,Finish,Outline Level");
+                        foreach (var zone in Global.DocContent.ZoneList)
+                        {
+                            //var _plist = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneCode == zone.ZoneCode);
+                            var _elist = Global.DocContent.MullionList.Where(m => m.INF_ZoneCode == zone.ZoneCode);
+                            writer.WriteLine($"{++idtask},{zone.ZoneCode},,,1");
+
+                            //foreach (var p in _plist) writer.WriteLine($"{++idtask},{p.INF_Code},{p.INF_TaskStart},{p.INF_TaskFinish},2");
+                            foreach (var m in _elist) writer.WriteLine($"{++idtask},{m.INF_Code},{m.INF_TaskStart},{m.INF_TaskFinish},2");
+                        }
+                    }
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose,
-                (sender,e)=>
+                (sender, e) =>
                 {
                     bnQuickStart.IsChecked = false;
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
             bnModelInit.Command = cmdModelInit;
-            bnSelectPanels.Command = cmdSelectPanels;
-            bnSelectPanels_CheckData.Command = cmdSelectPanelsCheckData;
-            bnSelectPanels_CreateSelectionSet.Command = cmdSelectPanelsCreateSelectionSet;
-            bnPanelResolve.Command = cmdPanelResolve;
+            bnElementClassify.Command = cmdElementClassify;
+            bnElementResolve.Command = cmdElementResolve;
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
             bnApplyParameters.Command = cmdApplyParameters;
+            bnExportElementSchedule.Command = cmdExportElementSchedule;
             bnSearch.Command = cmdSearch;
             bnPopupClose.Command = cmdPopupClose;
 
-            ProcZone.CommandBindings.Add(cbModelInit);
-            ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbSelectPanels, cbSelectPanelsCheckData, cbSelectPanelsCreateSelectionSet });
-            ProcZone.CommandBindings.Add(cbPanelResolve);
-            ProcZone.CommandBindings.Add(cbNavZone);
-            ProcZone.CommandBindings.AddRange(new CommandBinding[] { cbLoadData, cbSaveData });
-            ProcZone.CommandBindings.Add(cbApplyParameters);
-            ProcZone.CommandBindings.Add(cbSearch);
-            ProcZone.CommandBindings.Add(cbPopupClose);
+            ProcZone.CommandBindings.AddRange(new CommandBinding[] 
+            {
+                cbModelInit,
+                cbElementClassify,
+                cbElementResolve,
+                cbNavZone,
+                cbLoadData,
+                cbSaveData,
+                cbApplyParameters,
+                cbSearch,
+                cbPopupClose
+            });
         }
 
         private void navZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -337,15 +345,16 @@ namespace FacadeHelper
                 datagridPanels.ItemsSource = null;
                 var _plist = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneCode == zi.ZoneCode);
                 datagridPanels.ItemsSource = _plist;
-                expDataGridPanels.Header = $"分區[{zi.ZoneCode}]幕墻嵌板數據列表，數量 {_plist.Count()}";
+                expDataGridPanels.Header = $"分区[{zi.ZoneCode}]幕墙嵌板数据列表，数量 {_plist.Count()}";
                 expDataGridPanels.IsExpanded = true;
+
                 navPanels.ItemsSource = _plist;
-                expPanel.Header = $"幕墻嵌板：{_plist.Count()}，分區[{zi.ZoneCode}]";
+                expPanel.Header = $"幕墙嵌板：{_plist.Count()}，分区[{zi.ZoneCode}]";
                 expPanel.IsExpanded = true;
                 datagridScheduleElements.ItemsSource = null;
                 var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_ZoneCode == zi.ZoneCode);
                 datagridScheduleElements.ItemsSource = _elist;
-                expDataGridScheduleElements.Header = $"分區[{zi.ZoneCode}]明細構件數據列表，數量 {_elist.Count()}";
+                expDataGridScheduleElements.Header = $"分区[{zi.ZoneCode}]明细构件数据列表，数量 {_elist.Count()}";
                 navZone.SelectedItem = null;
             }
         }
@@ -359,14 +368,15 @@ namespace FacadeHelper
                 datagridScheduleElements.ItemsSource = null;
                 var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_HostCurtainPanel.INF_ElementId == pi.INF_ElementId);
                 datagridScheduleElements.ItemsSource = _elist;
-                expDataGridScheduleElements.Header = $"分區[{pi.INF_ZoneCode}]，嵌板[{pi.INF_Code}]明細構件數據列表，數量 {_elist.Count()}";
+                expDataGridScheduleElements.Header = $"分区[{pi.INF_ZoneCode}]，嵌板[{pi.INF_Code}]明细构件数据列表，数量 {_elist.Count()}";
                 expDataGridScheduleElements.IsExpanded = true;
                 navPanels.SelectedItem = null;
             }
         }
 
 
-        private void cbSelectPanelsCheckData_Executed(object sender, ExecutedRoutedEventArgs e)
+        #region Command -- bnElementClassify : 嵌板和构件归类
+        private void cbElementClassify_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             //parentWin.Hide();
             //var _p_sel_list = uidoc.Selection.PickObjects(ObjectType.Element, "選擇同一分區的所有嵌板");
@@ -456,6 +466,7 @@ namespace FacadeHelper
             subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
         }
 
+        #endregion
         private void expDataGrid_Expanded(object sender, RoutedEventArgs e)
         {
             if (((Expander)sender).Name == "expDataGridZones") { expDataGridPanels.IsExpanded = false; expDataGridScheduleElements.IsExpanded = false; }

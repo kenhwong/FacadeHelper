@@ -729,8 +729,9 @@ namespace FacadeHelper
             }
             pindex = 0;
             //確定分區內V竪梃(8)數據及排序
-            foreach (MullionInfo _mi in _mullionsinzone.Where(m => m.INF_Type == 7))
+            foreach (MullionInfo _mi in _mullionsinzone.Where(m => m.INF_Type < 8))
             {
+                _mi.INF_Type = 7; //临时处理
                 processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [H 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索H幕墻竪梃[{_mi.INF_ElementId}]...");
                 _mi.INF_Index = pindex;

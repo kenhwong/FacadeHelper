@@ -112,6 +112,7 @@ namespace FacadeHelper
             INF_Type = 0;
             if (INF_Name.StartsWith("H")) INF_Type = 7;
             if (INF_Name.StartsWith("V")) INF_Type = 8;
+            if (INF_Name.StartsWith("S")) INF_Type = 7;
 
             INF_ErrorInfo = $"{mu.Id}";
 
