@@ -385,29 +385,29 @@ namespace FacadeHelper
             ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
             if (ids.Count == 0)
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前無選擇。");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前未选择构件。");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前選擇 {ids.Count} 構件");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前选择 {ids.Count} 构件");
             FilteredElementCollector collector = new FilteredElementCollector(doc, ids);
             LogicalAndFilter cwpanel_InstancesFilter =
                 new LogicalAndFilter(
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
-            var eles = collector
+            var panels = collector
                 .WherePasses(cwpanel_InstancesFilter)
-                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板");
+                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板");
 
-            if (eles.Count() == 0)
+            if (panels.Count() == 0)
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前未選擇幕墻嵌板。");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前未选择有效的幕墙嵌板。");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {eles.Count()} 幕墻嵌板");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {panels.Count()} 幕墻嵌板");
             SelectedCurtainPanelList.Clear();
             int errorcount_zonecode = 0;
             CurrentZoneInfo = new ZoneInfoBase("Z-00-00-ZZ-00");
-            foreach (var _ele in eles)
+            foreach (var _ele in panels)
             {
                 CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
                 _gp.INF_Type = CurrentZonePanelType;
@@ -426,12 +426,12 @@ namespace FacadeHelper
                 }
 
             }
-            if (errorcount_zonecode == 0) listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{eles.Count()}幕墻嵌板均已設置相同的分區區號");
+            if (errorcount_zonecode == 0) listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{panels.Count()}幕墻嵌板均已設置相同的分區區號");
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
             expDataGridPanels.Header = "選擇區域幕墻嵌板數據列表";
 
             uidoc.Selection.Elements.Clear();
-            foreach (var _ele in eles) uidoc.Selection.Elements.Add(_ele);
+            foreach (var _ele in panels) uidoc.Selection.Elements.Add(_ele);
         }
 
         private void cbSelectPanelsCreateSelectionSet_Executed(object sender, ExecutedRoutedEventArgs e)

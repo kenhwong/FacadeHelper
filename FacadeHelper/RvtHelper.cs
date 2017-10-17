@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using RvtApplication = Autodesk.Revit.ApplicationServices.Application;
 
 // The Building Coder Samples https://github.com/jeremytammik/the_building_coder_samples
@@ -483,6 +484,7 @@ namespace FacadeHelper
                 if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "构件子项"))
                 {
                     CategorySet _catset = new CategorySet();
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "构件子项", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
@@ -717,7 +719,7 @@ namespace FacadeHelper
             int tindex = 0;
             pindex = 0;
             //確定分區內V竪梃(8)數據及排序
-            foreach (MullionInfo _mi in _mullionsinzone.Where(m=>m.INF_Type == 8))
+            foreach (MullionInfo _mi in _mullionsinzone.Where(m => m.INF_Type == 8))
             {
                 processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [V 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索V幕墻竪梃[{_mi.INF_ElementId}]...");
@@ -994,4 +996,27 @@ namespace FacadeHelper
             }
         }
     }
+
+    public class PathButton : Button
+    {
+        public static readonly DependencyProperty DataProperty = DependencyProperty.Register("Data", typeof(Geometry), typeof(PathButton), new PropertyMetadata(new PropertyChangedCallback(OnDataChanged)));
+
+        private static void OnDataChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            PathButton button = d as PathButton;
+            button.Content = new System.Windows.Shapes.Path()
+            {
+                Data = e.NewValue as Geometry,
+                Fill = Brushes.Gray,
+                Stretch = Stretch.Uniform,
+                StrokeThickness = 1, 
+                Stroke = button.Foreground,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 30,
+                Height = 30
+            };
+        }
+        public Geometry Data { get { return (Geometry)GetValue(DataProperty); } set { SetValue(DataProperty, value); }}
+    }
+
 }
