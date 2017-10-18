@@ -206,6 +206,7 @@ namespace FacadeHelper
         private int _inf_Index;
         private string _inf_Code;
         private string _inf_Error_info;
+        private bool _inf_IsScheduled;
 
         private uint _inf_TaskID;
         private int _inf_TaskLevel;
@@ -234,6 +235,7 @@ namespace FacadeHelper
         public int INF_Index { get { return _inf_Index; } set { _inf_Index = value; OnPropertyChanged(nameof(INF_Index)); } }
         public string INF_Code { get { return _inf_Code; } set { _inf_Code = value; OnPropertyChanged(nameof(INF_Code)); } }
         public string INF_ErrorInfo { get { return _inf_Error_info; } set { _inf_Error_info = value; OnPropertyChanged(nameof(INF_ErrorInfo)); } }
+        public bool INF_IsScheduled { get { return _inf_IsScheduled; } set { _inf_IsScheduled = value; OnPropertyChanged(nameof(INF_IsScheduled)); } }
 
         public uint INF_TaskID { get { return _inf_TaskID; } set { _inf_TaskID = value; OnPropertyChanged(nameof(INF_TaskID)); } }
         public int INF_TaskLevel { get { return _inf_TaskLevel; } set { _inf_TaskLevel = value; OnPropertyChanged(nameof(INF_TaskLevel)); } }

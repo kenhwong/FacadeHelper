@@ -186,6 +186,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
@@ -245,23 +246,22 @@
                               Stroke="{StaticResource GroupBoxHeaderBackgroundBrush}"
                               Height="12" Width="12"
                               Stretch="Fill"
-                              Fill="{StaticResource GroupBoxHeaderBackgroundBrush}"
+                              Fill="Transparent"
                               VerticalAlignment="Center"/>
                         <Path Name="ExpandPath"
-                              Data="M0,5 L0,0 5,0 M12,6 L12,12 6,12 M0,12 L12,0"
-                              Stroke="{StaticResource GroupBoxHeaderBrush}"
+                              Data="M896 256H128V128h768v128z m0 192H128v128h768V448z m0 320H128v128h768V768z"
+                              Fill="{StaticResource GroupBoxHeaderBrush}" StrokeThickness="0"
                               Height="12" Width="12"
                               Stretch="Fill" 
                               VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter Property="Data" TargetName="ExpandPath" Value="M0,12 L10,12 10,2 0,2Z M11,10 L12,10 12,0 2,0 2,1"/>
+                            <Setter Property="Fill" TargetName="ExpandPath" Value="#1296db"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ExpandPath" Property="Stroke" Value="Gray" />
+                            <Setter TargetName="ExpandPath" Property="Fill" Value="Gray" />
                             <Setter TargetName="ExpandPathEdge" Property="Stroke" Value="Gray" />
-                            <Setter Property="Data" TargetName="ExpandPath" Value=""/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -634,11 +634,12 @@
 
     <!--#region PathButton-->
     <Style x:Key="IconPathButton" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
-        <Setter Property="FocusVisualStyle" Value="{StaticResource BookFocusVisualStyte}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="#1296db"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Foreground" Value="#505050"/>
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="IsTabStop" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
         <Setter Property="Effect">
             <Setter.Value>

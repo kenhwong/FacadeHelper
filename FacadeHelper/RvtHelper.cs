@@ -750,21 +750,52 @@ namespace FacadeHelper
             bool _haserror = false;
             uidoc.Selection.Elements.Clear();
 
+            IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
+
+            var zsi = Global.DocContent.ZoneScheduleList.FirstOrDefault(zs => zs.ZoneCode == zone.ZoneCode);
+            int zonedays = (zsi.ZoneFinish - zsi.ZoneStart).Days + 1;
+            int zonehours = zonedays * Global.OptionHoursPerDay;
+
             List<ScheduleElementInfo> p_ScheduleElementList = new List<ScheduleElementInfo>();
-            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索分區[{zone.ZoneCode}]...");
-            var _panelsinzone = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
-                .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 检索分区 [{zone.ZoneCode}]...");
+
+            #region CurtainPanelList 排序
+            if (zone.ZoneDirection == "S")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "N")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "E")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+            if (zone.ZoneDirection == "W")
+                _panelsinzone = Global.DocContent.CurtainPanelList
+                    .Where(p => p.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+            #endregion
+
+            double v_hours_per_panel = 1.0 * zonehours / _panelsinzone.Count();
             int pindex = 0;
             //確定分區內嵌板數據及排序
             foreach (CurtainPanelInfo _pi in _panelsinzone)
             {
-                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 檢索幕墻嵌板[{_pi.INF_ElementId}]...");
+                processinfo.Content = $"当前处理进度：[分区：{zone.ZoneCode}] - [幕墙嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 检索幕墙嵌板[{_pi.INF_ElementId}]...");
                 Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
+
                 _pi.INF_Index = pindex;
                 _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
-
+                _pi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * (pindex - 1));
+                _pi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * pindex);
+                //TODO: Check
                 //確定嵌板內明細構件數據
                 var p_subs = _p.GetSubComponentIds();
                 foreach (ElementId eid in p_subs)
@@ -802,7 +833,7 @@ namespace FacadeHelper
                                 _schedule_element.INF_Type = -1;
                                 _haserror = true;
                                 _schedule_element.INF_ErrorInfo = "構件[分項]參數錯誤(INF_Type)";
-                                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数错误...");
+                                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}][{_schedule_element.INF_Name}]:[分项]参数错误...");
                                 uidoc.Selection.Elements.Add(_element);
                                 continue;
                             }
@@ -812,7 +843,7 @@ namespace FacadeHelper
                             _schedule_element.INF_Type = -2;
                             _haserror = true;
                             _schedule_element.INF_ErrorInfo = "構件[分項]參數未設置(INF_Type)";
-                            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数未賦值...");
+                            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}][{_schedule_element.INF_Name}]:[分项]参数未賦值...");
                             uidoc.Selection.Elements.Add(_element);
                             continue;
                         }
@@ -821,7 +852,7 @@ namespace FacadeHelper
                     {
                         _schedule_element.INF_Type = -3;
                         _haserror = true;
-                        _schedule_element.INF_ErrorInfo = "構件[分項]參數未設置(INF_Type)";
+                        _schedule_element.INF_ErrorInfo = "构件[分项]参数未设置(INF_Type)";
                         listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数未設置...");
                         uidoc.Selection.Elements.Add(_element);
                         continue;

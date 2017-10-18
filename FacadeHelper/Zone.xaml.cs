@@ -389,12 +389,12 @@ namespace FacadeHelper
                 return;
             }
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前选择 {ids.Count} 构件");
-            FilteredElementCollector collector = new FilteredElementCollector(doc, ids);
+            FilteredElementCollector panelcollector = new FilteredElementCollector(doc, ids);
             LogicalAndFilter cwpanel_InstancesFilter =
                 new LogicalAndFilter(
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
-            var panels = collector
+            var panels = panelcollector
                 .WherePasses(cwpanel_InstancesFilter)
                 .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板");
 
@@ -403,7 +403,7 @@ namespace FacadeHelper
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前未选择有效的幕墙嵌板。");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 當前篩選 {panels.Count()} 幕墻嵌板");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前筛选 {panels.Count()} 幕墙嵌板");
             SelectedCurtainPanelList.Clear();
             int errorcount_zonecode = 0;
             CurrentZoneInfo = new ZoneInfoBase("Z-00-00-ZZ-00");
@@ -414,49 +414,51 @@ namespace FacadeHelper
                 SelectedCurtainPanelList.Add(_gp);
                 Parameter _param = _ele.get_Parameter("分区区号");
                 if (!_param.HasValue)
-                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 未設置分區區號");
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墙嵌板[{_ele.Id.IntegerValue}] 未设置分区区号");
                 else
                 {
                     var _zc = _param.AsString();
                     if (CurrentZoneInfo.ZoneIndex == 0)
                         CurrentZoneInfo = new ZoneInfoBase(_zc);
                     else if (CurrentZoneInfo.ZoneCode != _zc)
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墙嵌板[{_ele.Id.IntegerValue}] 分区区号{_zc}差异({CurrentZoneInfo.ZoneCode})");
                     _gp.INF_ZoneInfo = CurrentZoneInfo;
                 }
 
             }
-            if (errorcount_zonecode == 0) listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{panels.Count()}幕墻嵌板均已設置相同的分區區號");
+            if (errorcount_zonecode == 0)
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前选择的{panels.Count()}幕墙嵌板均已设置相同的分区区号");
+            else if (MessageBox.Show(
+                $"当前选择的选择的{panels.Count()}幕墙嵌板设置的分区区号不相同，或有部分嵌板未设置分区区号参数等错误，是否继续？",
+                "错误 - 幕墙嵌板 - 分区区号",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Exclamation,
+                MessageBoxResult.No) == MessageBoxResult.No) return;
+
+            datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
-            expDataGridPanels.Header = "選擇區域幕墻嵌板數據列表";
+            expDataGridPanels.Header = "选择区域幕墙嵌板数据列表";
 
             uidoc.Selection.Elements.Clear();
             foreach (var _ele in panels) uidoc.Selection.Elements.Add(_ele);
-        }
 
-        private void cbSelectPanelsCreateSelectionSet_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-            using (Transaction trans = new Transaction(doc, "CreateGroup"))
+            using (Transaction trans = new Transaction(doc, "CreatePanelGroup"))
             {
                 trans.Start();
-                var sfe = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
-                sfe.AddSet(uidoc.Selection.GetElementIds());
+                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                ICollection<Element> typecollection = collector.OfClass(typeof(SelectionFilterElement)).ToElements();
+                SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == CurrentZoneInfo.ZoneCode);
+                if (selectset != null) selectset.Clear();
+                else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
+                selectset.AddSet(uidoc.Selection.GetElementIds());
+                doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
                 trans.Commit();
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 選擇的{sfe.GetElementIds().Count}幕墻嵌板已保存至選擇集[{CurrentZoneInfo.FilterName}]");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 选择的{selectset.GetElementIds().Count}幕墙嵌板已保存至选择集[{CurrentZoneInfo.FilterName}]");
             }
-
-            /**
-            ListBoxItem _zoneitem = new ListBoxItem();
-            _zoneitem.Content = CurrentZoneInfo;
-            _zoneitem.Name = CurrentZoneInfo.ZoneCode.Replace("-", ""); 
-            _zoneitem.Tag = CurrentZoneInfo;
-            **/
 
             MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));
             mbind.CommandParameter = SelectedCurtainPanelList;
             mbind.CommandTarget = datagridPanels;
-            //_zoneitem.InputBindings.Add(mbind);
-            //navZone.Items.Add(_zoneitem);
 
             Global.DocContent.ZoneList.Add(CurrentZoneInfo);
             Global.DocContent.CurtainPanelList.AddRange(SelectedCurtainPanelList);
@@ -482,14 +484,24 @@ namespace FacadeHelper
         private void InitModelData()
         {
             ParameterHelper.InitProjectParameters(ref doc);
+
+            //加載分區進度數據
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+            ofd.InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile);
+            ofd.DefaultExt = "*.txt";
+            ofd.Filter = "Schedule Text Files(*.txt)|*.txt|All(*.*)|*.*";
+            if (ofd.ShowDialog() == true)
+                if (MessageBox.Show($"加载新的分区进度定义文件 {ofd.FileName}？\n\n现有的进度数据将被覆盖。选择确认继续。", "加载新的进度数据文件...",
+                    MessageBoxButton.OKCancel,
+                    MessageBoxImage.Question,
+                    MessageBoxResult.OK) == MessageBoxResult.OK)
+                {
+                    ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 加载新的进度数据文件 {ofd.FileName}.");
+                }
+
         }
         #endregion
-
-        private void bnTest_Click(object sender, RoutedEventArgs e)
-        {
-            //MessageBox.Show($"CurrentZonePanelType：{CurrentZonePanelType}");
-            MessageBox.Show($"Range Zone：{IsSearchRangeZone}\nRange Panel：{IsSearchRangePanel}\nRange Element：{IsSearchRangeElement}\nRange All：{IsSearchRangeAll}");
-        }
 
         private void listInformation_SelectionChanged(object sender, SelectionChangedEventArgs e) { var lb = sender as ListBox; lb.ScrollIntoView(lb.Items[lb.Items.Count - 1]); }
 
