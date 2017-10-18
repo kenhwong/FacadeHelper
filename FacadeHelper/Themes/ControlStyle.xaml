@@ -139,15 +139,16 @@
         </Style.Triggers>
     </Style>
 
-    <SolidColorBrush x:Key="GroupBoxBorderBrush" Color="#A0A0A0"/>
-    <SolidColorBrush x:Key="GroupBoxHeaderBrush" Color="#505050"/>
-    <SolidColorBrush x:Key="GroupBoxHeaderBackgroundBrush" Color="#E0E0E0"/>
-    <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
     <!--#endregion-->
 
     <!--#region GroupBox: CommandGroup-->
+    <SolidColorBrush x:Key="GroupBoxBorderBrush" Color="#A0A0A0"/>
+    <SolidColorBrush x:Key="GroupBoxBorderLightBrush" Color="#C0C0C0"/>
+    <SolidColorBrush x:Key="GroupBoxHeaderBrush" Color="#505050"/>
+    <SolidColorBrush x:Key="GroupBoxHeaderBackgroundBrush" Color="#E0E0E0"/>
+    <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
     <Style TargetType="GroupBox" x:Key="CommandGroup"  BasedOn="{StaticResource baseStyle}">
-        <Setter Property="BorderBrush" Value="{StaticResource GroupBoxBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource GroupBoxBorderLightBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="IsTabStop" Value="True" />
@@ -156,23 +157,21 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type GroupBox}">
                     <Grid SnapsToDevicePixels="true">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Border x:Name="Header" Grid.Column="0" Padding="10,5" 
-                                Background="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" 
-                                BorderBrush="{TemplateBinding BorderBrush}">
-                            <ContentPresenter Name="HeadPresenter" ContentSource="Header" RecognizesAccessKey="true" 
-                                              TextElement.Foreground="{StaticResource GroupBoxHeaderBackgroundBrush}"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
-                                              VerticalAlignment="Center" 
-                                              HorizontalAlignment="Left" 
-                                              Margin="0" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ContentPresenter Name="ContentSite" Grid.Row="0"  Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Border x:Name="ContentEdge" Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{TemplateBinding BorderBrush}" Padding="0,0">
+                            <ContentPresenter Name="Presenter" ContentSource="Header" RecognizesAccessKey="true" 
+                                              TextElement.Foreground="{TemplateBinding BorderBrush}"
+                                              TextElement.FontSize="5"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0">
+                                <ContentPresenter.LayoutTransform>
+                                    <ScaleTransform ScaleX="1.8" />
+                                </ContentPresenter.LayoutTransform>
+                            </ContentPresenter>
                         </Border>
-                        <ContentPresenter Name="ContentSite" Grid.Column="1"  Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <Border x:Name="ContentEdge" Grid.Column="1" BorderThickness="0,1,1,1" BorderBrush="{TemplateBinding BorderBrush}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -569,14 +568,64 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource CheckBaseStyle}" />
-    <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource CheckBaseStyle}" />
+    <Style TargetType="{x:Type RadioButton}" x:Key="RadioCheck" BasedOn="{StaticResource CheckBaseStyle}" />
+    <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Foreground" Value="{StaticResource GroupBoxBorderLightBrush}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <BulletDecorator>
+                        <BulletDecorator.Bullet>
+                            <Grid SnapsToDevicePixels="true">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="5" />
+                                </Grid.RowDefinitions>
+                                <ContentPresenter Name="BulletText" Grid.Row="0" Margin="5" VerticalAlignment="Bottom"  HorizontalAlignment="Center"  
+                                                  TextElement.FontSize="13" RecognizesAccessKey="True" />
+                                <Border Name="PLLine" Grid.Row="1" BorderThickness="0,1,0,0" BorderBrush="{StaticResource GroupBoxBorderLightBrush}" Padding="0,1,0,0">
+                                    <Rectangle Grid.Row="1" Name="CheckMark" StrokeThickness="0" Fill="#3babe3" />
+                                </Border>
+                            </Grid>
+                        </BulletDecorator.Bullet>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckMark" Duration="0:0:0.2" To="0.5" />
+                                        <ColorAnimation Storyboard.TargetProperty="(TextElement.Foreground).Color"  Storyboard.TargetName="BulletText" Duration="0:0:0.2" 
+                                                        From="#C0C0C0" To="#3babe3" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked" >
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckMark" Duration="0:0:0.2" To="0" />
+                                        <ColorAnimation Storyboard.TargetProperty="(TextElement.Foreground).Color"  Storyboard.TargetName="BulletText" Duration="0:0:0.2" 
+                                                        From="#3babe3" To="#C0C0C0" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </BulletDecorator>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <Style x:Key="AFocusVisualStyte" >
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <Rectangle x:Name="FocusStyle" StrokeDashArray="4 4" RadiusX="5" RadiusY="5" Fill="Transparent"
-                           Stroke="#81d2eb" StrokeThickness="1" />
+                    <Rectangle x:Name="FocusStyle" StrokeDashArray="4 4" RadiusX="5" RadiusY="5" Fill="Transparent" Stroke="#81d2eb" StrokeThickness="1" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -590,6 +639,7 @@
         <Setter Property="BorderBrush" Value="#1296db"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Foreground" Value="#505050"/>
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
@@ -616,6 +666,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
+                        <Path x:Name="ButtonBack" Data="M15,0 A15,15 0 1 0 15,30 A15,15 0 1 0 15,0Z" Fill="Transparent" Stretch="Fill" Width="30" Height="30" HorizontalAlignment="Left" StrokeThickness="1"/>
                         <Path x:Name="BookShape"
                           Data="{TemplateBinding Tag}"
                           Stretch="Fill" Width="30" Height="30" StrokeThickness="0"

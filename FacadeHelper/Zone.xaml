@@ -20,28 +20,43 @@
 
     <DockPanel Margin="12,10,10,10">
         <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="通用" DockPanel.Dock="Left" Padding="0,0" />
-            <ToggleButton x:Name="bnQuickStart" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" Style="{DynamicResource CommonToggleButton}" IsChecked="False">
-                    <ToggleButton.Triggers>
-                        <EventTrigger RoutedEvent="ToggleButton.Click">
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <!--<DoubleAnimation Storyboard.TargetName="TrFQSPop" Storyboard.TargetProperty="(RotateTransform.Angle)" From="0" To="360" Duration="0:0:5" AutoReverse="True"/>-->
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </EventTrigger>
-                    </ToggleButton.Triggers>
-                </ToggleButton>
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="SYSTEM" DockPanel.Dock="Left" Padding="0,5">
+                <WrapPanel>
+                    <ToggleButton x:Name="bnQuickStart" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" Style="{DynamicResource CommonToggleButton}" IsChecked="False">
+                        <ToggleButton.Triggers>
+                            <EventTrigger RoutedEvent="ToggleButton.Click">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <!--<DoubleAnimation Storyboard.TargetName="TrFQSPop" Storyboard.TargetProperty="(RotateTransform.Angle)" From="0" To="360" Duration="0:0:5" AutoReverse="True"/>-->
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </ToggleButton.Triggers>
+                    </ToggleButton>
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" ToolTip="模型初始" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
+                </WrapPanel>
+            </GroupBox>
 
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" ToolTip="模型初始" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="10,0,10,0" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconResolve}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" ToolTip="加载数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="10,0,10,0" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" ToolTip="保存修改" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApplyParamData}" x:Name="bnApplyParameters" ToolTip="保存参数" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" ToolTip="导出计划" DockPanel.Dock="Left" Width="30" Height="30" Margin="10,0,10,0" />
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5" Margin="20,0,0,0">
+                <WrapPanel>
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconResolve}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
+                </WrapPanel>
+            </GroupBox>
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="DATA" DockPanel.Dock="Left" Padding="0,5" Margin="20,0,0,0">
+                <WrapPanel>
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" ToolTip="加载数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" ToolTip="保存修改" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApplyParamData}" x:Name="bnApplyParameters" ToolTip="保存参数" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
+                </WrapPanel>
+            </GroupBox>
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="EXPORT" DockPanel.Dock="Left" Padding="0,5" Margin="20,0,0,0">
+                <WrapPanel>
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" ToolTip="导出计划" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
+                </WrapPanel>
+            </GroupBox>
 
-            <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Left" Margin="10,0" Orientation="Horizontal" Visibility="Visible">
+            <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Left" Margin="30,13,0,0" Orientation="Horizontal" Visibility="Visible">
                 <RadioButton Content="玻璃" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 51}" />
                 <RadioButton Content="石材" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 52}" />
                 <RadioButton Content="铝板" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 53}" />
@@ -77,8 +92,8 @@
                 <DockPanel Margin="20,40,20,20" Height="460" Width="360" LastChildFill="False">
                     <Border BorderBrush="#C0C0C0" DockPanel.Dock="Top" BorderThickness="0,0,0,1">
                         <DockPanel Height="30" Margin="0,0,0,10" LastChildFill="False">
-                            <Label Content="操作手冊" DockPanel.Dock="Left" />
-                            <Button x:Name="bnPopupClose" Margin="0" DockPanel.Dock="Right">關閉手冊</Button>
+                            <Label Content="操作手册" DockPanel.Dock="Left" />
+                            <Button x:Name="bnPopupClose" Margin="0" DockPanel.Dock="Right">关闭手册</Button>
                         </DockPanel>
                     </Border>
                     <local:Manual />
