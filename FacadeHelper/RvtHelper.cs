@@ -596,14 +596,14 @@ namespace FacadeHelper
                     Global.DocContent.ZoneScheduleList.Add(new ZoneScheduleInfo
                     {
                         ZoneCode = rowdata[2],
-                        ZoneType = int.Parse(rowdata[2].Substring(2, 2)),
+                        ZoneLevel = int.Parse(rowdata[2].Substring(2, 2)),
                         ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}"),
                         ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}"),
                     });
                     Global.DocContent.ZoneScheduleList.Add(new ZoneScheduleInfo
                     {
                         ZoneCode = rowdata[5],
-                        ZoneType = int.Parse(rowdata[5].Substring(2, 2)),
+                        ZoneLevel = int.Parse(rowdata[5].Substring(2, 2)),
                         ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}"),
                         ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}"),
                     });
@@ -744,13 +744,14 @@ namespace FacadeHelper
             }
         }
 
-        public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo)
+        public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo) //TODO: Need re-process the logic.
         {
             var doc = uidoc.Document;
             bool _haserror = false;
             uidoc.Selection.Elements.Clear();
 
             IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
+            IOrderedEnumerable<ScheduleElementInfo>[] _sesinzone = null;
 
             var zsi = Global.DocContent.ZoneScheduleList.FirstOrDefault(zs => zs.ZoneCode == zone.ZoneCode);
             int zonedays = (zsi.ZoneFinish - zsi.ZoneStart).Days + 1;
@@ -782,7 +783,7 @@ namespace FacadeHelper
                     .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
             #endregion
 
-            double v_hours_per_panel = 1.0 * zonehours / _panelsinzone.Count();
+            //double v_hours_per_panel = 1.0 * zonehours / _panelsinzone.Count();
             int pindex = 0;
             //確定分區內嵌板數據及排序
             foreach (CurtainPanelInfo _pi in _panelsinzone)
@@ -793,9 +794,9 @@ namespace FacadeHelper
 
                 _pi.INF_Index = pindex;
                 _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
-                _pi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * (pindex - 1));
-                _pi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * pindex);
-                //TODO: Check
+                //_pi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * (pindex - 1));
+                //_pi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * pindex);
+                
                 //確定嵌板內明細構件數據
                 var p_subs = _p.GetSubComponentIds();
                 foreach (ElementId eid in p_subs)
@@ -812,6 +813,7 @@ namespace FacadeHelper
                     _schedule_element.INF_System = zone.ZoneSystem;
                     _schedule_element.INF_HostCurtainPanel = _pi;
 
+                    #region 确定分项参数 + 工序层级
                     Parameter _parameter;
                     _parameter = _element.get_Parameter("分项");
                     if (_parameter != null)
@@ -821,7 +823,12 @@ namespace FacadeHelper
                             if (int.TryParse(_parameter.AsString(), out int _type))
                             {
                                 if (Global.ElementClassList.Exists(ec => (ec.EClassIndex == _type) && (ec.IsScheduled)))
+                                {
                                     _schedule_element.INF_Type = _type;
+                                    if (Global.TaskLevelClass[0].Contains(_type)) _schedule_element.INF_TaskLevel = 0;
+                                    if (Global.TaskLevelClass[1].Contains(_type)) _schedule_element.INF_TaskLevel = 1;
+                                    if (Global.TaskLevelClass[2].Contains(_type)) _schedule_element.INF_TaskLevel = 2;
+                                }
                                 else
                                 {
                                     _schedule_element.INF_Type = -11;
@@ -832,7 +839,7 @@ namespace FacadeHelper
                             {
                                 _schedule_element.INF_Type = -1;
                                 _haserror = true;
-                                _schedule_element.INF_ErrorInfo = "構件[分項]參數錯誤(INF_Type)";
+                                _schedule_element.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
                                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}][{_schedule_element.INF_Name}]:[分项]参数错误...");
                                 uidoc.Selection.Elements.Add(_element);
                                 continue;
@@ -842,7 +849,7 @@ namespace FacadeHelper
                         {
                             _schedule_element.INF_Type = -2;
                             _haserror = true;
-                            _schedule_element.INF_ErrorInfo = "構件[分項]參數未設置(INF_Type)";
+                            _schedule_element.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
                             listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}][{_schedule_element.INF_Name}]:[分项]参数未賦值...");
                             uidoc.Selection.Elements.Add(_element);
                             continue;
@@ -852,11 +859,12 @@ namespace FacadeHelper
                     {
                         _schedule_element.INF_Type = -3;
                         _haserror = true;
-                        _schedule_element.INF_ErrorInfo = "构件[分项]参数未设置(INF_Type)";
+                        _schedule_element.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
                         listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - [{_schedule_element.INF_HostCurtainPanel.INF_ElementId}][{_schedule_element.INF_ElementId}]:[分项]参数未設置...");
                         uidoc.Selection.Elements.Add(_element);
                         continue;
                     }
+                    #endregion
 
                     #region 判断門窗
                     /**
@@ -911,10 +919,11 @@ namespace FacadeHelper
 
                     processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({pindex}/{_panelsinzone.Count()})] - [構件：{_schedule_element.INF_ElementId}]";
                     p_ScheduleElementList.Add(_schedule_element);
-                    //Global.DocContent.ScheduleElementList.Add(_schedule_element);
+                    Global.DocContent.ScheduleElementList.Add(_schedule_element);
                 }
             }
 
+            #region 参数错误构件保存选择集
             using (Transaction trans = new Transaction(doc, "CreateZoneErrorElementGroup"))
             {
                 trans.Start();
@@ -924,7 +933,41 @@ namespace FacadeHelper
                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分區[{zone.ZoneCode}]參數錯誤的構件已保存至選擇集[ERROR-{zone.ZoneCode}]");
             }
 
-            //確定明細構件排序
+            #endregion
+            #region 明细构件 排序
+            for (int i = 0; i < 3; i++)
+            {
+                if (zone.ZoneDirection == "S")
+                    _sesinzone[i] = Global.DocContent.ScheduleElementList
+                        .Where(se => se.INF_TaskLevel == i)
+                        .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                        .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenBy(m3 => Math.Round(m3.INF_OriginX_Metric / Constants.RVTPrecision));
+                if (zone.ZoneDirection == "N")
+                    _sesinzone[i] = Global.DocContent.ScheduleElementList
+                        .Where(se => se.INF_TaskLevel == i)
+                        .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                        .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .OrderByDescending(m3 => Math.Round(m3.INF_OriginX_Metric / Constants.RVTPrecision));
+                if (zone.ZoneDirection == "E")
+                    _sesinzone[i] = Global.DocContent.ScheduleElementList
+                        .Where(se => se.INF_TaskLevel == i)
+                        .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                        .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenBy(m3 => Math.Round(m3.INF_OriginY_Metric / Constants.RVTPrecision));
+                if (zone.ZoneDirection == "W")
+                    _sesinzone[i] = Global.DocContent.ScheduleElementList
+                        .Where(se => se.INF_TaskLevel == i)
+                        .Where(m => m.INF_ZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
+                        .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .OrderByDescending(m3 => Math.Round(m3.INF_OriginY_Metric / Constants.RVTPrecision));
+            }
+            #endregion
+            //TODO: Check
             int eindex = 0;
             foreach (var ele in p_ScheduleElementList
                 .OrderBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
@@ -1040,14 +1083,14 @@ namespace FacadeHelper
                 Data = e.NewValue as Geometry,
                 Fill = Brushes.Gray,
                 Stretch = Stretch.Uniform,
-                StrokeThickness = 1, 
+                StrokeThickness = 1,
                 Stroke = button.Foreground,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 Width = 30,
                 Height = 30
             };
         }
-        public Geometry Data { get { return (Geometry)GetValue(DataProperty); } set { SetValue(DataProperty, value); }}
+        public Geometry Data { get { return (Geometry)GetValue(DataProperty); } set { SetValue(DataProperty, value); } }
     }
 
 }

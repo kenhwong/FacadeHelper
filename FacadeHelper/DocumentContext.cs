@@ -96,24 +96,26 @@ namespace FacadeHelper
 
         public DocumentContent()
         {
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 1, EClassName = "玻璃", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = false});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 3, EClassName = "鋁板", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 6, EClassName = "鋼立柱", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 9, EClassName = "緊固件", IsScheduled = false});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 10, EClassName = "鐵板", IsScheduled = true});
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 1, EClassName = "玻璃", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = false });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 3, EClassName = "鋁板", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 6, EClassName = "鋼立柱", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 9, EClassName = "緊固件", IsScheduled = false });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 10, EClassName = "鐵板", IsScheduled = true });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 11, EClassName = "保溫棉", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 12, EClassName = "膠", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 13, EClassName = "焊縫", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 14, EClassName = "鋼件", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 15, EClassName = "預埋件", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 16, EClassName = "連接板", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 21, EClassName = "窗扇", IsScheduled = true});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 22, EClassName = "門扇", IsScheduled = true});
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 17, EClassName = "钢线条", IsScheduled = false });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 18, EClassName = "铝线条", IsScheduled = false });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 21, EClassName = "窗扇", IsScheduled = true });
+            Global.ElementClassList.Add(new ElementClass { EClassIndex = 22, EClassName = "門扇", IsScheduled = true });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 23, EClassName = "大五金", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 51, EClassName = "石材嵌板", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 52, EClassName = "玻璃嵌板", IsScheduled = false });
@@ -127,6 +129,7 @@ namespace FacadeHelper
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 92, EClassName = "汽吊", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 93, EClassName = "捲揚", IsScheduled = false });
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 94, EClassName = "配電", IsScheduled = false });
+            Global.TaskLevelClass = new int[][] { new int[] { 5, 6, 7, 8 }, new int[] { 1, 3, 4, 10, 21, 22 }, new int[] { 17, 18 } };
         }
     }
 
@@ -134,7 +137,7 @@ namespace FacadeHelper
     public class ZoneScheduleInfo
     {
         public string ZoneCode { get; set; }
-        public int ZoneType { get; set; }
+        public int ZoneLevel { get; set; }
         public DateTime ZoneStart { get; set; }
         public DateTime ZoneFinish { get; set; }
     }
@@ -157,6 +160,7 @@ namespace FacadeHelper
         public static int OptionDaysPerWeek = 7;
 
         public static List<ElementClass> ElementClassList = new List<ElementClass>();
+        public static int[][] TaskLevelClass;
     }
 
 
