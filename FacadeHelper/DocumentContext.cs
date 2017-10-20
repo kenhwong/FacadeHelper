@@ -76,7 +76,8 @@ namespace FacadeHelper
     public class DocumentContent// : INotifyPropertyChanged
     {
         //private ObservableCollection<ZoneInfoBase> _zoneList = new ObservableCollection<ZoneInfoBase>();
-        public List<ZoneScheduleInfo> ZoneScheduleList { get; set; } = new List<ZoneScheduleInfo>();
+        public List<ZoneScheduleInfo> ZoneScheduleSimpleList { get; set; } = new List<ZoneScheduleInfo>();
+        public List<ZoneScheduleLevelInfo> ZoneScheduleLevelList { get; set; } = new List<ZoneScheduleLevelInfo>();
 
         public List<CurtainPanelInfo> CurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public Dictionary<int, double> LevelDictionary { get; set; } = new Dictionary<int, double>();
@@ -140,6 +141,15 @@ namespace FacadeHelper
         public int ZoneLevel { get; set; }
         public DateTime ZoneStart { get; set; }
         public DateTime ZoneFinish { get; set; }
+    }
+
+    [SerializableType]
+    public class ZoneScheduleLevelInfo
+    {
+        public string HandleId { get; set; }
+        public string ZoneUniversalCode { get; set; }
+        public DateTime[] ZoneLevelStart { get; set; } = new DateTime[3];
+        public DateTime[] ZoneLevelFinish { get; set; } = new DateTime[3];
     }
 
     [SerializableType]

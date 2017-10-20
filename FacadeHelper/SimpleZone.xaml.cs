@@ -719,7 +719,7 @@ namespace FacadeHelper
                     MessageBoxImage.Question,
                     MessageBoxResult.OK) == MessageBoxResult.OK)
                 {
-                    ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
+                    ZoneHelper.FnLoadSimpleZoneScheduleData(ofd.FileName);
                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 加載新分區進度文件{ofd.FileName}.");
                 }
 
