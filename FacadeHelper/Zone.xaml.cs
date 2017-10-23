@@ -235,7 +235,7 @@ namespace FacadeHelper
                                 _element.get_Parameter("立面系统").Set(p.INF_System);
                                 _element.get_Parameter("立面楼层").Set(p.INF_Level);
                                 _element.get_Parameter("构件分项").Set(p.INF_Type);
-                                _element.get_Parameter("分区序号").Set(p.INF_ZoneID);
+                                _element.get_Parameter("分区序号").Set(p.INF_ZoneIndex);
                                 _element.get_Parameter("分区区号").Set(p.INF_ZoneCode);
                                 _element.get_Parameter("分区编码").Set(p.INF_Code);
 
@@ -262,7 +262,7 @@ namespace FacadeHelper
                                 _element.get_Parameter("立面系统").Set(ele.INF_System);
                                 _element.get_Parameter("立面楼层").Set(ele.INF_Level);
                                 _element.get_Parameter("构件分项").Set(ele.INF_Type);
-                                _element.get_Parameter("分区序号").Set(ele.INF_ZoneID);
+                                _element.get_Parameter("分区序号").Set(ele.INF_ZoneIndex);
                                 _element.get_Parameter("分区区号").Set(ele.INF_ZoneCode);
                                 _element.get_Parameter("分区编码").Set(ele.INF_Code);
 
@@ -305,12 +305,7 @@ namespace FacadeHelper
                     }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose,
-                (sender, e) =>
-                {
-                    bnQuickStart.IsChecked = false;
-                },
-                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose, (sender, e) => { bnQuickStart.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
             bnModelInit.Command = cmdModelInit;
             bnElementClassify.Command = cmdElementClassify;
@@ -322,7 +317,7 @@ namespace FacadeHelper
             bnSearch.Command = cmdSearch;
             bnPopupClose.Command = cmdPopupClose;
 
-            ProcZone.CommandBindings.AddRange(new CommandBinding[] 
+            ProcZone.CommandBindings.AddRange(new CommandBinding[]
             {
                 cbModelInit,
                 cbElementClassify,
@@ -406,7 +401,7 @@ namespace FacadeHelper
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前筛选 {panels.Count()} 幕墙嵌板");
             SelectedCurtainPanelList.Clear();
             int errorcount_zonecode = 0;
-            CurrentZoneInfo = new ZoneInfoBase("Z-00-00-ZZ-00");
+            CurrentZoneInfo = new ZoneInfoBase();
             foreach (var _ele in panels)
             {
                 CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
@@ -422,7 +417,7 @@ namespace FacadeHelper
                         CurrentZoneInfo = new ZoneInfoBase(_zc);
                     else if (CurrentZoneInfo.ZoneCode != _zc)
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墙嵌板[{_ele.Id.IntegerValue}] 分区区号{_zc}差异({CurrentZoneInfo.ZoneCode})");
-                    _gp.INF_ZoneInfo = CurrentZoneInfo;
+                    _gp.INF_HostZoneInfo = CurrentZoneInfo;
                 }
 
             }

@@ -243,7 +243,7 @@ namespace FacadeHelper
                                 _element.get_Parameter("立面系统").Set(p.INF_System);
                                 _element.get_Parameter("立面楼层").Set(p.INF_Level);
                                 _element.get_Parameter("构件分项").Set(p.INF_Type);
-                                _element.get_Parameter("分区序号").Set(p.INF_ZoneID);
+                                _element.get_Parameter("分区序号").Set(p.INF_ZoneIndex);
                                 _element.get_Parameter("分区区号").Set(p.INF_ZoneCode);
                                 _element.get_Parameter("分区编码").Set(p.INF_Code);
                                 _element.get_Parameter("安装开始").Set(p.INF_TaskStart.ToString("MM-dd-yy HH:mm:ss"));
@@ -272,7 +272,7 @@ namespace FacadeHelper
                                 _element.get_Parameter("立面系统").Set(mi.INF_System);
                                 _element.get_Parameter("立面楼层").Set(mi.INF_Level);
                                 _element.get_Parameter("构件分项").Set(mi.INF_Type);
-                                _element.get_Parameter("分区序号").Set(mi.INF_ZoneID);
+                                _element.get_Parameter("分区序号").Set(mi.INF_ZoneIndex);
                                 _element.get_Parameter("分区区号").Set(mi.INF_ZoneCode);
                                 _element.get_Parameter("分区编码").Set(mi.INF_Code);
                                 _element.get_Parameter("安装开始").Set(mi.INF_TaskStart.ToString("MM-dd-yy HH:mm:ss"));
@@ -415,7 +415,7 @@ namespace FacadeHelper
                         CurrentZoneInfo = new ZoneInfoBase(_zc);
                     else if (CurrentZoneInfo.ZoneCode != _zc)
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
-                    _p.INF_ZoneInfo = CurrentZoneInfo;
+                    _p.INF_HostZoneInfo = CurrentZoneInfo;
                 }
 
             }
@@ -476,7 +476,7 @@ namespace FacadeHelper
                         CurrentZoneInfo = new ZoneInfoBase(_zc);
                     else if (CurrentZoneInfo.ZoneCode != _zc)
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻竪梃[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
-                    _m.INF_ZoneInfo = CurrentZoneInfo;
+                    _m.INF_HostZoneInfo = CurrentZoneInfo;
                 }
 
             }
@@ -560,7 +560,7 @@ namespace FacadeHelper
                         CurrentZoneInfo = new ZoneInfoBase(_zc);
                     else if (CurrentZoneInfo.ZoneCode != _zc)
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻嵌板[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
-                    _p.INF_ZoneInfo = CurrentZoneInfo;
+                    _p.INF_HostZoneInfo = CurrentZoneInfo;
                 }
 
             }
@@ -647,7 +647,7 @@ namespace FacadeHelper
                         CurrentZoneInfo = new ZoneInfoBase(_zc);
                     else if (CurrentZoneInfo.ZoneCode != _zc)
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墻竪梃[{_ele.Id.IntegerValue}] 分區區號{_zc}差異({CurrentZoneInfo.ZoneCode})");
-                    _m.INF_ZoneInfo = CurrentZoneInfo;
+                    _m.INF_HostZoneInfo = CurrentZoneInfo;
                 }
 
             }

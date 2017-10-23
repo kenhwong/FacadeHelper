@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using RvtDB = Autodesk.Revit.DB;
 
 namespace FacadeHelper
@@ -78,7 +79,7 @@ namespace FacadeHelper
             #endregion
         }
 
-        public override string ToString() { return INF_Code; }
+        public override string ToString() => INF_Code;
 
         public void ResolveZoneCode()
         {
@@ -89,7 +90,7 @@ namespace FacadeHelper
             INF_System = _array_field[3].Substring(1, 1);
             INF_Direction = _array_field[3].Substring(0, 1);
             INF_Level = int.Parse(_array_field[2]);
-            INF_ZoneID = int.Parse(_array_field[4]);
+            INF_ZoneIndex = int.Parse(_array_field[4]);
         }
     }
 
@@ -98,12 +99,12 @@ namespace FacadeHelper
     {
         private double _inf_MullionLength_Metric = 0;
         public double INF_MullionLength_Metric { get { return _inf_MullionLength_Metric; } set { _inf_MullionLength_Metric = value; OnPropertyChanged(nameof(INF_MullionLength_Metric)); } }
-        public MullionInfo() { INF_Type = 1; }
+        public MullionInfo() => INF_Type = 1;
         /// <summary>
         /// 按竪梃方向初始化
         /// </summary>
         /// <param name="mulliontype">竪梃方向，1: 立柱，2：橫樑</param>
-        public MullionInfo(int mulliontype) { INF_Type = mulliontype; }
+        public MullionInfo(int mulliontype) => INF_Type = mulliontype;
         public MullionInfo(Mullion mu)
         {
             #region MullionInfo 初始化
@@ -136,9 +137,9 @@ namespace FacadeHelper
             //立面楼层，分区区号 未读取
             #endregion
         }
-        public MullionInfo(Mullion mu, int mulliontype) : this(mu) { INF_Type = mulliontype; }
+        public MullionInfo(Mullion mu, int mulliontype) : this(mu) => INF_Type = mulliontype;
 
-        public override string ToString() { return INF_Code; }
+        public override string ToString() => INF_Code;
 
         public void ResolveZoneCode()
         {
@@ -149,7 +150,7 @@ namespace FacadeHelper
             INF_System = _array_field[3].Substring(1, 1);
             INF_Direction = _array_field[3].Substring(0, 1);
             INF_Level = int.Parse(_array_field[2]);
-            INF_ZoneID = int.Parse(_array_field[4]);
+            INF_ZoneIndex = int.Parse(_array_field[4]);
         }
 
     }
@@ -184,7 +185,7 @@ namespace FacadeHelper
     }
 
     [SerializableType]
-    public abstract class ElementInfoBase: INotifyPropertyChanged
+    public abstract class ElementInfoBase : INotifyPropertyChanged
     {
         private int _inf_ElementId;
         private string _inf_Name;
@@ -199,8 +200,8 @@ namespace FacadeHelper
         private double _inf_OriginX_US;
         private double _inf_OriginY_US;
         private double _inf_OriginZ_US;
-        private ZoneInfoBase _inf_ZoneInfo;
-        private int _inf_ZoneID;
+        private ZoneInfoBase _inf_HostZoneInfo;
+        private int _inf_ZoneIndex;
         private string _inf_ZoneCode;
         private int _inf_ZoneType;
         private int _inf_Index;
@@ -209,7 +210,8 @@ namespace FacadeHelper
         private bool _inf_IsScheduled;
 
         private uint _inf_TaskID;
-        private int _inf_TaskLevel;
+        private int _inf_TaskLevel = -1;
+        private int _inf_TaskSubLevel = -1;
         private DateTime _inf_TaskStart;
         private DateTime _inf_TaskFinish;
         private string _inf_TaskDuration;
@@ -228,8 +230,8 @@ namespace FacadeHelper
         public double INF_OriginX_US { get { return _inf_OriginX_US; } set { _inf_OriginX_US = value; OnPropertyChanged(nameof(INF_OriginX_US)); } }
         public double INF_OriginY_US { get { return _inf_OriginY_US; } set { _inf_OriginY_US = value; OnPropertyChanged(nameof(INF_OriginY_US)); } }
         public double INF_OriginZ_US { get { return _inf_OriginZ_US; } set { _inf_OriginZ_US = value; OnPropertyChanged(nameof(INF_OriginZ_US)); } }
-        public ZoneInfoBase INF_ZoneInfo { get { return _inf_ZoneInfo; } set { _inf_ZoneInfo = value; OnPropertyChanged(nameof(INF_ZoneInfo)); } }
-        public int INF_ZoneID { get { return _inf_ZoneID; } set { _inf_ZoneID = value; OnPropertyChanged(nameof(INF_ZoneID)); } }
+        public ZoneInfoBase INF_HostZoneInfo { get { return _inf_HostZoneInfo; } set { _inf_HostZoneInfo = value; OnPropertyChanged(nameof(INF_HostZoneInfo)); } }
+        public int INF_ZoneIndex { get { return _inf_ZoneIndex; } set { _inf_ZoneIndex = value; OnPropertyChanged(nameof(INF_ZoneIndex)); } }
         public string INF_ZoneCode { get { return _inf_ZoneCode; } set { _inf_ZoneCode = value; OnPropertyChanged(nameof(INF_ZoneCode)); } }
         public int INF_ZoneType { get { return _inf_ZoneType; } set { _inf_ZoneType = value; OnPropertyChanged(nameof(INF_ZoneType)); } }
         public int INF_Index { get { return _inf_Index; } set { _inf_Index = value; OnPropertyChanged(nameof(INF_Index)); } }
@@ -239,6 +241,7 @@ namespace FacadeHelper
 
         public uint INF_TaskID { get { return _inf_TaskID; } set { _inf_TaskID = value; OnPropertyChanged(nameof(INF_TaskID)); } }
         public int INF_TaskLevel { get { return _inf_TaskLevel; } set { _inf_TaskLevel = value; OnPropertyChanged(nameof(INF_TaskLevel)); } }
+        public int INF_TaskSubLevel { get { return _inf_TaskSubLevel; } set { _inf_TaskSubLevel = value; OnPropertyChanged(nameof(INF_TaskSubLevel)); } }
         public DateTime INF_TaskStart { get { return _inf_TaskStart; } set { _inf_TaskStart = value; OnPropertyChanged(nameof(INF_TaskStart)); } }
         public DateTime INF_TaskFinish { get { return _inf_TaskFinish; } set { _inf_TaskFinish = value; OnPropertyChanged(nameof(INF_TaskFinish)); } }
         public string INF_TaskDuration { get { return _inf_TaskDuration; } set { _inf_TaskDuration = value; OnPropertyChanged(nameof(INF_TaskDuration)); } }
@@ -292,7 +295,7 @@ namespace FacadeHelper
         private DateTime _zoneFinish;
         private double _zoneDurationHours;
 
-        private int _zoneType = 0;
+        private int _zoneTaskLevel = -1;
         private int _zoneLevel;
         private string _zoneDirection;
         private string _zoneSystem;
@@ -305,7 +308,7 @@ namespace FacadeHelper
         public DateTime ZoneFinish { get { return _zoneFinish; } set { _zoneFinish = value; OnPropertyChanged(nameof(ZoneFinish)); } }
         public double ZoneDurationHours { get { return _zoneDurationHours; } set { _zoneDurationHours = value; OnPropertyChanged(nameof(ZoneDurationHours)); } }
 
-        public int ZoneType { get { return _zoneType; } set { _zoneType = value; OnPropertyChanged(nameof(ZoneType)); } } //1,2,3,4; Preset 0 = All
+        public int ZoneTaskLevel { get { return _zoneTaskLevel; } set { _zoneTaskLevel = value; OnPropertyChanged(nameof(ZoneTaskLevel)); } } //1,2,3,4; Preset 0 = All
         public int ZoneLevel { get { return _zoneLevel; } set { _zoneLevel = value; OnPropertyChanged(nameof(ZoneLevel)); } }
         public string ZoneDirection { get { return _zoneDirection; } set { _zoneDirection = value; OnPropertyChanged(nameof(ZoneDirection)); } }
         public string ZoneSystem { get { return _zoneSystem; } set { _zoneSystem = value; OnPropertyChanged(nameof(ZoneSystem)); } }
@@ -313,13 +316,15 @@ namespace FacadeHelper
 
         public string FilterName { get { return _filterName; } set { _filterName = value; OnPropertyChanged(nameof(FilterName)); } }
 
+        public ZoneInfoBase() { }
         public ZoneInfoBase(string zcode)
         {
+            if (!Regex.IsMatch(zcode, @"Z-\d{2}-\d{2}-[S|N|E|W][A-Z]-\d{2}")) throw new FormatException("Invalid zone code format while Initializing ZoneInfoBase instance.");
             ZoneCode = FilterName = zcode;
             string[] _segment_code = zcode.Split('-');
-            ZoneType = int.Parse(_segment_code[1]);
+            ZoneTaskLevel = 0;// int.Parse(_segment_code[1]);
             ZoneLevel = int.Parse(_segment_code[2]);
-            ZoneDirection = _segment_code[3].Substring(0,1);
+            ZoneDirection = _segment_code[3].Substring(0, 1);
             ZoneSystem = _segment_code[3].Substring(1, 1);
             ZoneIndex = int.Parse(_segment_code[4]);
 
@@ -331,7 +336,7 @@ namespace FacadeHelper
             ZoneDurationHours = (zfinish - zstart).Days * Global.OptionHoursPerDay + Global.OptionHoursPerDay;
         }
 
-        public override string ToString() { return ZoneCode; }
+        public override string ToString() => ZoneCode;
 
         public SelectionFilterElement LoadFilter(UIDocument uidoc)
         {
