@@ -155,7 +155,7 @@
                         </ScrollViewer>
                     </Expander.Content>
                 </Expander>
-                <Expander x:Name="expPanel" ExpandDirection="Down" Header="幕墻嵌板" DockPanel.Dock="Top" Margin="5" Padding="5">
+                <Expander x:Name="expPanel" ExpandDirection="Down" Header="幕墻嵌板" DockPanel.Dock="Top" Margin="5" Padding="5" Visibility="Collapsed">
                     <Expander.Content>
                         <ScrollViewer>
                             <ListBox x:Name="navPanels" ItemsSource="{Binding}" SelectionChanged="navPanels_SelectionChanged" IsSynchronizedWithCurrentItem="False">
@@ -168,11 +168,26 @@
                         </ScrollViewer>
                     </Expander.Content>
                 </Expander>
-                <Expander x:Name="expSubElement" ExpandDirection="Down" Header="構件篩選" DockPanel.Dock="Top" Margin="5" Padding="5">
+                <Expander x:Name="expPreview" ExpandDirection="Down" Header="构件明细" DockPanel.Dock="Top" Margin="5" Padding="5">
+                    <Expander.Content>
+                        <ScrollViewer>
+                            <StackPanel x:Name="PanelProp" />
+                        </ScrollViewer>
+                    </Expander.Content>
+                </Expander>
+
+                <Expander x:Name="expSubElement" ExpandDirection="Down" Header="构件筛选" DockPanel.Dock="Top" Margin="5" Padding="5">
                     <Expander.Content>
                         <ScrollViewer>
                             <ListBox x:Name="navElementClassFilter" />
                         </ScrollViewer>
+                    </Expander.Content>
+                </Expander>
+                <Expander x:Name="expZoneCodeInput" ExpandDirection="Down" Header="构件筛选" DockPanel.Dock="Top" Margin="5" Padding="5">
+                    <Expander.Content>
+                        <WrapPanel>
+                            
+                        </WrapPanel>
                     </Expander.Content>
                 </Expander>
             </DockPanel>
@@ -234,7 +249,7 @@
                         <ScrollViewer>
                             <DataGrid x:Name="datagridPanels" DockPanel.Dock="Top" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
                                   AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
-                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single"  Height="200">
+                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single"  Height="200" GotFocus="datagridElements_GotFocus">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="PANELID" Width="70" Binding="{Binding INF_ElementId}" />
                                     <DataGridTextColumn Header="名称" Width="120" Binding="{Binding INF_Name}" />
@@ -261,7 +276,7 @@
                         <ScrollViewer HorizontalScrollBarVisibility="Auto">
                             <DataGrid x:Name="datagridScheduleElements" DockPanel.Dock="Top" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
                                   AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
-                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single"  Height="200">
+                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single"  Height="200" GotFocus="datagridElements_GotFocus">
                                 <DataGrid.Columns>
                                     <DataGridTextColumn Header="ELEID" Width="70" Binding="{Binding INF_ElementId}" />
                                     <DataGridTextColumn Header="名称" Width="150" Binding="{Binding INF_Name}" />

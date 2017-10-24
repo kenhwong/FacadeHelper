@@ -15,8 +15,12 @@ namespace FacadeHelper
             DataGridRow hostrow = ((DataGridRow)sender);
             if (hostrow.Item is CurtainPanelInfo)
             {
-                CurtainPanelInfo currentcs = hostrow.Item as CurtainPanelInfo;
-                
+                CurtainPanelInfo currentcs = hostrow.Item as CurtainPanelInfo;                
+            }
+
+            if(hostrow.Item is ScheduleElementInfo)
+            {
+                ScheduleElementInfo currentsei = hostrow.Item as ScheduleElementInfo;
             }
         }
     }

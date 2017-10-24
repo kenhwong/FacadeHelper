@@ -853,34 +853,51 @@ namespace FacadeHelper
             uidoc.Selection.Elements.Clear();
 
             IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
-            IOrderedEnumerable<ScheduleElementInfo>[] _sesinzone = null;
+            IOrderedEnumerable<ScheduleElementInfo>[] _sesinzone = new IOrderedEnumerable<ScheduleElementInfo>[3];
 
             var zsi = Global.DocContent.ZoneScheduleLevelList.FirstOrDefault(zs => zs.ZoneUniversalCode == zone.ZoneCode);
 
             List<ScheduleElementInfo> p_ScheduleElementList = new List<ScheduleElementInfo>();
             listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 检索分区 [{zone.ZoneCode}]...");
+            System.Windows.Forms.Application.DoEvents();
 
             #region CurtainPanelList 排序
-            if (zone.ZoneDirection == "S")
-                _panelsinzone = Global.DocContent.CurtainPanelList
+            switch (zone.ZoneDirection)
+            {
+                case "S":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 排序：X递增，Z递增...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
                     .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
                     .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "N")
-                _panelsinzone = Global.DocContent.CurtainPanelList
+                    break;
+                case "N":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 排序：X递减，Z递增...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
                     .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
                     .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "E")
-                _panelsinzone = Global.DocContent.CurtainPanelList
+                    break;
+                case "E":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 排序：Y递增，Z递增...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
                     .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
                     .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "W")
-                _panelsinzone = Global.DocContent.CurtainPanelList
+                    break;
+                case "W":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 排序：Y递减，Z递增...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
                     .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
                     .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+                    break;
+                default: break;
+            }
             #endregion
 
             int pindex = 0;
@@ -889,6 +906,7 @@ namespace FacadeHelper
             {
                 processinfo.Content = $"当前处理进度：[分区：{zone.ZoneCode}] - [幕墙嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
                 listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 检索幕墙嵌板[{_pi.INF_ElementId}]...");
+                System.Windows.Forms.Application.DoEvents();
                 Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
 
                 _pi.INF_Index = pindex;
@@ -1016,21 +1034,24 @@ namespace FacadeHelper
                     _sei.INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z);
 
                     processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({pindex}/{_panelsinzone.Count()})] - [構件：{_sei.INF_ElementId}]";
+                    System.Windows.Forms.Application.DoEvents();
                     p_ScheduleElementList.Add(_sei);
                     //Global.DocContent.ScheduleElementList.Add(_sei);
                 }
             }
 
             #region 参数错误构件保存选择集
-            using (Transaction trans = new Transaction(doc, "CreateZoneErrorElementGroup"))
+            if (!uidoc.Selection.Elements.IsEmpty)
             {
-                trans.Start();
-                var sfe = SelectionFilterElement.Create(doc, $"ERROR-{zone.ZoneCode}");
-                sfe.AddSet(uidoc.Selection.GetElementIds());
-                trans.Commit();
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分區[{zone.ZoneCode}]參數錯誤的構件已保存至選擇集[ERROR-{zone.ZoneCode}]");
+                using (Transaction trans = new Transaction(doc, "CreateZoneErrorElementGroup"))
+                {
+                    trans.Start();
+                    var sfe = SelectionFilterElement.Create(doc, $"ERROR-{zone.ZoneCode}");
+                    sfe.AddSet(uidoc.Selection.GetElementIds());
+                    trans.Commit();
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分區[{zone.ZoneCode}]參數錯誤的構件已保存至選擇集[ERROR-{zone.ZoneCode}]");
+                }
             }
-
             #endregion
 
             if (_haserror)
@@ -1043,46 +1064,64 @@ namespace FacadeHelper
 
 
             #region 明细构件 排序
-            var lvgroupsScheduleElement = p_ScheduleElementList.GroupBy(se => se.INF_TaskLevel);
+            var lvgroupsScheduleElement = p_ScheduleElementList.ToLookup(se => se.INF_TaskLevel);
             foreach (var lvgroup in lvgroupsScheduleElement)
             {
-                if (zone.ZoneDirection == "S")
-                    _sesinzone[lvgroup.Key] = lvgroup
-                        .OrderBy(m1 => m1.INF_TaskSubLevel)
-                        .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
-                        .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
-                        .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                        .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
-                if (zone.ZoneDirection == "N")
-                    _sesinzone[lvgroup.Key] = lvgroup
-                        .OrderByDescending(m1 => m1.INF_TaskSubLevel)
-                        .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
-                        .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
-                        .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                        .ThenByDescending(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
-                if (zone.ZoneDirection == "E")
-                    _sesinzone[lvgroup.Key] = lvgroup
-                        .OrderByDescending(m1 => m1.INF_TaskSubLevel)
-                        .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
-                        .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
-                        .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                        .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Y / Constants.RVTPrecision));
-                if (zone.ZoneDirection == "W")
-                    _sesinzone[lvgroup.Key] = lvgroup
-                        .OrderByDescending(m1 => m1.INF_TaskSubLevel)
-                        .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
-                        .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
-                        .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                        .ThenByDescending(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Y / Constants.RVTPrecision));
+                switch (zone.ZoneDirection)
+                {
+                    case "S":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 工序 [{lvgroup.Key}] 构件排序：X递增，Z递增...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[lvgroup.Key] = lvgroup
+                            .OrderBy(m1 => m1.INF_TaskSubLevel)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
+                            .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
+                        break;
+                    case "N":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 工序 [{lvgroup.Key}] 构件排序：X递减，Z递增...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[lvgroup.Key] = lvgroup
+                            .OrderByDescending(m1 => m1.INF_TaskSubLevel)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
+                            .ThenByDescending(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
+                        break;
+                    case "E":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 工序 [{lvgroup.Key}] 构件排序：Y递增，Z递增...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[lvgroup.Key] = lvgroup
+                            .OrderByDescending(m1 => m1.INF_TaskSubLevel)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
+                            .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Y / Constants.RVTPrecision));
+                        break;
+                    case "W":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 工序 [{lvgroup.Key}] 构件排序：Y递减，Z递增...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[lvgroup.Key] = lvgroup
+                            .OrderByDescending(m1 => m1.INF_TaskSubLevel)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
+                            .ThenByDescending(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Y / Constants.RVTPrecision));
+                        break;
+                    default:
+                        break;
+                }
 
                 int eindexinzone = 0;
                 foreach (var ele in _sesinzone[lvgroup.Key])
                 {
                     eindexinzone++;
                     ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}-{eindexinzone:0000}";//构件编码
-                    processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [構件：{ele.INF_ElementId}({eindexinzone}/{_sesinzone[lvgroup.Key].Count()})]";
                 }
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - 分区 [{zone.ZoneCode}] 工序 [{lvgroup.Key}] 构件 {_sesinzone[lvgroup.Key].Count()} 编号完成...");
             }
+            Global.DocContent.ScheduleElementList.AddRange(p_ScheduleElementList);
             #endregion
 
         }

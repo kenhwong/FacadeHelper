@@ -529,6 +529,12 @@ namespace FacadeHelper
             ((CheckBox)sender).GetBindingExpression(CheckBox.IsCheckedProperty).UpdateTarget();
         }
 
+        private void datagridElements_GotFocus(object sender, RoutedEventArgs e)
+        {
+            ScheduleElementInfo currentsei = new ScheduleElementInfo();
+            if (datagridScheduleElements.CurrentItem != null) currentsei = (ScheduleElementInfo)(datagridScheduleElements.CurrentItem);
+            
+        }
     }
 
     public class IntToBoolConverter : IValueConverter
