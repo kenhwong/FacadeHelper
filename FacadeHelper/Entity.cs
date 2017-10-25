@@ -299,7 +299,7 @@ namespace FacadeHelper
         private int _zoneLevel;
         private string _zoneDirection;
         private string _zoneSystem;
-        private int _zoneIndex;
+        private int _zoneIndex = 0;
 
         private string _filterName;
 

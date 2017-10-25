@@ -14,6 +14,15 @@
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
     <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <Geometry x:Key="IconCancel">M1024 512C1024 229.230208 794.769792 0 512 0 229.230208 0 0 229.230208 0 512 0 794.769792 229.230208 1024 512 1024 629.410831 1024 740.826187 
+        984.331046 830.768465 912.686662 841.557579 904.092491 843.33693 888.379234 834.742758 877.590121 826.148587 866.801009 810.43533 865.021658 799.646219 873.615827 
+        718.470035 938.277495 618.001779 974.048781 512 974.048781 256.817504 974.048781 49.951219 767.182496 49.951219 512 49.951219 256.817504 256.817504 49.951219 512 
+        49.951219 767.182496 49.951219 974.048781 256.817504 974.048781 512 974.048781 599.492834 949.714859 683.336764 904.470807 755.960693 897.177109 767.668243 900.755245 
+        783.071797 912.462793 790.365493 924.170342 797.659191 939.573897 794.081058 946.867595 782.373508 997.013826 701.880796 1024 608.898379 1024 512Z
+        M331.838918 663.575492C322.174057 673.416994 322.317252 689.230029 332.158756 698.894891 342.000258 708.559753 357.813293 708.416557 367.478155 698.575053L717.473766 
+        342.182707C727.138628 332.341205 726.995433 316.528171 717.153931 306.863309 707.312427 297.198447 691.499394 297.341643 681.834532 307.183147L331.838918 663.575492Z
+        M681.834532 698.575053C691.499394 708.416557 707.312427 708.559753 717.153931 698.894891 726.995433 689.230029 727.138628 673.416994 717.473766 663.575492L367.478155 
+        307.183147C357.813293 297.341643 342.000258 297.198447 332.158756 306.863309 322.317252 316.528171 322.174057 332.341205 331.838918 342.182707L681.834532 698.575053Z</Geometry>
     <Geometry x:Key="IconConfirm">M464.247573 677.487844C474.214622 686.649009 489.665824 686.201589 499.086059 676.479029L798.905035 367.037897C808.503379 357.131511 808.253662 
         341.319802 798.347275 331.721455 788.44089 322.12311 772.62918 322.372828 763.030833 332.279215L463.211857 641.720346 498.050342 640.711531 316.608838 473.940461C306.453342 
         464.606084 290.653675 465.271735 281.319298 475.427234 271.984922 485.582733 272.650573 501.382398 282.806071 510.716774L464.247573 677.487844Z
@@ -221,8 +230,8 @@
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" />
                             </Grid>
                         </Border>
-                        <ContentPresenter x:Name="ExpandSite" Visibility="Collapsed" Grid.Row="1" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <Border x:Name="ExpandEdge" Visibility="Collapsed" Grid.Row="1" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}" />
+                        <ContentPresenter x:Name="ExpandSite" Visibility="Collapsed" Grid.Row="1" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Panel.ZIndex="2" />
+                        <Border x:Name="ExpandEdge" Visibility="Collapsed" Grid.Row="1" BorderThickness="1,0,1,1" BorderBrush="{TemplateBinding BorderBrush}" Background="{x:Static SystemColors.ControlBrush}" Panel.ZIndex="1" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="true">
@@ -288,6 +297,18 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="L20" TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="Foreground" Value="#008000" />
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--#endregion-->
 
     <!--#region Some Buttons-->
@@ -656,6 +677,8 @@
 
     <!--#region PathButton-->
     <Style x:Key="IconPathButton" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="#1296db"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -670,7 +693,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Button">
+                <ControlTemplate TargetType="{x:Type Button}">
                     <Grid >
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">

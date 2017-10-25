@@ -42,6 +42,16 @@ namespace FacadeHelper
 
         private int _currentZonePanelType = 51;
         public int CurrentZonePanelType { get { return _currentZonePanelType; } set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
+        private int _currentZoneLevel = 1;
+        private string _currentZoneDirection = "S";
+        private string _currentZoneSystem = "A";
+        private int _currentZoneIndex = 1;
+        private string _currentZoneCode = "Z-00-01-SA-01";
+        public int CurrentZoneLevel { get { return _currentZoneLevel; } set { _currentZoneLevel = value; OnPropertyChanged(nameof(CurrentZoneLevel)); } }
+        public string CurrentZoneDirection { get { return _currentZoneDirection; } set { _currentZoneDirection = value; OnPropertyChanged(nameof(CurrentZoneDirection)); } }
+        public string CurrentZoneSystem { get { return _currentZoneSystem; } set { _currentZoneSystem = value; OnPropertyChanged(nameof(CurrentZoneSystem)); } }
+        public int CurrentZoneIndex { get { return _currentZoneIndex; } set { _currentZoneIndex = value; OnPropertyChanged(nameof(CurrentZoneIndex)); } }
+        public string CurrentZoneCode { get { return _currentZoneCode; } set { _currentZoneCode = value; OnPropertyChanged(nameof(CurrentZoneCode)); } }
 
         private bool _isSearchRangeZone = true;
         private bool _isSearchRangePanel = true;
@@ -87,12 +97,16 @@ namespace FacadeHelper
 
             navZone.ItemsSource = Global.DocContent.ZoneList;
             datagridZones.ItemsSource = Global.DocContent.ZoneList;
+
+
+
         }
 
 
         #region 初始化 Command
 
         private RoutedCommand cmdModelInit = new RoutedCommand();
+        private RoutedCommand cmdOnElementClassify = new RoutedCommand();
         private RoutedCommand cmdElementClassify = new RoutedCommand();
         private RoutedCommand cmdElementResolve = new RoutedCommand();
 
@@ -110,6 +124,28 @@ namespace FacadeHelper
         private void InitializeCommand()
         {
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbOnElementClassify = new CommandBinding(cmdOnElementClassify, (sender, e) =>
+            {
+                expZoneCodeInput.IsExpanded = true;
+                if (Global.DocContent.CurrentZoneInfo.ZoneIndex == 0)
+                {
+                    CurrentZoneLevel = Global.DocContent.CurrentZoneInfo.ZoneLevel = 1;
+                    CurrentZoneDirection = Global.DocContent.CurrentZoneInfo.ZoneDirection = "S";
+                    CurrentZoneSystem = Global.DocContent.CurrentZoneInfo.ZoneSystem = "A";
+                    CurrentZoneIndex = Global.DocContent.CurrentZoneInfo.ZoneIndex = 1;
+                    CurrentZoneCode = Global.DocContent.CurrentZoneInfo.ZoneCode = "Z-00-01-SA-01";
+                }
+                else
+                {
+                    CurrentZoneLevel = Global.DocContent.CurrentZoneInfo.ZoneLevel;
+                    CurrentZoneDirection = Global.DocContent.CurrentZoneInfo.ZoneDirection;
+                    CurrentZoneSystem = Global.DocContent.CurrentZoneInfo.ZoneSystem;
+                    CurrentZoneIndex = Global.DocContent.CurrentZoneInfo.ZoneIndex;
+                    CurrentZoneCode = Global.DocContent.CurrentZoneInfo.ZoneCode;
+                }
+
+            },
+            (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbElementClassify = new CommandBinding(cmdElementClassify, cbElementClassify_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbElementResolve = new CommandBinding(cmdElementResolve,
                 (sender, e) =>
@@ -308,6 +344,7 @@ namespace FacadeHelper
             CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose, (sender, e) => { bnQuickStart.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
             bnModelInit.Command = cmdModelInit;
+            bnOnElementClassify.Command = cmdOnElementClassify;
             bnElementClassify.Command = cmdElementClassify;
             bnElementResolve.Command = cmdElementResolve;
             bnLoadData.Command = cmdLoadData;
@@ -320,6 +357,7 @@ namespace FacadeHelper
             ProcZone.CommandBindings.AddRange(new CommandBinding[]
             {
                 cbModelInit,
+                cbOnElementClassify,
                 cbElementClassify,
                 cbElementResolve,
                 cbNavZone,
@@ -376,6 +414,12 @@ namespace FacadeHelper
             //parentWin.Hide();
             //var _p_sel_list = uidoc.Selection.PickObjects(ObjectType.Element, "選擇同一分區的所有嵌板");
             //parentWin.Visibility = System.Windows.Visibility.Visible;
+            Global.DocContent.CurrentZoneInfo.ZoneLevel = CurrentZoneLevel;
+            Global.DocContent.CurrentZoneInfo.ZoneDirection = CurrentZoneDirection;
+            Global.DocContent.CurrentZoneInfo.ZoneSystem = CurrentZoneSystem;
+            Global.DocContent.CurrentZoneInfo.ZoneIndex = CurrentZoneIndex;
+            Global.DocContent.CurrentZoneInfo.ZoneCode = CurrentZoneCode = (txtZoneCode.Content as TextBlock).Text;
+            CurrentZoneInfo = Global.DocContent.CurrentZoneInfo;
 
             ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
             if (ids.Count == 0)
@@ -400,35 +444,26 @@ namespace FacadeHelper
             }
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前筛选 {panels.Count()} 幕墙嵌板");
             SelectedCurtainPanelList.Clear();
-            int errorcount_zonecode = 0;
-            CurrentZoneInfo = new ZoneInfoBase();
-            foreach (var _ele in panels)
-            {
-                CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
-                _gp.INF_Type = CurrentZonePanelType;
-                SelectedCurtainPanelList.Add(_gp);
-                Parameter _param = _ele.get_Parameter("分区区号");
-                if (!_param.HasValue)
-                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墙嵌板[{_ele.Id.IntegerValue}] 未设置分区区号");
-                else
-                {
-                    var _zc = _param.AsString();
-                    if (CurrentZoneInfo.ZoneIndex == 0)
-                        CurrentZoneInfo = new ZoneInfoBase(_zc);
-                    else if (CurrentZoneInfo.ZoneCode != _zc)
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - {++errorcount_zonecode}/ 幕墙嵌板[{_ele.Id.IntegerValue}] 分区区号{_zc}差异({CurrentZoneInfo.ZoneCode})");
-                    _gp.INF_HostZoneInfo = CurrentZoneInfo;
-                }
 
+            using (Transaction trans = new Transaction(doc, "Apply_Panels_ZoneCode"))
+            {
+                trans.Start();
+                foreach (var _ele in panels)
+                {
+                    CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
+                    _gp.INF_Type = CurrentZonePanelType;
+                    SelectedCurtainPanelList.Add(_gp);
+                    Parameter _param = _ele.get_Parameter("分区区号");
+                    if (_param == null)
+                    {
+                        MessageBox.Show($"当前选择的幕墙嵌板[{_gp.INF_ElementId}]嵌板未设置分区区号参数，请修改后继续。", "错误 - 幕墙嵌板 - 分区区号", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        return;
+                    }
+                    _param.Set(Global.DocContent.CurrentZoneInfo.ZoneCode);
+                }
+                trans.Commit();
             }
-            if (errorcount_zonecode == 0)
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前选择的{panels.Count()}幕墙嵌板均已设置相同的分区区号");
-            else if (MessageBox.Show(
-                $"当前选择的选择的{panels.Count()}幕墙嵌板设置的分区区号不相同，或有部分嵌板未设置分区区号参数等错误，是否继续？",
-                "错误 - 幕墙嵌板 - 分区区号",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Exclamation,
-                MessageBoxResult.No) == MessageBoxResult.No) return;
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前选择的{panels.Count()}幕墙嵌板的[分区区号]参数均已设置为[{Global.DocContent.CurrentZoneInfo.ZoneCode}].");
 
             datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
@@ -533,18 +568,18 @@ namespace FacadeHelper
         {
             ScheduleElementInfo currentsei = new ScheduleElementInfo();
             if (datagridScheduleElements.CurrentItem != null) currentsei = (ScheduleElementInfo)(datagridScheduleElements.CurrentItem);
-            
+
         }
     }
 
     public class IntToBoolConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (int)value == int.Parse(parameter.ToString());
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var data = (bool)value;
             if (data)
@@ -554,5 +589,19 @@ namespace FacadeHelper
             return -1;
         }
     }
+
+    public class VarToBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.Equals(parameter);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.Equals(true) ? parameter : System.Windows.Data.Binding.DoNothing;
+        }
+    }
+
 
 }

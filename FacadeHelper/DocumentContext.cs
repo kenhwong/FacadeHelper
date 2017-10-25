@@ -91,6 +91,8 @@ namespace FacadeHelper
         [NonSerializableMember] public ILookup<string, ScheduleElementInfo> Lookup_ScheduleElements { get; set; }
         [NonSerializableMember] public List<ParameterHelper.RawProjectParameterInfo> ParameterInfoList { get; set; } = new List<ParameterHelper.RawProjectParameterInfo>();
 
+        public ZoneInfoBase CurrentZoneInfo = new ZoneInfoBase();
+
         //public SQLContext CurrentDBContext;
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -173,6 +175,7 @@ namespace FacadeHelper
 
         public static List<ElementClass> ElementClassList = new List<ElementClass>();
         public static int[][] TaskLevelClass;
+        
     }
 
 
