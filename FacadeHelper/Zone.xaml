@@ -57,6 +57,26 @@
                 </WrapPanel>
             </GroupBox>
 
+            <StackPanel Margin="35,5" VerticalAlignment="Center" Background="{x:Static SystemColors.ControlBrush}">
+                <ProgressBar Width="300" Height="30" Value="100" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="10,0" >
+                    <ProgressBar.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </ProgressBar.RenderTransform>
+                    <ProgressBar.Foreground>
+                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                            <GradientStop Color="#FF24EE27" Offset="0"/>
+                            <GradientStop Color="#FF5434AC" Offset="0.5"/>
+                            <GradientStop Color="#FFB371EA" Offset="1"/>
+                        </LinearGradientBrush>
+                    </ProgressBar.Foreground>
+                </ProgressBar>
+            </StackPanel>
+
             <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="實時進度" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
         <Popup x:Name="popQS" Width="400" Height="520" HorizontalOffset="0" VerticalOffset="10" AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
@@ -104,7 +124,7 @@
             </StackPanel>
             <StackPanel DockPanel.Dock="Right" Orientation="Vertical" VerticalAlignment="Bottom" Width="200">
                 <Grid Margin="0">
-                    <ProgressBar x:Name="progbarPanel" Height="15" />
+                    <ProgressBar x:Name="progbarPanel" Height="15" Value="20" />
                     <TextBlock Foreground="#808080" FontSize="10" FontWeight="Heavy"  HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock.Text>
                             <MultiBinding StringFormat="{}{0} / {1}">
