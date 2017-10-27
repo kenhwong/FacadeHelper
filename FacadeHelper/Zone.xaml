@@ -19,9 +19,12 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <DockPanel Margin="12,10,10,10">
-        <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="SYSTEM" DockPanel.Dock="Left" Padding="0,5">
+    <DockPanel Margin="10">
+        <DockPanel DockPanel.Dock="Top" Margin="-10" LastChildFill="False" Background="{x:Static SystemColors.ControlBrush}">
+            <DockPanel.Effect>
+                <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
+            </DockPanel.Effect>
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="SYSTEM" DockPanel.Dock="Left" Padding="0,5" Margin="20,10,10,10">
                 <WrapPanel>
                     <ToggleButton x:Name="bnQuickStart" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" Style="{DynamicResource CommonToggleButton}" IsChecked="False">
                         <ToggleButton.Triggers>
@@ -37,50 +40,29 @@
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" ToolTip="模型初始" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
-
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5" Margin="20,0,0,0">
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
                 <WrapPanel>
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnOnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconResolve}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="DATA" DockPanel.Dock="Left" Padding="0,5" Margin="20,0,0,0">
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="DATA" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
                 <WrapPanel>
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" ToolTip="加载数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" ToolTip="保存修改" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApplyParamData}" x:Name="bnApplyParameters" ToolTip="保存参数" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="EXPORT" DockPanel.Dock="Left" Padding="0,5" Margin="20,0,0,0">
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="EXPORT" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
                 <WrapPanel>
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" ToolTip="导出计划" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
 
-            <StackPanel Margin="35,5" VerticalAlignment="Center" Background="{x:Static SystemColors.ControlBrush}">
-                <ProgressBar Width="300" Height="30" Value="100" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="10,0" >
-                    <ProgressBar.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </ProgressBar.RenderTransform>
-                    <ProgressBar.Foreground>
-                        <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                            <GradientStop Color="#FF24EE27" Offset="0"/>
-                            <GradientStop Color="#FF5434AC" Offset="0.5"/>
-                            <GradientStop Color="#FFB371EA" Offset="1"/>
-                        </LinearGradientBrush>
-                    </ProgressBar.Foreground>
-                </ProgressBar>
-            </StackPanel>
-
-            <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="實時進度" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="實時進度" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10" />
         </DockPanel>
         <Popup x:Name="popQS" Width="400" Height="520" HorizontalOffset="0" VerticalOffset="10" AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
-               StaysOpen="True" IsOpen="{Binding ElementName=bnQuickStart, Path=IsChecked}" PlacementTarget="{Binding ElementName=bnQuickStart}" Placement="Bottom">
+               StaysOpen="True" IsOpen="{Binding ElementName=bnQuickStart, Path=IsChecked}" PlacementTarget="{Binding ElementName=bnQuickStart}" Placement="Bottom" Visibility="Collapsed">
             <Canvas Name="Main">
                 <Canvas.RenderTransform>
                     <RotateTransform x:Name="TrFQSPop" />
@@ -115,6 +97,22 @@
             </Canvas>
         </Popup>
 
+        <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
+            <DockPanel DockPanel.Dock="Left" Margin="10" LastChildFill="False">
+                <WrapPanel DockPanel.Dock="Top" Margin="0,10,0,0">
+                    <Label Content="当前处理：" />
+                </WrapPanel>
+                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Left">
+                    <ProgressBar Width="500" Height="10" Value="88" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
+                </StackPanel>
+                <WrapPanel DockPanel.Dock="Top" Margin="0,10,0,0">
+                    <Label Content="总体进度：" />
+                </WrapPanel>
+                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Left">
+                    <ProgressBar Width="500" Height="10" Value="100" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
+                </StackPanel>
+            </DockPanel>
+        </DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
             <StackPanel DockPanel.Dock="Left">
                 <Label x:Name="txtProcessInfo" />
