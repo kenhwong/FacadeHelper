@@ -151,7 +151,14 @@ namespace FacadeHelper
                 (sender, e) =>
                 {
                     Global.DocContent.ScheduleElementList.Clear();
-                    foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveZone(uidoc, zn, ref listInformation, ref txtProcessInfo);
+                    foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveZone(uidoc, zn, 
+                        ref txtCurrentProcessElement,
+                        ref txtCurrentProcessOperation,
+                        ref progbarCurrentProcess,
+                        ref txtGlobalProcessElement,
+                        ref txtGlobalProcessOperation,
+                        ref progbarGlobalProcess,
+                        ref listInformation, ref txtProcessInfo);
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -178,7 +185,7 @@ namespace FacadeHelper
                             MessageBoxResult.OK) == MessageBoxResult.OK)
                         {
                             ZoneHelper.FnContentDeserialize(ofd.FileName);
-                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 加载新的数据文件{ofd.FileName}.");
+                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - LOAD: FILE, {ofd.FileName}.");
                         }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -191,8 +198,8 @@ namespace FacadeHelper
                         MessageBoxResult.OK) == MessageBoxResult.OK)
                     {
                         ZoneHelper.FnContentSerializeWithBackup();
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 备份数据文件 {Global.DataFile}.bak.");
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 更新数据文件 {Global.DataFile}.");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: FILE, {Global.DataFile}.bak.");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - UPDATE: FILE, {Global.DataFile}.");
                     }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -262,8 +269,11 @@ namespace FacadeHelper
                         using (Transaction trans = new Transaction(doc, "Apply_Parameters_CurtainPanels"))
                         {
                             trans.Start();
-                            progbarPanel.Maximum = Global.DocContent.CurtainPanelList.Count;
-                            progbarPanel.Value = 0;
+                            progbarGlobalProcess.Maximum = 100;
+                            progbarGlobalProcess.Value = 0;
+                            progbarCurrentProcess.Maximum = Global.DocContent.CurtainPanelList.Count;
+                            progbarCurrentProcess.Value = 0;
+
                             Global.DocContent.CurtainPanelList.ForEach(p =>
                             {
                                 Element _element = doc.GetElement(new ElementId(p.INF_ElementId));
@@ -277,20 +287,28 @@ namespace FacadeHelper
 
                                 if (IsRealTimeProgress)
                                 {
-                                    txtProcessInfo.Content = $"當前處理進度：[分區：{p.INF_ZoneCode}] - [幕墻嵌板：{p.INF_ElementId}, {p.INF_Code})]";
-                                    progbarPanel.Value++;
+                                    txtCurrentProcessElement.Content = $"[分区-{p.INF_ZoneCode}].[嵌板-{p.INF_ElementId}, {p.INF_Code}]";
+                                    txtCurrentProcessOperation.Content = "参数写入";
+                                    progbarCurrentProcess.Value++;
+                                    progbarGlobalProcess.Value += 50d / Global.DocContent.CurtainPanelList.Count;
+                                    txtGlobalProcessElement.Content = $"[分区-{p.INF_ZoneCode}]";
+                                    txtGlobalProcessOperation.Content = $"嵌板";
                                     System.Windows.Forms.Application.DoEvents();
                                 }
                             });
                             trans.Commit();
                         }
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：嵌板 [{Global.DocContent.CurtainPanelList.Count}] 參數 [{Global.DocContent.CurtainPanelList.Count * 7}]");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: PARAM, P/{Global.DocContent.CurtainPanelList.Count}, Param#{Global.DocContent.CurtainPanelList.Count * 7}");
 
                         using (Transaction trans = new Transaction(doc, "Apply_Parameters_ScheduleElements"))
                         {
                             trans.Start();
-                            progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
-                            progbarElement.Value = 0;
+                            //progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
+                            //progbarElement.Value = 0;
+                            progbarGlobalProcess.Value = 50;
+                            progbarCurrentProcess.Maximum = Global.DocContent.ScheduleElementList.Count;
+                            progbarCurrentProcess.Value = 0;
+
                             Global.DocContent.ScheduleElementList.ForEach(ele =>
                             {
                                 Element _element = doc.GetElement(new ElementId(ele.INF_ElementId));
@@ -304,14 +322,20 @@ namespace FacadeHelper
 
                                 if (IsRealTimeProgress)
                                 {
-                                    txtProcessInfo.Content = $"當前處理進度：[嵌板：{ele.INF_HostCurtainPanel.INF_Code}] - [明細構件：{ele.INF_ElementId}, {ele.INF_Code})]";
                                     progbarElement.Value++;
+
+                                    txtCurrentProcessElement.Content = $"[嵌板-{ele.INF_HostCurtainPanel.INF_Code}].[构件-{ele.INF_ElementId}, {ele.INF_Code}]";
+                                    txtCurrentProcessOperation.Content = "参数写入";
+                                    progbarCurrentProcess.Value++;
+                                    progbarGlobalProcess.Value += 50d / Global.DocContent.CurtainPanelList.Count;
+                                    txtGlobalProcessElement.Content = $"[分区-{ele.INF_ZoneCode}]";
+                                    txtGlobalProcessOperation.Content = $"构件";
                                     System.Windows.Forms.Application.DoEvents();
                                 }
                             });
                             trans.Commit();
                         }
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 寫入：明細構件 [{Global.DocContent.ScheduleElementList.Count}] 參數 [{Global.DocContent.ScheduleElementList.Count * 7}]");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: PARAM, E/{Global.DocContent.ScheduleElementList.Count}, Param#{Global.DocContent.ScheduleElementList.Count * 7}");
                     }
                     //catch (Exception ex)
                     {
@@ -406,7 +430,7 @@ namespace FacadeHelper
                 navPanels.SelectedItem = null;
             }
         }
-
+        
 
         #region Command -- bnElementClassify : 嵌板和构件归类
         private void cbElementClassify_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -424,10 +448,10 @@ namespace FacadeHelper
             ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
             if (ids.Count == 0)
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前未选择构件。");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - ERR: NONE SELECTED, E/ALL.");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前选择 {ids.Count} 构件");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - SELECT: ELE/{ids.Count}.");
             FilteredElementCollector panelcollector = new FilteredElementCollector(doc, ids);
             LogicalAndFilter cwpanel_InstancesFilter =
                 new LogicalAndFilter(
@@ -439,10 +463,10 @@ namespace FacadeHelper
 
             if (panels.Count() == 0)
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前未选择有效的幕墙嵌板。");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - ERR: NONE SELECTED, P/VALID.");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前筛选 {panels.Count()} 幕墙嵌板");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - SELECT: P/{panels.Count()}.");
             SelectedCurtainPanelList.Clear();
 
             using (Transaction trans = new Transaction(doc, "Apply_Panels_ZoneCode"))
@@ -463,7 +487,7 @@ namespace FacadeHelper
                 }
                 trans.Commit();
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 当前选择的{panels.Count()}幕墙嵌板的[分区区号]参数均已设置为[{Global.DocContent.CurrentZoneInfo.ZoneCode}].");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
 
             datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
@@ -483,7 +507,7 @@ namespace FacadeHelper
                 selectset.AddSet(uidoc.Selection.GetElementIds());
                 doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
                 trans.Commit();
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 选择的{selectset.GetElementIds().Count}幕墙嵌板已保存至选择集[{CurrentZoneInfo.FilterName}]");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: SECECTSET, SSET/{CurrentZoneInfo.FilterName}, P/{selectset.GetElementIds().Count}");
             }
 
             MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));
@@ -527,7 +551,7 @@ namespace FacadeHelper
                     MessageBoxResult.OK) == MessageBoxResult.OK)
                 {
                     ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
-                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - 加载新的进度数据文件 {ofd.FileName}.");
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - L: {ofd.FileName}.");
                 }
 
         }
@@ -603,5 +627,18 @@ namespace FacadeHelper
         }
     }
 
+    public class PrefixConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null) return false;
+            return (value as string).StartsWith(parameter as string);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value.Equals(true) ? parameter : System.Windows.Data.Binding.DoNothing;
+        }
+    }
 
 }

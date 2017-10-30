@@ -59,7 +59,7 @@
                 </WrapPanel>
             </GroupBox>
 
-            <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="實時進度" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10" />
+            <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="实时" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10" />
         </DockPanel>
         <Popup x:Name="popQS" Width="400" Height="520" HorizontalOffset="0" VerticalOffset="10" AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
                StaysOpen="True" IsOpen="{Binding ElementName=bnQuickStart, Path=IsChecked}" PlacementTarget="{Binding ElementName=bnQuickStart}" Placement="Bottom" Visibility="Collapsed">
@@ -97,20 +97,32 @@
             </Canvas>
         </Popup>
 
-        <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
+        <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="True">
             <DockPanel DockPanel.Dock="Left" Margin="10" LastChildFill="False">
                 <WrapPanel DockPanel.Dock="Top" Margin="0,10,0,0">
                     <Label Content="当前处理：" />
+                    <Label x:Name="txtCurrentProcessElement" Style="{StaticResource CCyanLabel}" Content="无" />
+                    <Label Content="操作：" />
+                    <Label x:Name="txtCurrentProcessOperation" Style="{StaticResource CCyanLabel}" Content="无" />
                 </WrapPanel>
                 <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Left">
-                    <ProgressBar Width="500" Height="10" Value="88" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
+                    <ProgressBar x:Name="progbarCurrentProcess" Width="500" Height="10" Value="0" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
                 </StackPanel>
                 <WrapPanel DockPanel.Dock="Top" Margin="0,10,0,0">
-                    <Label Content="总体进度：" />
+                    <Label Content="全局处理：" />
+                    <Label x:Name="txtGlobalProcessElement" Style="{StaticResource CCyanLabel}" Content="无" />
+                    <Label Content="操作：" />
+                    <Label x:Name="txtGlobalProcessOperation" Style="{StaticResource CCyanLabel}" Content="无" />
                 </WrapPanel>
                 <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Left">
-                    <ProgressBar Width="500" Height="10" Value="100" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
+                    <ProgressBar x:Name="progbarGlobalProcess" Width="500" Height="10" Value="0" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
                 </StackPanel>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Left" Margin="10" LastChildFill="True">
+                <ScrollViewer>
+                    <ListBox x:Name="listInformation" MaxHeight="94" SelectionChanged="listInformation_SelectionChanged" 
+                             Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
+                </ScrollViewer>
             </DockPanel>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
@@ -393,9 +405,6 @@
                     </Expander>
 
                     <Expander ExpandDirection="Down"  Header="当前数据处理状态" DockPanel.Dock="Top" IsExpanded="True" Margin="5" Padding="0">
-                        <ScrollViewer>
-                            <ListBox x:Name="listInformation" MinHeight="100" SelectionChanged="listInformation_SelectionChanged" Style="{DynamicResource MonitorScreen}" />
-                        </ScrollViewer>
                     </Expander>
                 </DockPanel>
             </DockPanel>
