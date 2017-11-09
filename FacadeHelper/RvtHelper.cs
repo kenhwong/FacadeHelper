@@ -702,7 +702,7 @@ namespace FacadeHelper
             ref ListBox listinfo)
         {
             var doc = uidoc.Document;
-            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - F: KEY/{querystring}...");
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - F: KEY/{querystring}...");
 
             if (hasrangezone && DateTime.TryParse(querystring, out DateTime querydatetime))
                 relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneStart.Equals(querydatetime) || z.ZoneFinish.Equals(querydatetime)));
@@ -770,7 +770,7 @@ namespace FacadeHelper
             foreach (CurtainPanelInfo _pi in _panelsinzone)
             {
                 processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: P/{_pi.INF_ElementId}...");
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: P/{_pi.INF_ElementId}...");
                 _pi.INF_Index = pindex;
                 _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
                 _pi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * (pindex - 1));
@@ -812,7 +812,7 @@ namespace FacadeHelper
             foreach (MullionInfo _mi in _mullionsinzone.Where(m => m.INF_Type == 8))
             {
                 processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [V 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - CALC: M/V{_mi.INF_ElementId}...");
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: M/V{_mi.INF_ElementId}...");
                 _mi.INF_Index = pindex;
                 _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{tindex:0000}";
 
@@ -825,7 +825,7 @@ namespace FacadeHelper
             {
                 _mi.INF_Type = 7; //临时处理
                 processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [H 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - CALC: M/H{_mi.INF_ElementId}...");
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: M/H{_mi.INF_ElementId}...");
                 _mi.INF_Index = pindex;
                 _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{tindex:0000}";
 
@@ -863,14 +863,14 @@ namespace FacadeHelper
             var zsi = Global.DocContent.ZoneScheduleLevelList.FirstOrDefault(zs => zs.ZoneUniversalCode == zone.ZoneCode);
 
             List<ScheduleElementInfo> p_ScheduleElementList = new List<ScheduleElementInfo>();
-            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - CALC: Z/{zone.ZoneCode}.");
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: Z/{zone.ZoneCode}.");
             System.Windows.Forms.Application.DoEvents();
 
             #region CurtainPanelList 排序
             switch (zone.ZoneDirection)
             {
                 case "S":
-                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}, X+, Z+...");
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, X+, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
@@ -878,7 +878,7 @@ namespace FacadeHelper
                     .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
                     break;
                 case "N":
-                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}, X-, Z+...");
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, X-, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
@@ -886,7 +886,7 @@ namespace FacadeHelper
                     .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
                     break;
                 case "E":
-                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}, Y+, Z+...");
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, Y+, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
@@ -894,7 +894,7 @@ namespace FacadeHelper
                     .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
                     break;
                 case "W":
-                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}, Y-, Z+...");
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, Y-, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
                     .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
@@ -964,7 +964,7 @@ namespace FacadeHelper
                                 _sei.INF_Type = -1;
                                 _haserror = true;
                                 _sei.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
-                                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
                                 uidoc.Selection.Elements.Add(__element);
                                 continue;
                             }
@@ -974,7 +974,7 @@ namespace FacadeHelper
                             _sei.INF_Type = -2;
                             _haserror = true;
                             _sei.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
-                            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
                             uidoc.Selection.Elements.Add(__element);
                             continue;
                         }
@@ -984,7 +984,7 @@ namespace FacadeHelper
                         _sei.INF_Type = -3;
                         _haserror = true;
                         _sei.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
-                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
                         uidoc.Selection.Elements.Add(__element);
                         continue;
                     }
@@ -1057,7 +1057,7 @@ namespace FacadeHelper
                     var sfe = SelectionFilterElement.Create(doc, $"ERROR-{zone.ZoneCode}");
                     sfe.AddSet(uidoc.Selection.GetElementIds());
                     trans.Commit();
-                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: Z/[{zone.ZoneCode}, ERR#{zone.ZoneCode}.");
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: Z/[{zone.ZoneCode}, ERR#{zone.ZoneCode}.");
                 }
             }
             #endregion
@@ -1078,7 +1078,7 @@ namespace FacadeHelper
                 switch (zone.ZoneDirection)
                 {
                     case "S":
-                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, X+, Z+...");
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, X+, Z+...");
                         System.Windows.Forms.Application.DoEvents();
                         _sesinzone[lvgroup.Key] = lvgroup
                             .OrderBy(m1 => m1.INF_TaskSubLevel)
@@ -1088,7 +1088,7 @@ namespace FacadeHelper
                             .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
                         break;
                     case "N":
-                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, X-, Z+...");
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, X-, Z+...");
                         System.Windows.Forms.Application.DoEvents();
                         _sesinzone[lvgroup.Key] = lvgroup
                             .OrderByDescending(m1 => m1.INF_TaskSubLevel)
@@ -1098,7 +1098,7 @@ namespace FacadeHelper
                             .ThenByDescending(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
                         break;
                     case "E":
-                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, Y+, Z+...");
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, Y+, Z+...");
                         System.Windows.Forms.Application.DoEvents();
                         _sesinzone[lvgroup.Key] = lvgroup
                             .OrderByDescending(m1 => m1.INF_TaskSubLevel)
@@ -1108,7 +1108,7 @@ namespace FacadeHelper
                             .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Y / Constants.RVTPrecision));
                         break;
                     case "W":
-                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, Y-, Z+...");
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{lvgroup.Key}, Y-, Z+...");
                         System.Windows.Forms.Application.DoEvents();
                         _sesinzone[lvgroup.Key] = lvgroup
                             .OrderByDescending(m1 => m1.INF_TaskSubLevel)
@@ -1127,7 +1127,7 @@ namespace FacadeHelper
                     eindexinzone++;
                     ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}-{eindexinzone:0000}";//构件编码
                 }
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:hh:MM:ss} - CODE: Z/{zone.ZoneCode}@{lvgroup.Key}, E/{_sesinzone[lvgroup.Key].Count()}...");
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CODE: Z/{zone.ZoneCode}@{lvgroup.Key}, E/{_sesinzone[lvgroup.Key].Count()}...");
             }
             Global.DocContent.ScheduleElementList.AddRange(p_ScheduleElementList);
             #endregion

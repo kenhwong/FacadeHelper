@@ -151,7 +151,7 @@ namespace FacadeHelper
                 (sender, e) =>
                 {
                     Global.DocContent.ScheduleElementList.Clear();
-                    foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveZone(uidoc, zn, 
+                    foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveZone(uidoc, zn,
                         ref txtCurrentProcessElement,
                         ref txtCurrentProcessOperation,
                         ref progbarCurrentProcess,
@@ -185,7 +185,7 @@ namespace FacadeHelper
                             MessageBoxResult.OK) == MessageBoxResult.OK)
                         {
                             ZoneHelper.FnContentDeserialize(ofd.FileName);
-                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - LOAD: FILE, {ofd.FileName}.");
+                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LOAD: FILE, {ofd.FileName}.");
                         }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -198,8 +198,8 @@ namespace FacadeHelper
                         MessageBoxResult.OK) == MessageBoxResult.OK)
                     {
                         ZoneHelper.FnContentSerializeWithBackup();
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: FILE, {Global.DataFile}.bak.");
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - UPDATE: FILE, {Global.DataFile}.");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: FILE, {Global.DataFile}.bak.");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - UPDATE: FILE, {Global.DataFile}.");
                     }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -298,7 +298,7 @@ namespace FacadeHelper
                             });
                             trans.Commit();
                         }
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: PARAM, P/{Global.DocContent.CurtainPanelList.Count}, Param#{Global.DocContent.CurtainPanelList.Count * 7}");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, P/{Global.DocContent.CurtainPanelList.Count}, Param#{Global.DocContent.CurtainPanelList.Count * 7}");
 
                         using (Transaction trans = new Transaction(doc, "Apply_Parameters_ScheduleElements"))
                         {
@@ -335,7 +335,7 @@ namespace FacadeHelper
                             });
                             trans.Commit();
                         }
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: PARAM, E/{Global.DocContent.ScheduleElementList.Count}, Param#{Global.DocContent.ScheduleElementList.Count * 7}");
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, E/{Global.DocContent.ScheduleElementList.Count}, Param#{Global.DocContent.ScheduleElementList.Count * 7}");
                     }
                     //catch (Exception ex)
                     {
@@ -430,7 +430,7 @@ namespace FacadeHelper
                 navPanels.SelectedItem = null;
             }
         }
-        
+
 
         #region Command -- bnElementClassify : 嵌板和构件归类
         private void cbElementClassify_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -448,10 +448,10 @@ namespace FacadeHelper
             ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
             if (ids.Count == 0)
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - ERR: NONE SELECTED, E/ALL.");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NONE SELECTED, E/ALL.");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - SELECT: ELE/{ids.Count}.");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: ELE/{ids.Count}.");
             FilteredElementCollector panelcollector = new FilteredElementCollector(doc, ids);
             LogicalAndFilter cwpanel_InstancesFilter =
                 new LogicalAndFilter(
@@ -459,14 +459,14 @@ namespace FacadeHelper
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
             var panels = panelcollector
                 .WherePasses(cwpanel_InstancesFilter)
-                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系統嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板");
+                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板");
 
             if (panels.Count() == 0)
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - ERR: NONE SELECTED, P/VALID.");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NONE SELECTED, P/VALID.");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - SELECT: P/{panels.Count()}.");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: P/{panels.Count()}.");
             SelectedCurtainPanelList.Clear();
 
             using (Transaction trans = new Transaction(doc, "Apply_Panels_ZoneCode"))
@@ -487,7 +487,7 @@ namespace FacadeHelper
                 }
                 trans.Commit();
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
 
             datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
@@ -507,7 +507,7 @@ namespace FacadeHelper
                 selectset.AddSet(uidoc.Selection.GetElementIds());
                 doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
                 trans.Commit();
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - WRITE: SECECTSET, SSET/{CurrentZoneInfo.FilterName}, P/{selectset.GetElementIds().Count}");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: SECECTSET, SSET/{CurrentZoneInfo.FilterName}, P/{selectset.GetElementIds().Count}");
             }
 
             MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));
@@ -551,9 +551,27 @@ namespace FacadeHelper
                     MessageBoxResult.OK) == MessageBoxResult.OK)
                 {
                     ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
-                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:hh:MM:ss} - L: {ofd.FileName}.");
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - L: {ofd.FileName}.");
                 }
 
+            //统计
+            FilteredElementCollector panelcollector = new FilteredElementCollector(doc);
+            LogicalAndFilter cwpanel_InstancesFilter =
+                new LogicalAndFilter(
+                    new ElementClassFilter(typeof(FamilyInstance)),
+                    new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
+            var panels = panelcollector
+                .WherePasses(cwpanel_InstancesFilter)
+                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板");
+            var syspanels = panelcollector
+                .WherePasses(cwpanel_InstancesFilter)
+                .Where(x => (x as FamilyInstance).Symbol.Family.Name == "系统嵌板");
+
+            int nele = 0;
+            int nsysele = 0;
+            foreach (var _p in panels) nele += (_p as Autodesk.Revit.DB.Panel).GetSubComponentIds().Count;
+            foreach (var _p in syspanels) nsysele += (_p as Autodesk.Revit.DB.Panel).GetSubComponentIds().Count;
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: TOTAL, P/{panels.Count():N0}, E/{nele:N0}, SYS-P/{syspanels.Count():N0}, SYS-E/{nsysele:N0}");
         }
         #endregion
 
