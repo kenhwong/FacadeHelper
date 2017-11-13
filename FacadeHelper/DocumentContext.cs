@@ -77,7 +77,7 @@ namespace FacadeHelper
     {
         //private ObservableCollection<ZoneInfoBase> _zoneList = new ObservableCollection<ZoneInfoBase>();
         public List<ZoneLayerInfo> ZoneScheduleSimpleList { get; set; } = new List<ZoneLayerInfo>();
-        public List<ZoneScheduleLayerInfo> ZoneScheduleLayerList { get; set; } = new List<ZoneScheduleLayerInfo>(); //Obsoleted property.
+        //public List<ZoneScheduleLayerInfo> ZoneScheduleLayerList { get; set; } = new List<ZoneScheduleLayerInfo>(); //Obsoleted property.
         public List<ZoneLayerInfo> ZoneLayerList { get; set; } = new List<ZoneLayerInfo>();
 
         public List<CurtainPanelInfo> CurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
@@ -87,6 +87,12 @@ namespace FacadeHelper
         public List<DeepElementInfo> DeepElementList { get; set; } = new List<DeepElementInfo>();
         public ObservableCollection<ZoneInfoBase> ZoneList { get; set; } = new ObservableCollection<ZoneInfoBase>();
         public List<MullionInfo> MullionList { get; set; } = new List<MullionInfo>();
+
+        public List<ExternalElementData> ExternalElementDataList { get; set; } = new List<ExternalElementData>();
+        public List<CurtainPanelInfo> ExternalCurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
+        public List<ScheduleElementInfo> ExternalScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
+        public List<CurtainPanelInfo> FullCurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
+        public List<ScheduleElementInfo> FullScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
 
         [NonSerializableMember] public ILookup<string, CurtainPanelInfo> Lookup_CurtainPanels { get; set; }
         [NonSerializableMember] public ILookup<string, ScheduleElementInfo> Lookup_ScheduleElements { get; set; }
@@ -135,6 +141,15 @@ namespace FacadeHelper
             Global.ElementClassList.Add(new ElementClass { EClassIndex = 94, EClassName = "配電", IsScheduled = false });
             Global.TaskLevelClass = new int[][] { new int[] { 5, 6, 7, 8 }, new int[] { 1, 3, 4, 10, 21, 22 }, new int[] { 17, 18 } };
         }
+    }
+
+    [SerializableType]
+    public class ExternalElementData
+    {
+        public int ExternalId { get; set; }
+        public string ExternalFileName { get; set; }
+        public List<CurtainPanelInfo> CurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
+        public List<ScheduleElementInfo> ScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
     }
 
     [SerializableType]

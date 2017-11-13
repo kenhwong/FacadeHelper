@@ -80,7 +80,7 @@ namespace FacadeHelper
                 INF_ZoneCode = zonecode.ToUpper();
                 //Z-00-99-AA-99
                 var _array_field = INF_ZoneCode.Split('-');
-                INF_ZoneType = int.Parse(_array_field[1]);
+                //INF_ZoneLayer = int.Parse(_array_field[1]);
                 INF_System = _array_field[3].Substring(1, 1);
                 INF_Direction = _array_field[3].Substring(0, 1);
                 INF_Level = int.Parse(_array_field[2]);
@@ -144,7 +144,7 @@ namespace FacadeHelper
             INF_ZoneCode = INF_ZoneCode.ToUpper();
             //Z-00-99-AA-99
             var _array_field = INF_ZoneCode.Split('-');
-            INF_ZoneType = int.Parse(_array_field[1]);
+            INF_ZoneLayer = int.Parse(_array_field[1]);
             INF_System = _array_field[3].Substring(1, 1);
             INF_Direction = _array_field[3].Substring(0, 1);
             INF_Level = int.Parse(_array_field[2]);
@@ -185,6 +185,7 @@ namespace FacadeHelper
     [SerializableType]
     public abstract class ElementInfoBase : INotifyPropertyChanged
     {
+        private int _inf_ExternalLinkId = 0;
         private int _inf_ElementId;
         private string _inf_Name;
         private string _inf_System;
@@ -201,7 +202,7 @@ namespace FacadeHelper
         private ZoneInfoBase _inf_HostZoneInfo;
         private int _inf_ZoneIndex;
         private string _inf_ZoneCode;
-        private int _inf_ZoneType;
+        private int _inf_ZoneLayer;
         private int _inf_Index;
         private string _inf_Code;
         private string _inf_Error_info;
@@ -215,6 +216,7 @@ namespace FacadeHelper
         private string _inf_TaskDuration;
         private uint _inf_TaskID_PreProcess;
 
+        public int INF_ExternalLinkId { get { return _inf_ExternalLinkId; } set { _inf_ExternalLinkId = value; OnPropertyChanged(nameof(INF_ExternalLinkId)); } }
         public int INF_ElementId { get { return _inf_ElementId; } set { _inf_ElementId = value; OnPropertyChanged(nameof(INF_ElementId)); } }
         public string INF_Name { get { return _inf_Name; } set { _inf_Name = value; OnPropertyChanged(nameof(INF_Name)); } }
         public string INF_System { get { return _inf_System; } set { _inf_System = value; OnPropertyChanged(nameof(INF_System)); } }
@@ -231,7 +233,7 @@ namespace FacadeHelper
         public ZoneInfoBase INF_HostZoneInfo { get { return _inf_HostZoneInfo; } set { _inf_HostZoneInfo = value; OnPropertyChanged(nameof(INF_HostZoneInfo)); } }
         public int INF_ZoneIndex { get { return _inf_ZoneIndex; } set { _inf_ZoneIndex = value; OnPropertyChanged(nameof(INF_ZoneIndex)); } }
         public string INF_ZoneCode { get { return _inf_ZoneCode; } set { _inf_ZoneCode = value; OnPropertyChanged(nameof(INF_ZoneCode)); } }
-        public int INF_ZoneType { get { return _inf_ZoneType; } set { _inf_ZoneType = value; OnPropertyChanged(nameof(INF_ZoneType)); } }
+        public int INF_ZoneLayer { get { return _inf_ZoneLayer; } set { _inf_ZoneLayer = value; OnPropertyChanged(nameof(INF_ZoneLayer)); } }
         public int INF_Index { get { return _inf_Index; } set { _inf_Index = value; OnPropertyChanged(nameof(INF_Index)); } }
         public string INF_Code { get { return _inf_Code; } set { _inf_Code = value; OnPropertyChanged(nameof(INF_Code)); } }
         public string INF_ErrorInfo { get { return _inf_Error_info; } set { _inf_Error_info = value; OnPropertyChanged(nameof(INF_ErrorInfo)); } }

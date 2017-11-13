@@ -584,43 +584,6 @@ namespace FacadeHelper
     public static class ZoneHelper
     {
         /// <summary>
-        /// 加载ACADE导出的分区进度数据 - 4D简单模型
-        /// </summary>
-        /// <param name="ZoneScheduleDataFile">进度数据文件(*.txt)</param>
-        #region 加载ACADE导出的分区进度数据 - 4D简单模型
-        public static void FnLoadSimpleZoneScheduleData(string ZoneScheduleDataFile)
-        {
-            Global.DocContent.ZoneScheduleSimpleList.Clear();
-            using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
-            {
-                string dataline;
-                reader.ReadLine();
-                while ((dataline = reader.ReadLine()) != null)
-                {
-                    string[] rowdata = dataline.Split('\t');
-                    if (int.TryParse(rowdata[2].Substring(2, 2), out int lv2))
-                        Global.DocContent.ZoneScheduleSimpleList.Add(new ZoneLayerInfo
-                        {
-                            ZoneCode = Regex.Replace(rowdata[2], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase),
-                            ZoneLayer = lv2,
-                            ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}"),
-                            ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}"),
-                        });
-                    if (int.TryParse(rowdata[5].Substring(2, 2), out int lv5))
-                        Global.DocContent.ZoneScheduleSimpleList.Add(new ZoneLayerInfo
-                        {
-                            ZoneCode = Regex.Replace(rowdata[5], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase),
-                            ZoneLayer = lv5,
-                            ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}"),
-                            ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}"),
-                        });
-                }
-            }
-        }
-
-        #endregion
-
-        /// <summary>
         /// 加载ACADE导出的分区进度数据 - 4D设计模型
         /// </summary>
         /// <param name="ZoneScheduleDataFile">进度数据文件(*.txt)</param>
@@ -715,6 +678,35 @@ namespace FacadeHelper
 
         #endregion
 
+        #region 加载外部链接项目的构件数据
+        public static void FnLinkedElementsDeserialize(string[] linkfiles)
+        {
+            //Global.DocContent.CurtainPanelList.ForEach(p => p.INF_ExternalLinkId = 0);
+            //Global.DocContent.ScheduleElementList.ForEach(e => e.INF_ExternalLinkId = 0);
+            Global.DocContent.FullCurtainPanelList.AddRange(Global.DocContent.CurtainPanelList);
+            Global.DocContent.FullScheduleElementList.AddRange(Global.DocContent.ScheduleElementList);
+
+            for (int i = 0; i < linkfiles.Length; i++)
+            {
+                if (File.Exists(linkfiles[i]))
+                {
+                    using (Stream stream = new FileStream(linkfiles[i], FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        var extdata = Serializer.Deserialize<ExternalElementData>(stream);
+                        extdata.ExternalId = i + 1;
+                        extdata.ExternalFileName = linkfiles[i];
+                        Global.DocContent.ExternalElementDataList.Add(extdata);
+                        extdata.CurtainPanelList.ForEach(p => p.INF_ExternalLinkId = i + 1);
+                        extdata.ScheduleElementList.ForEach(e => e.INF_ExternalLinkId = i + 1);
+                        Global.DocContent.FullCurtainPanelList.AddRange(extdata.CurtainPanelList);
+                        Global.DocContent.FullScheduleElementList.AddRange(extdata.ScheduleElementList);
+                    }
+                }
+            }
+        }
+        #endregion
+
+        #region 搜索构件
         public static void FnSearch(UIDocument uidoc,
             string querystring,
             ref List<ZoneInfoBase> relistzone, ref List<CurtainPanelInfo> relistpanel, ref List<ScheduleElementInfo> relistelement,
@@ -724,14 +716,16 @@ namespace FacadeHelper
             var doc = uidoc.Document;
             listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - F: KEY/{querystring}...");
 
-            if (hasrangezone && DateTime.TryParse(querystring, out DateTime querydatetime))
-                relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneLayerStart.Equals(querydatetime) || z.ZoneLayerFinish.Equals(querydatetime)));
+            //if (hasrangezone && DateTime.TryParse(querystring, out DateTime querydatetime))
+            //relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneLayerStart.Equals(querydatetime) || z.ZoneLayerFinish.Equals(querydatetime)));
 
             if (hasrangezone) relistzone.AddRange(Global.DocContent.ZoneList.Where(z => Regex.IsMatch(z.ZoneCode, querystring, RegexOptions.IgnoreCase)));
             if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch($"{p.INF_ElementId} # {p.INF_Code}", querystring, RegexOptions.IgnoreCase)));
             if (hasrangeelement) relistelement.AddRange(Global.DocContent.ScheduleElementList.Where(e => Regex.IsMatch($"{e.INF_ElementId} # {e.INF_Code}", querystring, RegexOptions.IgnoreCase)));
         }
+        #endregion
 
+        #region 搜索构件
         public static void FnSearch(UIDocument uidoc,
             string querystring,
             ref List<ZoneInfoBase> relistzone, ref List<CurtainPanelInfo> relistpanel, ref List<MullionInfo> relistmullion,
@@ -740,120 +734,6 @@ namespace FacadeHelper
         {
 
         }
-
-        /// <summary>
-        /// 4D简单分区，嵌板和竖梃分析
-        /// </summary>
-        /// <param name="uidoc">UIDOC</param>
-        /// <param name="zone">目标分区ZoneInfoBase对象引用</param>
-        /// <param name="listinfo">输出状态信息控件引用</param>
-        /// <param name="processinfo">当前操作信息控件引用</param>
-        #region 4D简单分区，嵌板和竖梃分析
-        internal static void FnResolveSimpleZone(UIDocument uidoc, ZoneInfoBase zone, ref ListBox listinfo, ref Label processinfo)
-        {
-            var doc = uidoc.Document;
-            uidoc.Selection.Elements.Clear();
-            IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
-            IOrderedEnumerable<MullionInfo> _mullionsinzone = null;
-
-            var zsi = Global.DocContent.ZoneScheduleSimpleList.FirstOrDefault(zs => zs.ZoneCode == zone.ZoneCode);
-            int zonedays = (zsi.ZoneFinish - zsi.ZoneStart).Days + 1;
-            int zonehours = zonedays * Global.OptionHoursPerDay;
-
-            #region CurtainPanelList 排序
-            if (zone.ZoneDirection == "S")
-                _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "N")
-                _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "E")
-                _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "W")
-                _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
-
-            #endregion
-
-            double v_hours_per_panel = 1.0 * zonehours / _panelsinzone.Count();
-            int pindex = 0;
-            //確定分區內嵌板數據及排序
-            foreach (CurtainPanelInfo _pi in _panelsinzone)
-            {
-                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [幕墻嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: P/{_pi.INF_ElementId}...");
-                _pi.INF_Index = pindex;
-                _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
-                _pi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * (pindex - 1));
-                _pi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_panel * pindex);
-            }
-
-            #region MullionList 排序
-            if (zone.ZoneDirection == "S")
-                _mullionsinzone = Global.DocContent.MullionList
-                    .Where(m => m.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
-                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .ThenBy(m3 => Math.Round(m3.INF_OriginX_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "N")
-                _mullionsinzone = Global.DocContent.MullionList
-                    .Where(m => m.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
-                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .OrderByDescending(m3 => Math.Round(m3.INF_OriginX_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "E")
-                _mullionsinzone = Global.DocContent.MullionList
-                    .Where(m => m.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
-                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .ThenBy(m3 => Math.Round(m3.INF_OriginY_Metric / Constants.RVTPrecision));
-            if (zone.ZoneDirection == "W")
-                _mullionsinzone = Global.DocContent.MullionList
-                    .Where(m => m.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderByDescending(m1 => m1.INF_Type) //先8立柱后7橫樑
-                    .OrderBy(m2 => Math.Round(m2.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .OrderByDescending(m3 => Math.Round(m3.INF_OriginY_Metric / Constants.RVTPrecision));
-
-            #endregion
-
-            double v_hours_per_mullion = 1.0 * zonehours / _mullionsinzone.Count();
-            int tindex = 0;
-            pindex = 0;
-            //確定分區內V竪梃(8)數據及排序
-            foreach (MullionInfo _mi in _mullionsinzone.Where(m => m.INF_Type == 8))
-            {
-                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [V 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: M/V{_mi.INF_ElementId}...");
-                _mi.INF_Index = pindex;
-                _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{tindex:0000}";
-
-                _mi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * (tindex - 1));
-                _mi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * tindex);
-            }
-            pindex = 0;
-            //確定分區內V竪梃(8)數據及排序
-            foreach (MullionInfo _mi in _mullionsinzone.Where(m => m.INF_Type < 8))
-            {
-                _mi.INF_Type = 7; //临时处理
-                processinfo.Content = $"當前處理進度：[分區：{zone.ZoneCode}] - [H 幕墻竪梃：{_mi.INF_ElementId}({++pindex}:{++tindex}/{_mullionsinzone.Count()})]";
-                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: M/H{_mi.INF_ElementId}...");
-                _mi.INF_Index = pindex;
-                _mi.INF_Code = $"CW-{_mi.INF_Type:00}-{_mi.INF_Level:00}-{_mi.INF_Direction}{_mi.INF_System}-{tindex:0000}";
-
-                _mi.INF_TaskStart = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * (tindex - 1));
-                _mi.INF_TaskFinish = GetDeadTime(zsi.ZoneStart, v_hours_per_mullion * tindex);
-            }
-        }
-
         #endregion
 
         #region 4D设计分区，嵌板和构件分析
@@ -874,8 +754,7 @@ namespace FacadeHelper
 
             IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
             IOrderedEnumerable<ScheduleElementInfo>[] _sesinzone = new IOrderedEnumerable<ScheduleElementInfo>[3];
-
-            var zsi = Global.DocContent.ZoneScheduleLayerList.FirstOrDefault(zs => zs.ZoneUniversalCode == zone.ZoneCode);
+            var _layersinzone = Global.DocContent.ZoneLayerList.Where(zs => zs.ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase));
 
             List<ScheduleElementInfo> p_ScheduleElementList = new List<ScheduleElementInfo>();
             listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: Z/{zone.ZoneCode}.");
@@ -887,34 +766,38 @@ namespace FacadeHelper
                 case "S":
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, X+, Z+...");
                     System.Windows.Forms.Application.DoEvents();
-                    _panelsinzone = Global.DocContent.CurtainPanelList
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
                         .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .OrderBy(p=>p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
                         .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
                     break;
                 case "N":
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, X-, Z+...");
                     System.Windows.Forms.Application.DoEvents();
-                    _panelsinzone = Global.DocContent.CurtainPanelList
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
                         .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                        .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+                        .OrderBy(p => p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
                     break;
                 case "E":
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, Y+, Z+...");
                     System.Windows.Forms.Application.DoEvents();
-                    _panelsinzone = Global.DocContent.CurtainPanelList
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
                         .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .OrderBy(p => p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
                         .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
                     break;
                 case "W":
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, Y-, Z+...");
                     System.Windows.Forms.Application.DoEvents();
-                    _panelsinzone = Global.DocContent.CurtainPanelList
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
                         .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                        .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+                        .OrderBy(p => p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
                     break;
                 default: break;
             }

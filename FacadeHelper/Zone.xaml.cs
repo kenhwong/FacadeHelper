@@ -108,6 +108,7 @@ namespace FacadeHelper
         private RoutedCommand cmdModelInit = new RoutedCommand();
         private RoutedCommand cmdOnElementClassify = new RoutedCommand();
         private RoutedCommand cmdElementClassify = new RoutedCommand();
+        private RoutedCommand cmdElementLink = new RoutedCommand();
         private RoutedCommand cmdElementResolve = new RoutedCommand();
 
         private RoutedCommand cmdNavZone = new RoutedCommand();
@@ -147,6 +148,23 @@ namespace FacadeHelper
             },
             (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbElementClassify = new CommandBinding(cmdElementClassify, cbElementClassify_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbElementLink = new CommandBinding(cmdElementLink,
+                (sender, e) =>
+                {
+                    Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
+                    ofd.Multiselect = true;
+                    ofd.InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile);
+                    ofd.DefaultExt = "*.elist";
+                    ofd.Filter = "Element Collection Files(*.elist)|*.elist|All(*.*)|*.*";
+                    if (ofd.ShowDialog() == true)
+                    {
+                        ZoneHelper.FnLinkedElementsDeserialize(ofd.FileNames);
+                        bnElementLink.Foreground = new SolidColorBrush(Colors.DarkGreen);
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LINK: FILE, {string.Join(",", ofd.SafeFileNames)}.");
+                    }
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
             CommandBinding cbElementResolve = new CommandBinding(cmdElementResolve,
                 (sender, e) =>
                 {
@@ -374,6 +392,7 @@ namespace FacadeHelper
             bnModelInit.Command = cmdModelInit;
             bnOnElementClassify.Command = cmdOnElementClassify;
             bnElementClassify.Command = cmdElementClassify;
+            bnElementLink.Command = cmdElementLink;
             bnElementResolve.Command = cmdElementResolve;
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
@@ -387,6 +406,7 @@ namespace FacadeHelper
                 cbModelInit,
                 cbOnElementClassify,
                 cbElementClassify,
+                cbElementLink,
                 cbElementResolve,
                 cbNavZone,
                 cbLoadData,

@@ -27,18 +27,18 @@ namespace FacadeHelper
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
             PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
             PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
-            PushButtonData bndata_zone4d = new PushButtonData("cmdZone4D", "簡化分區", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone4D");
+            //PushButtonData bndata_zone4d = new PushButtonData("cmdZone4D", "簡化分區", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone4D");
             //PushButtonData bndata_zonecodeinput = new PushButtonData("cmdZoneCodeInput", "分区输入", thisAssemblyPath, "FacadeHelper.ICommand_Document_ZoneCodeInput");
             bndata_process_elements.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "se32.png")));
-            bndata_zone4d.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
+            //bndata_zone4d.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             //bndata_zonecodeinput.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "id32.png")));
             //rpanel.AddItem(bndata_process_elements);
             rpanel.AddItem(bndata_zone);
-            rpanel.AddItem(bndata_zone4d);
+            //rpanel.AddItem(bndata_zone4d);
             //rpanel.AddItem(bndata_zonecodeinput);
 
-            PushButtonData bndata_test = new PushButtonData("cmdTEST", "TEST", thisAssemblyPath, "FacadeHelper.ICommand_Document_TEST");
+            //PushButtonData bndata_test = new PushButtonData("cmdTEST", "TEST", thisAssemblyPath, "FacadeHelper.ICommand_Document_TEST");
             //rpanel.AddItem(bndata_test);
             return Result.Succeeded;
         }
@@ -126,33 +126,6 @@ namespace FacadeHelper
         }
     }
 
-    [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class ICommand_Document_Zone4D : IExternalCommand
-    {
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
-        {
-            UIApplication uiapp = commandData.Application;
-
-            try
-            {
-                SimpleZone ucpe4d = new SimpleZone(commandData);
-                Window winaddin = new Window();
-                ucpe4d.parentWin = winaddin;
-                winaddin.Content = ucpe4d;
-                //winaddin.WindowStyle = WindowStyle.None;
-                winaddin.Padding = new Thickness(0);
-                Global.winhelper = new System.Windows.Interop.WindowInteropHelper(winaddin);
-                winaddin.ShowDialog();
-            }
-            catch (Exception e)
-            {
-                TaskDialog.Show("Error", e.ToString());
-                return Result.Failed;
-            }
-
-            return Result.Succeeded;
-        }
-    }
 
 
 }

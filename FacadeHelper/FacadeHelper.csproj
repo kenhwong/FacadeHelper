@@ -106,9 +106,6 @@
     <Compile Include="Themes\DataGridStyle.xaml.cs">
       <DependentUpon>DataGridStyle.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SimpleZone.xaml.cs">
-      <DependentUpon>SimpleZone.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Zone.xaml.cs">
       <DependentUpon>Zone.xaml</DependentUpon>
     </Compile>
@@ -128,10 +125,6 @@
     <Page Include="Themes\DataGridStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SimpleZone.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Zone.xaml">
       <SubType>Designer</SubType>

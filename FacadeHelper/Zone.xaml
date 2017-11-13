@@ -43,7 +43,8 @@
             <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
                 <WrapPanel>
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnOnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconResolve}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconPlus}" x:Name="bnElementLink" ToolTip="链接外部数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
             <GroupBox Style="{DynamicResource CommandGroup}" Header="DATA" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
@@ -160,13 +161,6 @@
                         </ScrollViewer>
                     </Expander.Content>
                 </Expander>
-                <Expander x:Name="expSubElement" ExpandDirection="Down" Header="构件筛选" DockPanel.Dock="Top" Margin="5" Padding="5">
-                    <Expander.Content>
-                        <ScrollViewer>
-                            <ListBox x:Name="navElementClassFilter" />
-                        </ScrollViewer>
-                    </Expander.Content>
-                </Expander>
                 <Expander x:Name="expZoneCodeInput" ExpandDirection="Down" Header="分区编号" DockPanel.Dock="Top" Margin="5" Padding="5">
                     <Expander.Content>
                         <DockPanel Margin="10" LastChildFill="False">
@@ -262,6 +256,13 @@
                                 </WrapPanel>
                             </DockPanel>
                         </DockPanel>
+                    </Expander.Content>
+                </Expander>
+                <Expander x:Name="expSubElement" ExpandDirection="Down" Header="构件筛选" DockPanel.Dock="Top" Margin="5" Padding="5">
+                    <Expander.Content>
+                        <ScrollViewer>
+                            <ListBox x:Name="navElementClassFilter" />
+                        </ScrollViewer>
                     </Expander.Content>
                 </Expander>
             </DockPanel>
