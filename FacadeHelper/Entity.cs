@@ -38,12 +38,9 @@ namespace FacadeHelper
         }
         public CurtainPanelInfo(Panel p) : this()
         {
-            #region GroupablePanel初始化
+            #region CurtainPanelInfo 初始化
             INF_ElementId = p.Id.IntegerValue;
             INF_Name = p.Name;
-            //INF_HostId = p.Host.Id.IntegerValue;
-            //INF_Type = 51;
-
             INF_ErrorInfo = $"{p.Id}";
             Parameter _param;
             if ((_param = p.get_Parameter("构件分项")).HasValue) INF_Type = _param.AsInteger();
@@ -55,9 +52,6 @@ namespace FacadeHelper
                 if (INF_Name.Contains("百页")) INF_Type = 54;
                 if (INF_Name.Contains("立柱")) INF_Type = 61;
             }
-            //INF_System = p.Host.get_Parameter("立面系统").AsString();
-            //INF_Direction = p.Host.get_Parameter("立面朝向").AsString();
-            //INF_ZoneID = p.Host.get_Parameter("分区").AsInteger();
 
             INF_Width_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.CURTAIN_WALL_PANELS_WIDTH).AsDouble());
             INF_Height_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.CURTAIN_WALL_PANELS_HEIGHT).AsDouble());
@@ -69,29 +63,33 @@ namespace FacadeHelper
             INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y);
             INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z);
 
+            /**
             if ((_param = p.get_Parameter("分区区号")).HasValue)
             {
                 INF_ZoneCode = _param.AsString();
                 ResolveZoneCode();
             }
             else INF_ErrorInfo += $"[参数未设置：分区区号]";
-            //立面楼层，分区区号 未读取
+            **/
             #endregion
+        }
+        public CurtainPanelInfo(Panel p, string zonecode) : this(p)
+        {
+            if (Regex.IsMatch(zonecode, @"Z-00-\d{2}-[a-z|A-Z]{2}-\d{2}"))
+            {
+                INF_ZoneCode = zonecode.ToUpper();
+                //Z-00-99-AA-99
+                var _array_field = INF_ZoneCode.Split('-');
+                INF_ZoneType = int.Parse(_array_field[1]);
+                INF_System = _array_field[3].Substring(1, 1);
+                INF_Direction = _array_field[3].Substring(0, 1);
+                INF_Level = int.Parse(_array_field[2]);
+                INF_ZoneIndex = int.Parse(_array_field[4]);
+            }
         }
 
         public override string ToString() => INF_Code;
 
-        public void ResolveZoneCode()
-        {
-            INF_ZoneCode = INF_ZoneCode.ToUpper();
-            //Z-00-99-AA-99
-            var _array_field = INF_ZoneCode.Split('-');
-            INF_ZoneType = int.Parse(_array_field[1]);
-            INF_System = _array_field[3].Substring(1, 1);
-            INF_Direction = _array_field[3].Substring(0, 1);
-            INF_Level = int.Parse(_array_field[2]);
-            INF_ZoneIndex = int.Parse(_array_field[4]);
-        }
     }
 
     [SerializableType]
@@ -276,14 +274,14 @@ namespace FacadeHelper
     public class DesignZoneInfo : ZoneInfoBase
     {
         public DesignZoneInfo(string zcode) : base(zcode) { }
-        public DesignZoneInfo(string zcode, DateTime zstart, DateTime zfinish) : base(zcode, zstart, zfinish) { }
+        //public DesignZoneInfo(string zcode, DateTime zstart, DateTime zfinish) : base(zcode, zstart, zfinish) { }
     }
 
     [SerializableType]
     public class ProcessZoneInfo : ZoneInfoBase
     {
         public ProcessZoneInfo(string zcode) : base(zcode) { }
-        public ProcessZoneInfo(string zcode, DateTime zstart, DateTime zfinish) : base(zcode, zstart, zfinish) { }
+        //public ProcessZoneInfo(string zcode, DateTime zstart, DateTime zfinish) : base(zcode, zstart, zfinish) { }
     }
 
     [SerializableType]
@@ -291,11 +289,7 @@ namespace FacadeHelper
     {
         //Z-00-99-AA-99, Z-01-99-AA-99, Z-02-99-AA-99
         private string _zoneCode;
-        private DateTime _zoneStart;
-        private DateTime _zoneFinish;
-        private double _zoneDurationHours;
 
-        private int _zoneTaskLevel = -1;
         private int _zoneLevel;
         private string _zoneDirection;
         private string _zoneSystem;
@@ -304,11 +298,7 @@ namespace FacadeHelper
         private string _filterName;
 
         public string ZoneCode { get { return _zoneCode; } set { _zoneCode = value; OnPropertyChanged(nameof(ZoneCode)); } }
-        public DateTime ZoneStart { get { return _zoneStart; } set { _zoneStart = value; OnPropertyChanged(nameof(ZoneStart)); } }
-        public DateTime ZoneFinish { get { return _zoneFinish; } set { _zoneFinish = value; OnPropertyChanged(nameof(ZoneFinish)); } }
-        public double ZoneDurationHours { get { return _zoneDurationHours; } set { _zoneDurationHours = value; OnPropertyChanged(nameof(ZoneDurationHours)); } }
 
-        public int ZoneTaskLevel { get { return _zoneTaskLevel; } set { _zoneTaskLevel = value; OnPropertyChanged(nameof(ZoneTaskLevel)); } } //1,2,3,4; Preset 0 = All
         public int ZoneLevel { get { return _zoneLevel; } set { _zoneLevel = value; OnPropertyChanged(nameof(ZoneLevel)); } }
         public string ZoneDirection { get { return _zoneDirection; } set { _zoneDirection = value; OnPropertyChanged(nameof(ZoneDirection)); } }
         public string ZoneSystem { get { return _zoneSystem; } set { _zoneSystem = value; OnPropertyChanged(nameof(ZoneSystem)); } }
@@ -322,18 +312,11 @@ namespace FacadeHelper
             if (!Regex.IsMatch(zcode, @"Z-\d{2}-\d{2}-[S|N|E|W][A-Z]-\d{2}")) throw new FormatException("Invalid zone code format while Initializing ZoneInfoBase instance.");
             ZoneCode = FilterName = zcode;
             string[] _segment_code = zcode.Split('-');
-            ZoneTaskLevel = 0;// int.Parse(_segment_code[1]);
             ZoneLevel = int.Parse(_segment_code[2]);
             ZoneDirection = _segment_code[3].Substring(0, 1);
             ZoneSystem = _segment_code[3].Substring(1, 1);
             ZoneIndex = int.Parse(_segment_code[4]);
 
-        }
-        public ZoneInfoBase(string zcode, DateTime zstart, DateTime zfinish) : this(zcode)
-        {
-            ZoneStart = zstart;
-            ZoneFinish = zfinish;
-            ZoneDurationHours = (zfinish - zstart).Days * Global.OptionHoursPerDay + Global.OptionHoursPerDay;
         }
 
         public override string ToString() => ZoneCode;

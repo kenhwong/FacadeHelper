@@ -76,8 +76,9 @@ namespace FacadeHelper
     public class DocumentContent// : INotifyPropertyChanged
     {
         //private ObservableCollection<ZoneInfoBase> _zoneList = new ObservableCollection<ZoneInfoBase>();
-        public List<ZoneScheduleInfo> ZoneScheduleSimpleList { get; set; } = new List<ZoneScheduleInfo>();
-        public List<ZoneScheduleLevelInfo> ZoneScheduleLevelList { get; set; } = new List<ZoneScheduleLevelInfo>();
+        public List<ZoneLayerInfo> ZoneScheduleSimpleList { get; set; } = new List<ZoneLayerInfo>();
+        public List<ZoneScheduleLayerInfo> ZoneScheduleLayerList { get; set; } = new List<ZoneScheduleLayerInfo>(); //Obsoleted property.
+        public List<ZoneLayerInfo> ZoneLayerList { get; set; } = new List<ZoneLayerInfo>();
 
         public List<CurtainPanelInfo> CurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public Dictionary<int, double> LevelDictionary { get; set; } = new Dictionary<int, double>();
@@ -137,21 +138,22 @@ namespace FacadeHelper
     }
 
     [SerializableType]
-    public class ZoneScheduleInfo
+    public class ZoneLayerInfo
     {
+        public string HandleId { get; set; }
         public string ZoneCode { get; set; }
-        public int ZoneLevel { get; set; }
+        public int ZoneLayer { get; set; }
         public DateTime ZoneStart { get; set; }
         public DateTime ZoneFinish { get; set; }
     }
 
     [SerializableType]
-    public class ZoneScheduleLevelInfo
+    public class ZoneScheduleLayerInfo
     {
         public string HandleId { get; set; }
         public string ZoneUniversalCode { get; set; }
-        public DateTime[] ZoneLevelStart { get; set; } = new DateTime[3];
-        public DateTime[] ZoneLevelFinish { get; set; } = new DateTime[3];
+        public DateTime[] ZoneLayerStart { get; set; } = new DateTime[3];
+        public DateTime[] ZoneLayerFinish { get; set; } = new DateTime[3];
     }
 
     [SerializableType]

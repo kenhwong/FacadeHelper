@@ -125,38 +125,6 @@
                 </ScrollViewer>
             </DockPanel>
         </DockPanel>
-        <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="False">
-            <StackPanel DockPanel.Dock="Left">
-                <Label x:Name="txtProcessInfo" />
-                <Label x:Name="txtResultZone" Target="{x:Reference expDataGridZones}" />
-                <Label x:Name="txtResultPanel" Target="{x:Reference expDataGridPanels}" />
-                <Label x:Name="txtResultElement" Target="{x:Reference expDataGridScheduleElements}" />
-            </StackPanel>
-            <StackPanel DockPanel.Dock="Right" Orientation="Vertical" VerticalAlignment="Bottom" Width="200">
-                <Grid Margin="0">
-                    <ProgressBar x:Name="progbarPanel" Height="15" Value="20" />
-                    <TextBlock Foreground="#808080" FontSize="10" FontWeight="Heavy"  HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="{}{0} / {1}">
-                                <Binding ElementName="progbarPanel" Path="Value" />
-                                <Binding ElementName="progbarPanel" Path="Maximum" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                </Grid>
-                <Grid Margin="0,5,0,0">
-                    <ProgressBar x:Name="progbarElement" Height="15" />
-                    <TextBlock Foreground="#808080" FontSize="10" FontWeight="Heavy"  HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock.Text>
-                            <MultiBinding StringFormat="{}{0} / {1}">
-                                <Binding ElementName="progbarElement" Path="Value" />
-                                <Binding ElementName="progbarElement" Path="Maximum" />
-                            </MultiBinding>
-                        </TextBlock.Text>
-                    </TextBlock>
-                </Grid>
-            </StackPanel>
-        </DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="10">
             <DockPanel DockPanel.Dock="Left" Width="250" x:Name="nav">
                 <Expander x:Name="expLevels" ExpandDirection="Down" Header="項目標高" DockPanel.Dock="Top" Margin="5" Padding="5" IsExpanded="False" Visibility="Collapsed">
@@ -306,6 +274,13 @@
                     <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
                     <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
                 </StackPanel>
+                <DockPanel x:Name="spSearchResult" DockPanel.Dock="Top" Margin="0,5" LastChildFill="False" Visibility="Visible">
+                    <Label Content="搜索结果：" DockPanel.Dock="Left" />
+                    <Label x:Name="txtResultZone" Style="{StaticResource CCyanLabel}"  DockPanel.Dock="Left" />
+                    <Label x:Name="txtResultPanel" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
+                    <Label x:Name="txtResultElement" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnCloseResult" ToolTip="关闭搜索结果" DockPanel.Dock="Right" Width="30" Height="30" Margin="0" />
+                </DockPanel>
                 <DockPanel DockPanel.Dock="Top" LastChildFill="True" ScrollViewer.CanContentScroll="True">
 
                     <Expander x:Name="expDataGridZones" ExpandDirection="Down" Header="分区数据" DockPanel.Dock="Top" IsExpanded="False" Margin="5" Padding="5" Expanded="expDataGrid_Expanded">

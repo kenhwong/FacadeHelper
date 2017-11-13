@@ -150,15 +150,21 @@ namespace FacadeHelper
             CommandBinding cbElementResolve = new CommandBinding(cmdElementResolve,
                 (sender, e) =>
                 {
+                    //Clear ScheduleElementList
                     Global.DocContent.ScheduleElementList.Clear();
-                    foreach (var zn in Global.DocContent.ZoneList) ZoneHelper.FnResolveZone(uidoc, zn,
-                        ref txtCurrentProcessElement,
-                        ref txtCurrentProcessOperation,
-                        ref progbarCurrentProcess,
-                        ref txtGlobalProcessElement,
-                        ref txtGlobalProcessOperation,
-                        ref progbarGlobalProcess,
-                        ref listInformation, ref txtProcessInfo);
+
+                    progbarGlobalProcess.Maximum = Global.DocContent.ZoneList.Count;
+                    progbarGlobalProcess.Value = 0;
+
+                    foreach (var zn in Global.DocContent.ZoneList)
+                    {
+                        ZoneHelper.FnResolveZone(uidoc, zn,
+                            ref txtCurrentProcessElement,
+                            ref txtCurrentProcessOperation,
+                            ref progbarCurrentProcess,
+                            ref listInformation);
+                        progbarGlobalProcess.Value++;
+                    }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -211,48 +217,48 @@ namespace FacadeHelper
                     ResultZoneInfo.Clear();
                     ResultPanelInfo.Clear();
                     ResultElementInfo.Clear();
+
                     ZoneHelper.FnSearch(uidoc,
                         txtSearchKeyword.Text.Trim(),
                         ref ResultZoneInfo, ref ResultPanelInfo, ref ResultElementInfo,
                         IsSearchRangeZone, IsSearchRangePanel, IsSearchRangeElement,
                         ref listInformation);
-                    txtProcessInfo.Content = $"檢索結果：";
                     if (IsSearchRangeZone)
                     {
-                        txtResultZone.Content = $"[分區： {ResultZoneInfo.Count}]";
+                        txtResultZone.Content = $"Z/{ResultZoneInfo.Count}; ";
                         datagridZones.ItemsSource = null;
                         datagridZones.ItemsSource = ResultZoneInfo;
-                        expDataGridZones.Header = $"分區檢索結果： {ResultZoneInfo.Count}";
+                        expDataGridZones.Header = $"分区检索结果： {ResultZoneInfo.Count}";
                     }
                     else
                     {
-                        txtResultZone.Content = $"[分區： 不檢索]";
+                        txtResultZone.Content = $"Z/SKIP; ";
                         datagridZones.ItemsSource = null;
-                        expDataGridZones.Header = $"分區檢索結果： 不檢索";
+                        expDataGridZones.Header = $"分区检索结果： 不检索";
                     }
                     if (IsSearchRangePanel)
                     {
-                        txtResultPanel.Content = $"[幕墻嵌板： {ResultPanelInfo.Count}]";
+                        txtResultPanel.Content = $"P/{ResultPanelInfo.Count}; ";
                         datagridPanels.ItemsSource = null;
                         datagridPanels.ItemsSource = ResultPanelInfo;
-                        expDataGridPanels.Header = $"幕墻嵌板檢索結果： {ResultPanelInfo.Count}";
+                        expDataGridPanels.Header = $"嵌板检索结果： {ResultPanelInfo.Count}";
                     }
                     else
                     {
-                        txtResultPanel.Content = $"[幕墻嵌板： 不檢索]";
+                        txtResultPanel.Content = $"P/SKIP; ";
                         datagridPanels.ItemsSource = null;
-                        expDataGridPanels.Header = $"幕墻嵌板檢索結果： 不檢索";
+                        expDataGridPanels.Header = $"嵌板检索结果： 不检索";
                     }
                     if (IsSearchRangeElement)
                     {
-                        txtResultElement.Content = $"[明細構件： {ResultElementInfo.Count}]";
+                        txtResultElement.Content = $"E/{ResultElementInfo.Count}; ";
                         datagridScheduleElements.ItemsSource = null;
                         datagridScheduleElements.ItemsSource = ResultElementInfo;
-                        expDataGridScheduleElements.Header = $"分區檢索結果： {ResultElementInfo.Count}";
+                        expDataGridScheduleElements.Header = $"构件检索结果： {ResultElementInfo.Count}";
                     }
                     else
                     {
-                        txtResultElement.Content = $"[明細構件： 不檢索]";
+                        txtResultElement.Content = $"E/SKIP; ";
                         datagridScheduleElements.ItemsSource = null;
                         expDataGridScheduleElements.Header = $"分區檢索結果： 不檢索";
                     }
@@ -287,12 +293,12 @@ namespace FacadeHelper
 
                                 if (IsRealTimeProgress)
                                 {
-                                    txtCurrentProcessElement.Content = $"[分区-{p.INF_ZoneCode}].[嵌板-{p.INF_ElementId}, {p.INF_Code}]";
-                                    txtCurrentProcessOperation.Content = "参数写入";
+                                    txtCurrentProcessElement.Content = $"Z/{p.INF_ZoneCode}.P/{p.INF_ElementId}, {p.INF_Code}";
+                                    txtCurrentProcessOperation.Content = "W/PARAM";
                                     progbarCurrentProcess.Value++;
                                     progbarGlobalProcess.Value += 50d / Global.DocContent.CurtainPanelList.Count;
-                                    txtGlobalProcessElement.Content = $"[分区-{p.INF_ZoneCode}]";
-                                    txtGlobalProcessOperation.Content = $"嵌板";
+                                    txtGlobalProcessElement.Content = $"Z/{p.INF_ZoneCode}";
+                                    txtGlobalProcessOperation.Content = $"W/PARAM/P";
                                     System.Windows.Forms.Application.DoEvents();
                                 }
                             });
@@ -322,14 +328,12 @@ namespace FacadeHelper
 
                                 if (IsRealTimeProgress)
                                 {
-                                    progbarElement.Value++;
-
-                                    txtCurrentProcessElement.Content = $"[嵌板-{ele.INF_HostCurtainPanel.INF_Code}].[构件-{ele.INF_ElementId}, {ele.INF_Code}]";
-                                    txtCurrentProcessOperation.Content = "参数写入";
+                                    txtCurrentProcessElement.Content = $"P/{ele.INF_HostCurtainPanel.INF_Code}.E/{ele.INF_ElementId}, {ele.INF_Code}";
+                                    txtCurrentProcessOperation.Content = "W/PARAM";
                                     progbarCurrentProcess.Value++;
-                                    progbarGlobalProcess.Value += 50d / Global.DocContent.CurtainPanelList.Count;
-                                    txtGlobalProcessElement.Content = $"[分区-{ele.INF_ZoneCode}]";
-                                    txtGlobalProcessOperation.Content = $"构件";
+                                    progbarGlobalProcess.Value += 50d / Global.DocContent.ScheduleElementList.Count;
+                                    txtGlobalProcessElement.Content = $"P/{ele.INF_ZoneCode}]";
+                                    txtGlobalProcessOperation.Content = $"W/PARAM/E";
                                     System.Windows.Forms.Application.DoEvents();
                                 }
                             });
@@ -435,9 +439,6 @@ namespace FacadeHelper
         #region Command -- bnElementClassify : 嵌板和构件归类
         private void cbElementClassify_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            //parentWin.Hide();
-            //var _p_sel_list = uidoc.Selection.PickObjects(ObjectType.Element, "選擇同一分區的所有嵌板");
-            //parentWin.Visibility = System.Windows.Visibility.Visible;
             Global.DocContent.CurrentZoneInfo.ZoneLevel = CurrentZoneLevel;
             Global.DocContent.CurrentZoneInfo.ZoneDirection = CurrentZoneDirection;
             Global.DocContent.CurrentZoneInfo.ZoneSystem = CurrentZoneSystem;
@@ -469,23 +470,12 @@ namespace FacadeHelper
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: P/{panels.Count()}.");
             SelectedCurtainPanelList.Clear();
 
-            using (Transaction trans = new Transaction(doc, "Apply_Panels_ZoneCode"))
+            foreach (var _ele in panels)
             {
-                trans.Start();
-                foreach (var _ele in panels)
-                {
-                    CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel);
-                    _gp.INF_Type = CurrentZonePanelType;
-                    SelectedCurtainPanelList.Add(_gp);
-                    Parameter _param = _ele.get_Parameter("分区区号");
-                    if (_param == null)
-                    {
-                        MessageBox.Show($"当前选择的幕墙嵌板[{_gp.INF_ElementId}]嵌板未设置分区区号参数，请修改后继续。", "错误 - 幕墙嵌板 - 分区区号", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                        return;
-                    }
-                    _param.Set(Global.DocContent.CurrentZoneInfo.ZoneCode);
-                }
-                trans.Commit();
+                CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel, Global.DocContent.CurrentZoneInfo.ZoneCode);
+                _gp.INF_Type = CurrentZonePanelType;
+                _gp.INF_HostZoneInfo = Global.DocContent.CurrentZoneInfo;
+                SelectedCurtainPanelList.Add(_gp);
             }
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
 

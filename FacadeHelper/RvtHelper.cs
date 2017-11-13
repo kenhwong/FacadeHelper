@@ -599,18 +599,18 @@ namespace FacadeHelper
                 {
                     string[] rowdata = dataline.Split('\t');
                     if (int.TryParse(rowdata[2].Substring(2, 2), out int lv2))
-                        Global.DocContent.ZoneScheduleSimpleList.Add(new ZoneScheduleInfo
+                        Global.DocContent.ZoneScheduleSimpleList.Add(new ZoneLayerInfo
                         {
                             ZoneCode = Regex.Replace(rowdata[2], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase),
-                            ZoneLevel = lv2,
+                            ZoneLayer = lv2,
                             ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}"),
                             ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}"),
                         });
                     if (int.TryParse(rowdata[5].Substring(2, 2), out int lv5))
-                        Global.DocContent.ZoneScheduleSimpleList.Add(new ZoneScheduleInfo
+                        Global.DocContent.ZoneScheduleSimpleList.Add(new ZoneLayerInfo
                         {
                             ZoneCode = Regex.Replace(rowdata[5], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase),
-                            ZoneLevel = lv5,
+                            ZoneLayer = lv5,
                             ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}"),
                             ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}"),
                         });
@@ -627,16 +627,19 @@ namespace FacadeHelper
         #region 加载ACADE导出的分区进度数据 - 4D设计模型
         public static void FnLoadZoneScheduleData(string ZoneScheduleDataFile)
         {
-            Global.DocContent.ZoneScheduleLevelList.Clear();
+            Global.DocContent.ZoneLayerList.Clear();
+
             using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
             {
                 string dataline;
                 reader.ReadLine();
-                ZoneScheduleLevelInfo zsl = new ZoneScheduleLevelInfo();
+                ZoneLayerInfo zli = new ZoneLayerInfo();
+                string linehandleid;
+                string linezonecode = string.Empty;
                 while ((dataline = reader.ReadLine()) != null)
                 {
                     string[] rowdata = dataline.Split('\t');
-                    zsl.HandleId = rowdata[0].Replace(@"'", ""); //AutoCAD Attribute Block Handle ID.
+                    linehandleid = rowdata[0].Replace(@"'", ""); //AutoCAD Attribute Block Handle ID.
 
                     if ((rowdata.Length > 5 && rowdata[2] == rowdata[5]) || (rowdata.Length > 8 && (rowdata[2] == rowdata[8] || rowdata[5] == rowdata[8])))
                     {
@@ -652,9 +655,15 @@ namespace FacadeHelper
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[2]}]的工序层{lv2}小于预设的1层下限或大于3层上限，不能继续读取分析数据。", "错误 - 分区进度数据");
                                 return;
                             }
-                            zsl.ZoneUniversalCode = Regex.Replace(rowdata[2], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase);
-                            zsl.ZoneLevelStart[lv2 - 1] = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}");
-                            zsl.ZoneLevelFinish[lv2 - 1] = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}");
+                            linezonecode = Regex.Replace(rowdata[2], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase);
+                            Global.DocContent.ZoneLayerList.Add(new ZoneLayerInfo()
+                            {
+                                HandleId = linehandleid,
+                                ZoneLayer = lv2 - 1,
+                                ZoneCode = linezonecode,
+                                ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}"),
+                                ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}")
+                            });
                         }
                     if (rowdata.Length > 5)
                         if (int.TryParse(rowdata[5].Substring(2, 2), out int lv5))
@@ -664,13 +673,19 @@ namespace FacadeHelper
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[5]}]的工序层{lv5}小于预设的1层下限或大于3层上限，不能继续读取分析数据。", "错误 - 分区进度数据");
                                 return;
                             }
-                            if (zsl.ZoneUniversalCode != Regex.Replace(rowdata[5], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
+                            if (linezonecode != Regex.Replace(rowdata[5], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
                             {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{zsl.ZoneUniversalCode}]编号不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
+                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{linezonecode}]编号不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
                                 return;
                             }
-                            zsl.ZoneLevelStart[lv5 - 1] = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}");
-                            zsl.ZoneLevelFinish[lv5 - 1] = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}");
+                            Global.DocContent.ZoneLayerList.Add(new ZoneLayerInfo()
+                            {
+                                HandleId = linehandleid,
+                                ZoneLayer = lv5 - 1,
+                                ZoneCode = linezonecode,
+                                ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}"),
+                                ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}")
+                            });
                         }
                     if (rowdata.Length > 8)
                         if (int.TryParse(rowdata[8].Substring(2, 2), out int lv8))
@@ -680,15 +695,20 @@ namespace FacadeHelper
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[8]}]的工序层{lv8}小于预设的1层下限或大于3层上限，不能继续读取分析数据。", "错误 - 分区进度数据");
                                 return;
                             }
-                            if (zsl.ZoneUniversalCode != Regex.Replace(rowdata[8], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
+                            if (linezonecode != Regex.Replace(rowdata[8], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
                             {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区编号[{zsl.ZoneUniversalCode}]不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
+                                MessageBox.Show($"当前行[{rowdata[0]}]的分区编号[{linezonecode}]不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
                                 return;
                             }
-                            zsl.ZoneLevelStart[lv8 - 1] = DateTime.Parse($"{rowdata[9].Substring(0, 2)}/{rowdata[9].Substring(2, 2)}/{rowdata[9].Substring(4, 2)}");
-                            zsl.ZoneLevelFinish[lv8 - 1] = DateTime.Parse($"{rowdata[10].Substring(0, 2)}/{rowdata[10].Substring(2, 2)}/{rowdata[10].Substring(4, 2)}");
+                            Global.DocContent.ZoneLayerList.Add(new ZoneLayerInfo()
+                            {
+                                HandleId = linehandleid,
+                                ZoneLayer = lv8 - 1,
+                                ZoneCode = linezonecode,
+                                ZoneStart = DateTime.Parse($"{rowdata[9].Substring(0, 2)}/{rowdata[9].Substring(2, 2)}/{rowdata[9].Substring(4, 2)}"),
+                                ZoneFinish = DateTime.Parse($"{rowdata[10].Substring(0, 2)}/{rowdata[10].Substring(2, 2)}/{rowdata[10].Substring(4, 2)}")
+                            });
                         }
-                    Global.DocContent.ZoneScheduleLevelList.Add(zsl);
                 }
             }
         }
@@ -705,7 +725,7 @@ namespace FacadeHelper
             listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - F: KEY/{querystring}...");
 
             if (hasrangezone && DateTime.TryParse(querystring, out DateTime querydatetime))
-                relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneStart.Equals(querydatetime) || z.ZoneFinish.Equals(querydatetime)));
+                relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneLayerStart.Equals(querydatetime) || z.ZoneLayerFinish.Equals(querydatetime)));
 
             if (hasrangezone) relistzone.AddRange(Global.DocContent.ZoneList.Where(z => Regex.IsMatch(z.ZoneCode, querystring, RegexOptions.IgnoreCase)));
             if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch($"{p.INF_ElementId} # {p.INF_Code}", querystring, RegexOptions.IgnoreCase)));
@@ -836,22 +856,17 @@ namespace FacadeHelper
 
         #endregion
 
+        #region 4D设计分区，嵌板和构件分析
         /// <summary>
-        /// 4D设计分区，嵌板和构件分析
+        /// 设计分区，嵌板和构件分析
         /// </summary>
         /// <param name="uidoc">UIDOC</param>
         /// <param name="zone">目标分区ZoneInfoBase对象引用</param>
+        /// <param name="txt_curr_ele">状态文字控件引用-当前处理对象</param>
+        /// <param name="txt_curr_op">状态文字控件引用-当前操作</param>
+        /// <param name="progbar_curr">当前状态进度条控件引用</param>
         /// <param name="listinfo">输出状态信息控件引用</param>
-        /// <param name="processinfo">当前操作信息控件引用</param>
-        #region 4D设计分区，嵌板和构件分析
-        public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, 
-            ref Label txt_curr_ele,
-            ref Label txt_curr_op,
-            ref ProgressBar progbar_curr,
-            ref Label txt_global_ele,
-            ref Label txt_global_op,
-            ref ProgressBar progbar_global,
-            ref ListBox listinfo, ref Label processinfo)
+        public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref Label txt_curr_ele, ref Label txt_curr_op, ref ProgressBar progbar_curr, ref ListBox listinfo)
         {
             var doc = uidoc.Document;
             bool _haserror = false;
@@ -860,7 +875,7 @@ namespace FacadeHelper
             IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
             IOrderedEnumerable<ScheduleElementInfo>[] _sesinzone = new IOrderedEnumerable<ScheduleElementInfo>[3];
 
-            var zsi = Global.DocContent.ZoneScheduleLevelList.FirstOrDefault(zs => zs.ZoneUniversalCode == zone.ZoneCode);
+            var zsi = Global.DocContent.ZoneScheduleLayerList.FirstOrDefault(zs => zs.ZoneUniversalCode == zone.ZoneCode);
 
             List<ScheduleElementInfo> p_ScheduleElementList = new List<ScheduleElementInfo>();
             listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: Z/{zone.ZoneCode}.");
@@ -873,47 +888,48 @@ namespace FacadeHelper
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, X+, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
                     break;
                 case "N":
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, X-, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .OrderByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
                     break;
                 case "E":
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, Y+, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
                     break;
                 case "W":
                     listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}, Y-, Z+...");
                     System.Windows.Forms.Application.DoEvents();
                     _panelsinzone = Global.DocContent.CurtainPanelList
-                    .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
-                    .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
-                    .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .OrderByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
                     break;
                 default: break;
             }
             #endregion
 
+            progbar_curr.Maximum = _panelsinzone.Count();
+            progbar_curr.Value = 0;
+
             int pindex = 0;
             //確定分區內嵌板數據及排序
             foreach (CurtainPanelInfo _pi in _panelsinzone)
-            {//TODO
-                processinfo.Content = $"当前处理进度：[分区：{zone.ZoneCode}] - [幕墙嵌板：{_pi.INF_ElementId}({++pindex}/{_panelsinzone.Count()})]";
-                txt_curr_ele.Content = $"[分区-{zone.ZoneCode}].[嵌板-{_pi.INF_ElementId}]";
-                txt_curr_op.Content = "参数分析";
-                txt_global_ele.Content = $"[分区-{zone.ZoneCode}]";
-                txt_global_op.Content = "参数分析";
+            {
+                txt_curr_ele.Content = $"Z/{zone.ZoneCode}.P/{_pi.INF_ElementId}, {_pi.INF_Code}";
+                txt_curr_op.Content = "RESOLVE/P";
+                progbar_curr.Value++;
                 System.Windows.Forms.Application.DoEvents();
                 Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
 
@@ -924,6 +940,9 @@ namespace FacadeHelper
                 var p_subs = _p.GetSubComponentIds();
                 foreach (ElementId eid in p_subs)
                 {
+                    txt_curr_op.Content = "RESOLVE/P.E";
+                    System.Windows.Forms.Application.DoEvents();
+
                     ScheduleElementInfo _sei = new ScheduleElementInfo();
                     Element __element = (doc.GetElement(eid));
                     _sei.INF_ElementId = eid.IntegerValue;
