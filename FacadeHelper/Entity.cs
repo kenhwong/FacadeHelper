@@ -209,8 +209,8 @@ namespace FacadeHelper
         private bool _inf_IsScheduled;
 
         private uint _inf_TaskID;
-        private int _inf_TaskLevel = -1;
-        private int _inf_TaskSubLevel = -1;
+        private int _inf_TaskLayer = -1;
+        private int _inf_TaskSubLayer = -1;
         private DateTime _inf_TaskStart;
         private DateTime _inf_TaskFinish;
         private string _inf_TaskDuration;
@@ -240,8 +240,8 @@ namespace FacadeHelper
         public bool INF_IsScheduled { get { return _inf_IsScheduled; } set { _inf_IsScheduled = value; OnPropertyChanged(nameof(INF_IsScheduled)); } }
 
         public uint INF_TaskID { get { return _inf_TaskID; } set { _inf_TaskID = value; OnPropertyChanged(nameof(INF_TaskID)); } }
-        public int INF_TaskLevel { get { return _inf_TaskLevel; } set { _inf_TaskLevel = value; OnPropertyChanged(nameof(INF_TaskLevel)); } }
-        public int INF_TaskSubLevel { get { return _inf_TaskSubLevel; } set { _inf_TaskSubLevel = value; OnPropertyChanged(nameof(INF_TaskSubLevel)); } }
+        public int INF_TaskLayer { get { return _inf_TaskLayer; } set { _inf_TaskLayer = value; OnPropertyChanged(nameof(INF_TaskLayer)); } }
+        public int INF_TaskSubLayer { get { return _inf_TaskSubLayer; } set { _inf_TaskSubLayer = value; OnPropertyChanged(nameof(INF_TaskSubLayer)); } }
         public DateTime INF_TaskStart { get { return _inf_TaskStart; } set { _inf_TaskStart = value; OnPropertyChanged(nameof(INF_TaskStart)); } }
         public DateTime INF_TaskFinish { get { return _inf_TaskFinish; } set { _inf_TaskFinish = value; OnPropertyChanged(nameof(INF_TaskFinish)); } }
         public string INF_TaskDuration { get { return _inf_TaskDuration; } set { _inf_TaskDuration = value; OnPropertyChanged(nameof(INF_TaskDuration)); } }
@@ -290,6 +290,7 @@ namespace FacadeHelper
     public class ZoneInfoBase : INotifyPropertyChanged
     {
         //Z-00-99-AA-99, Z-01-99-AA-99, Z-02-99-AA-99
+        private int _zoneExternalLinkId = 0;
         private string _zoneCode;
 
         private int _zoneLevel;
@@ -299,6 +300,7 @@ namespace FacadeHelper
 
         private string _filterName;
 
+        public int ZoneExternalLinkId { get { return _zoneExternalLinkId; } set { _zoneExternalLinkId = value; OnPropertyChanged(nameof(ZoneExternalLinkId)); } }
         public string ZoneCode { get { return _zoneCode; } set { _zoneCode = value; OnPropertyChanged(nameof(ZoneCode)); } }
 
         public int ZoneLevel { get { return _zoneLevel; } set { _zoneLevel = value; OnPropertyChanged(nameof(ZoneLevel)); } }

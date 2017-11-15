@@ -174,9 +174,9 @@ namespace FacadeHelper
                     progbarGlobalProcess.Maximum = Global.DocContent.ZoneList.Count;
                     progbarGlobalProcess.Value = 0;
 
-                    foreach (var zn in Global.DocContent.ZoneList)
+                    foreach (var zn in Global.DocContent.FullZoneList.GroupBy(z=>z.ZoneCode))
                     {
-                        ZoneHelper.FnResolveZone(uidoc, zn,
+                        ZoneHelper.FnResolveZone(uidoc, zn.ElementAt(0),
                             ref txtCurrentProcessElement,
                             ref txtCurrentProcessOperation,
                             ref progbarCurrentProcess,
@@ -191,7 +191,7 @@ namespace FacadeHelper
                 {
                     datagridPanels.ItemsSource = null;
                     datagridPanels.ItemsSource = e.Parameter as List<CurtainPanelInfo>;
-                    expDataGridPanels.Header = $"分区[{((navZone.SelectedItem as ListBoxItem).Tag as ZoneInfoBase).ZoneCode}]幕墙嵌板数据列表";
+                    tiPanel.Header = $"嵌板 / {(e.Parameter as List<CurtainPanelInfo>).Count}, Z/{((navZone.SelectedItem as ListBoxItem).Tag as ZoneInfoBase).ZoneCode}";
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -246,39 +246,39 @@ namespace FacadeHelper
                         txtResultZone.Content = $"Z/{ResultZoneInfo.Count}; ";
                         datagridZones.ItemsSource = null;
                         datagridZones.ItemsSource = ResultZoneInfo;
-                        expDataGridZones.Header = $"分区检索结果： {ResultZoneInfo.Count}";
+                        tiZone.Header = $"分区 / {ResultZoneInfo.Count}";
                     }
                     else
                     {
                         txtResultZone.Content = $"Z/SKIP; ";
                         datagridZones.ItemsSource = null;
-                        expDataGridZones.Header = $"分区检索结果： 不检索";
+                        tiZone.Header = $"分区 / SKIP";
                     }
                     if (IsSearchRangePanel)
                     {
                         txtResultPanel.Content = $"P/{ResultPanelInfo.Count}; ";
                         datagridPanels.ItemsSource = null;
                         datagridPanels.ItemsSource = ResultPanelInfo;
-                        expDataGridPanels.Header = $"嵌板检索结果： {ResultPanelInfo.Count}";
+                        tiPanel.Header = $"嵌板 / {ResultPanelInfo.Count}";
                     }
                     else
                     {
                         txtResultPanel.Content = $"P/SKIP; ";
                         datagridPanels.ItemsSource = null;
-                        expDataGridPanels.Header = $"嵌板检索结果： 不检索";
+                        tiPanel.Header = $"嵌板 / SKIP";
                     }
                     if (IsSearchRangeElement)
                     {
                         txtResultElement.Content = $"E/{ResultElementInfo.Count}; ";
                         datagridScheduleElements.ItemsSource = null;
                         datagridScheduleElements.ItemsSource = ResultElementInfo;
-                        expDataGridScheduleElements.Header = $"构件检索结果： {ResultElementInfo.Count}";
+                        tiElement.Header = $"构件 / {ResultElementInfo.Count}";
                     }
                     else
                     {
                         txtResultElement.Content = $"E/SKIP; ";
                         datagridScheduleElements.ItemsSource = null;
-                        expDataGridScheduleElements.Header = $"分區檢索結果： 不檢索";
+                        tiElement.Header = $"构件 / SKIP";
                     }
 
                     #endregion
@@ -426,16 +426,15 @@ namespace FacadeHelper
                 datagridPanels.ItemsSource = null;
                 var _plist = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneCode == zi.ZoneCode);
                 datagridPanels.ItemsSource = _plist;
-                expDataGridPanels.Header = $"分区[{zi.ZoneCode}]幕墙嵌板数据列表，数量 {_plist.Count()}";
-                expDataGridPanels.IsExpanded = true;
-
+                tiPanel.Header = $"嵌板 / {_plist.Count()}, Z/{zi.ZoneCode}]";
+                tiPanel.IsSelected = true;
                 navPanels.ItemsSource = _plist;
                 expPanel.Header = $"幕墙嵌板：{_plist.Count()}，分区[{zi.ZoneCode}]";
                 expPanel.IsExpanded = true;
                 datagridScheduleElements.ItemsSource = null;
                 var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_ZoneCode == zi.ZoneCode);
                 datagridScheduleElements.ItemsSource = _elist;
-                expDataGridScheduleElements.Header = $"分区[{zi.ZoneCode}]明细构件数据列表，数量 {_elist.Count()}";
+                tiElement.Header = $"构件 / {_elist.Count()}, Z/{zi.ZoneCode}";
                 navZone.SelectedItem = null;
             }
         }
@@ -449,8 +448,8 @@ namespace FacadeHelper
                 datagridScheduleElements.ItemsSource = null;
                 var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_HostCurtainPanel.INF_ElementId == pi.INF_ElementId);
                 datagridScheduleElements.ItemsSource = _elist;
-                expDataGridScheduleElements.Header = $"分区[{pi.INF_ZoneCode}]，嵌板[{pi.INF_Code}]明细构件数据列表，数量 {_elist.Count()}";
-                expDataGridScheduleElements.IsExpanded = true;
+                tiElement.Header = $"构件 / {_elist.Count()}, Z/{pi.INF_ZoneCode}/P/{pi.INF_Code}";
+                tiElement.IsSelected = true;
                 navPanels.SelectedItem = null;
             }
         }
@@ -480,9 +479,10 @@ namespace FacadeHelper
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
             var panels = panelcollector
                 .WherePasses(cwpanel_InstancesFilter)
-                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板");
+                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板")
+                .ToList();
 
-            if (panels.Count() == 0)
+            if (panels.Count == 0)
             {
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NONE SELECTED, P/VALID.");
                 return;
@@ -490,18 +490,132 @@ namespace FacadeHelper
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: P/{panels.Count()}.");
             SelectedCurtainPanelList.Clear();
 
-            foreach (var _ele in panels)
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LIST: P/{panels.Count()}/E.");
+            bool _haserror = false;
+            panels.ForEach(_ele =>
             {
-                CurtainPanelInfo _gp = new CurtainPanelInfo(_ele as Autodesk.Revit.DB.Panel, Global.DocContent.CurrentZoneInfo.ZoneCode);
+                var _p = _ele as Autodesk.Revit.DB.Panel;
+                CurtainPanelInfo _gp = new CurtainPanelInfo(_p, Global.DocContent.CurrentZoneInfo.ZoneCode);
                 _gp.INF_Type = CurrentZonePanelType;
                 _gp.INF_HostZoneInfo = Global.DocContent.CurrentZoneInfo;
                 SelectedCurtainPanelList.Add(_gp);
+
+                //確定嵌板內明細構件數據
+                progbarCurrentProcess.Maximum = panels.Count();
+                progbarCurrentProcess.Value = 0;
+
+                var p_subs = _p.GetSubComponentIds();
+                foreach (ElementId eid in p_subs)
+                {
+                    txtCurrentProcessElement.Content = $"P/{_gp.INF_ElementId}/E{eid}";
+                    txtCurrentProcessOperation.Content = "RESOLVE/P.E";
+                    progbarCurrentProcess.Value++;
+                    System.Windows.Forms.Application.DoEvents();
+
+                    ScheduleElementInfo _sei = new ScheduleElementInfo();
+                    Element __element = (doc.GetElement(eid));
+                    _sei.INF_ElementId = eid.IntegerValue;
+                    _sei.INF_Name = __element.Name;
+                    _sei.INF_ZoneCode = Global.DocContent.CurrentZoneInfo.ZoneCode;
+                    _sei.INF_ZoneIndex = Global.DocContent.CurrentZoneInfo.ZoneIndex;
+                    _sei.INF_HostZoneInfo = Global.DocContent.CurrentZoneInfo;
+                    _sei.INF_Level = Global.DocContent.CurrentZoneInfo.ZoneLevel;
+                    _sei.INF_Direction = Global.DocContent.CurrentZoneInfo.ZoneDirection;
+                    _sei.INF_System = Global.DocContent.CurrentZoneInfo.ZoneSystem;
+                    _sei.INF_HostCurtainPanel = _gp;
+
+                    #region 确定分项参数 + 工序层级
+                    Parameter _parameter;
+                    _parameter = __element.get_Parameter("分项");
+                    if (_parameter != null)
+                    {
+                        if ((_parameter = __element.get_Parameter("分项")).HasValue)
+                        {
+                            if (int.TryParse(_parameter.AsString(), out int _type))
+                            {
+                                ElementClass __sec;
+                                if ((__sec = Global.ElementClassList.Find(ec => ec.EClassIndex == _type && ec.IsScheduled)) != null)
+                                {
+                                    _sei.INF_Type = _type;
+                                    _sei.INF_TaskLayer = __sec.ETaskLayer;
+                                    _sei.INF_TaskSubLayer = __sec.ETaskSubLayer;
+                                    _sei.INF_IsScheduled = true;
+                                }
+                                else
+                                {
+                                    _sei.INF_Type = -11;
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                _sei.INF_Type = -1;
+                                _haserror = true;
+                                _sei.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
+                                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                                uidoc.Selection.Elements.Add(__element);
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            _sei.INF_Type = -2;
+                            _haserror = true;
+                            _sei.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
+                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                            uidoc.Selection.Elements.Add(__element);
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        _sei.INF_Type = -3;
+                        _haserror = true;
+                        _sei.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
+                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
+                        uidoc.Selection.Elements.Add(__element);
+                        continue;
+                    }
+                    #endregion
+
+                    XYZ _xyzOrigin = ((FamilyInstance)__element).GetTotalTransform().Origin;
+                    _sei.INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.X);
+                    _sei.INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y);
+                    _sei.INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z);
+
+                    Global.DocContent.ScheduleElementList.Add(_sei);
+                }
+
+            });
+
+            #region 参数错误构件保存选择集
+            if (!uidoc.Selection.Elements.IsEmpty)
+            {
+                using (Transaction trans = new Transaction(doc, "CreateZoneErrorElementGroup"))
+                {
+                    trans.Start();
+                    var sfe = SelectionFilterElement.Create(doc, $"ERROR-{CurrentZoneInfo.ZoneCode}");
+                    sfe.AddSet(uidoc.Selection.GetElementIds());
+                    trans.Commit();
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: Z/[{CurrentZoneInfo.ZoneCode}, ERR#{CurrentZoneInfo.ZoneCode}.");
+                }
             }
+
+            if (_haserror)
+            {
+                if (MessageBox.Show($"有部分构件存在参数错误，是否继续处理数据？", "构件参数错误...", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
+                {
+                    return;
+                }
+            }
+            #endregion
+
+
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
 
             datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
-            expDataGridPanels.Header = "选择区域幕墙嵌板数据列表";
+            tiPanel.Header = $"嵌板 / {SelectedCurtainPanelList.Count}";
 
             uidoc.Selection.Elements.Clear();
             foreach (var _ele in panels) uidoc.Selection.Elements.Add(_ele);
@@ -533,12 +647,6 @@ namespace FacadeHelper
         }
 
         #endregion
-        private void expDataGrid_Expanded(object sender, RoutedEventArgs e)
-        {
-            if (((Expander)sender).Name == "expDataGridZones") { expDataGridPanels.IsExpanded = false; expDataGridScheduleElements.IsExpanded = false; }
-            if (((Expander)sender).Name == "expDataGridPanels") { expDataGridZones.IsExpanded = false; expDataGridScheduleElements.IsExpanded = false; }
-            if (((Expander)sender).Name == "expDataGridScheduleElements") { expDataGridZones.IsExpanded = false; expDataGridPanels.IsExpanded = false; }
-        }
 
         private void cbModelInit_Executed(object sender, ExecutedRoutedEventArgs e)
         {

@@ -269,7 +269,7 @@
             <DockPanel DockPanel.Dock="Left" LastChildFill="True" ScrollViewer.CanContentScroll="True">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <TextBox x:Name="txtSearchKeyword" Width="500" />
-                    <Button x:Name="bnSearch" Content="搜索構件" DockPanel.Dock="Left" Margin="10,0,10,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSearch}" x:Name="bnSearch" ToolTip="搜素嵌板和构件" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0" />
                     <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
                     <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
                     <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
@@ -283,105 +283,101 @@
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnCloseResult" ToolTip="关闭搜索结果" DockPanel.Dock="Right" Width="30" Height="30" Margin="0" />
                 </DockPanel>
                 <DockPanel DockPanel.Dock="Top" LastChildFill="True" ScrollViewer.CanContentScroll="True">
-
-                    <Expander x:Name="expDataGridZones" ExpandDirection="Down" Header="分区数据" DockPanel.Dock="Top" IsExpanded="False" Margin="5" Padding="5" Expanded="expDataGrid_Expanded">
-                        <ScrollViewer>
-                            <DataGrid x:Name="datagridZones" DockPanel.Dock="Top" ItemsSource="{Binding}" 
+                    <TabControl x:Name="tabGrids" DockPanel.Dock="Top" Margin="5,5,-20,-20">
+                        <TabItem x:Name="tiZone" Header="分区 / 0" Tag="Z">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
+                                <DataGrid x:Name="datagridZones" DockPanel.Dock="Top" ItemsSource="{Binding}" 
                                   AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
-                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single" Height="200">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding ZoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="工序" Width="60" Binding="{Binding ZoneType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="楼层" Width="60" Binding="{Binding ZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="系統" Width="60" Binding="{Binding ZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="朝向" Width="60" Binding="{Binding ZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="分区" Width="60" Binding="{Binding ZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="选择集" Width="60" Binding="{Binding FilterName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTemplateColumn Header="开始" Width="100">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding ZoneStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <DatePicker SelectedDate="{Binding ZoneStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-                                    <DataGridTemplateColumn Header="结束" Width="100">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <TextBlock Text="{Binding ZoneFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                        <DataGridTemplateColumn.CellEditingTemplate>
-                                            <DataTemplate>
-                                                <DatePicker SelectedDate="{Binding ZoneFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellEditingTemplate>
-                                    </DataGridTemplateColumn>
-                                    <DataGridTextColumn Header="工期" Width="60" Binding="{Binding ZoneDurationHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </ScrollViewer>
-                    </Expander>
-
-                    <Expander x:Name="expDataGridPanels" ExpandDirection="Down" Header="嵌板数据" DockPanel.Dock="Top" IsExpanded="False" Margin="5" Padding="5" Expanded="expDataGrid_Expanded">
-                        <ScrollViewer>
-                            <DataGrid x:Name="datagridPanels" DockPanel.Dock="Top" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
+                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single" Margin="5" GotFocus="datagridElements_GotFocus">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding ZoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="工序" Width="60" Binding="{Binding ZoneType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="楼层" Width="60" Binding="{Binding ZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="系統" Width="60" Binding="{Binding ZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="朝向" Width="60" Binding="{Binding ZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="分区" Width="60" Binding="{Binding ZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="选择集" Width="60" Binding="{Binding FilterName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTemplateColumn Header="开始" Width="100">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding ZoneStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                            <DataGridTemplateColumn.CellEditingTemplate>
+                                                <DataTemplate>
+                                                    <DatePicker SelectedDate="{Binding ZoneStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellEditingTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="结束" Width="100">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding ZoneFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                            <DataGridTemplateColumn.CellEditingTemplate>
+                                                <DataTemplate>
+                                                    <DatePicker SelectedDate="{Binding ZoneFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellEditingTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="工期" Width="60" Binding="{Binding ZoneDurationHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </ScrollViewer>
+                        </TabItem>
+                        <TabItem x:Name="tiPanel" Header="嵌板 / 0" Tag="P">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
+                                <DataGrid x:Name="datagridPanels" DockPanel.Dock="Top" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
                                   AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
-                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single"  Height="200" GotFocus="datagridElements_GotFocus">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="PANELID" Width="70" Binding="{Binding INF_ElementId}" />
-                                    <DataGridTextColumn Header="名称" Width="120" Binding="{Binding INF_Name}" />
-                                    <DataGridTextColumn Header="分项" Width="50" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="系统" Width="50" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="朝向" Width="50" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="楼层" Width="50" Binding="{Binding INF_Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="原点X" Width="70" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="原点Y" Width="70" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="原点Z" Width="70" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="宽度" Width="70" Binding="{Binding INF_Width_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="高度" Width="70" Binding="{Binding INF_Height_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="分区" Width="50" Binding="{Binding INF_ZoneID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding INF_ZoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="分区编码" Width="130" Binding="{Binding INF_Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="安装开始" Width="130" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
-                                    <DataGridTextColumn Header="安装结束" Width="130" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </ScrollViewer>
-                    </Expander>
-
-                    <Expander x:Name="expDataGridScheduleElements" ExpandDirection="Down" Header="构件数据" DockPanel.Dock="Top" IsExpanded="False" Margin="5" Padding="5" Expanded="expDataGrid_Expanded">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                            <DataGrid x:Name="datagridScheduleElements" DockPanel.Dock="Top" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
+                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single" Margin="5" GotFocus="datagridElements_GotFocus">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="PANELID" Width="70" Binding="{Binding INF_ElementId}" />
+                                        <DataGridTextColumn Header="名称" Width="120" Binding="{Binding INF_Name}" />
+                                        <DataGridTextColumn Header="分项" Width="50" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="系统" Width="50" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="朝向" Width="50" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="楼层" Width="50" Binding="{Binding INF_Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="原点X" Width="70" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="原点Y" Width="70" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="原点Z" Width="70" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="宽度" Width="70" Binding="{Binding INF_Width_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="高度" Width="70" Binding="{Binding INF_Height_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="分区" Width="50" Binding="{Binding INF_ZoneID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding INF_ZoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="分区编码" Width="130" Binding="{Binding INF_Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="安装开始" Width="130" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                                        <DataGridTextColumn Header="安装结束" Width="130" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </ScrollViewer>
+                        </TabItem>
+                        <TabItem x:Name="tiElement" Header="构件 / 0" Tag="E">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
+                                <DataGrid x:Name="datagridScheduleElements" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
                                   AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
-                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single"  Height="200" GotFocus="datagridElements_GotFocus">
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="ELEID" Width="70" Binding="{Binding INF_ElementId}" />
-                                    <DataGridTextColumn Header="名称" Width="150" Binding="{Binding INF_Name}" />
-                                    <DataGridTextColumn Header="分项" Width="50" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="系統" Width="50" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="朝向" Width="50" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="楼层" Width="50" Binding="{Binding INF_Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="原点X" Width="70" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="原点Y" Width="70" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="原点Z" Width="70" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="嵌板" Width="100" Binding="{Binding INF_HostCurtainPanel, StringFormat={}{0:0.0}}" />
-                                    <DataGridTextColumn Header="分区" Width="50" Binding="{Binding INF_ZoneID}" />
-                                    <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding INF_ZoneCode}" />
-                                    <DataGridTextColumn Header="分区编码" Width="130" Binding="{Binding INF_Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    <DataGridTextColumn Header="安裝开始" Width="130" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
-                                    <DataGridTextColumn Header="安裝结束" Width="130" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
-                                </DataGrid.Columns>
-                            </DataGrid>
-                        </ScrollViewer>
-                    </Expander>
-
-                    <Expander ExpandDirection="Down"  Header="当前数据处理状态" DockPanel.Dock="Top" IsExpanded="True" Margin="5" Padding="0">
-                    </Expander>
+                                  CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single" Margin="5" GotFocus="datagridElements_GotFocus">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="ELEID" Width="70" Binding="{Binding INF_ElementId}" />
+                                        <DataGridTextColumn Header="名称" Width="150" Binding="{Binding INF_Name}" />
+                                        <DataGridTextColumn Header="分项" Width="50" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="系統" Width="50" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="朝向" Width="50" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="楼层" Width="50" Binding="{Binding INF_Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="原点X" Width="70" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="原点Y" Width="70" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="原点Z" Width="70" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="嵌板" Width="100" Binding="{Binding INF_HostCurtainPanel, StringFormat={}{0:0.0}}" />
+                                        <DataGridTextColumn Header="分区" Width="50" Binding="{Binding INF_ZoneID}" />
+                                        <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding INF_ZoneCode}" />
+                                        <DataGridTextColumn Header="分区编码" Width="130" Binding="{Binding INF_Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        <DataGridTextColumn Header="安裝开始" Width="130" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                                        <DataGridTextColumn Header="安裝结束" Width="130" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </ScrollViewer>
+                        </TabItem>
+                    </TabControl>
                 </DockPanel>
             </DockPanel>
         </DockPanel>
