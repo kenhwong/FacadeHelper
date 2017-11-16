@@ -309,9 +309,7 @@ namespace FacadeHelper
             it.Reset();
             while (it.MoveNext())
             {
-                ProjectParameterData newProjectParameterData = new ProjectParameterData();
-                newProjectParameterData.Definition = it.Key;
-                newProjectParameterData.Binding = it.Current as ElementBinding;
+                ProjectParameterData newProjectParameterData = new ProjectParameterData() { Definition = it.Key, Binding = it.Current as ElementBinding };
                 result.Add(newProjectParameterData);
             }
 

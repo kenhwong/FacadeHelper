@@ -38,7 +38,7 @@ namespace FacadeHelper
         private List<CurtainPanelInfo> ResultPanelInfo = new List<CurtainPanelInfo>();
         private List<ScheduleElementInfo> ResultElementInfo = new List<ScheduleElementInfo>();
 
-        public Window parentWin { get; set; }
+        public Window ParentWin { get; set; }
 
         private int _currentZonePanelType = 51;
         public int CurrentZonePanelType { get { return _currentZonePanelType; } set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
@@ -127,7 +127,7 @@ namespace FacadeHelper
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbOnElementClassify = new CommandBinding(cmdOnElementClassify, (sender, e) =>
             {
-                expZoneCodeInput.IsExpanded = true;
+                if (bnOnElementClassify.IsChecked == true) return;
                 if (Global.DocContent.CurrentZoneInfo.ZoneIndex == 0)
                 {
                     CurrentZoneLevel = Global.DocContent.CurrentZoneInfo.ZoneLevel = 1;
@@ -144,18 +144,19 @@ namespace FacadeHelper
                     CurrentZoneIndex = Global.DocContent.CurrentZoneInfo.ZoneIndex;
                     CurrentZoneCode = Global.DocContent.CurrentZoneInfo.ZoneCode;
                 }
-
             },
             (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbElementClassify = new CommandBinding(cmdElementClassify, cbElementClassify_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbElementLink = new CommandBinding(cmdElementLink,
                 (sender, e) =>
                 {
-                    Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-                    ofd.Multiselect = true;
-                    ofd.InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile);
-                    ofd.DefaultExt = "*.elist";
-                    ofd.Filter = "Element Collection Files(*.elist)|*.elist|All(*.*)|*.*";
+                    Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
+                    {
+                        Multiselect = true,
+                        InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
+                        DefaultExt = "*.elist",
+                        Filter = "Element Collection Files(*.elist)|*.elist|All(*.*)|*.*"
+                    };
                     if (ofd.ShowDialog() == true)
                     {
                         ZoneHelper.FnLinkedElementsDeserialize(ofd.FileNames);
@@ -174,7 +175,7 @@ namespace FacadeHelper
                     progbarGlobalProcess.Maximum = Global.DocContent.ZoneList.Count;
                     progbarGlobalProcess.Value = 0;
 
-                    foreach (var zn in Global.DocContent.FullZoneList.GroupBy(z=>z.ZoneCode))
+                    foreach (var zn in Global.DocContent.FullZoneList.GroupBy(z => z.ZoneCode))
                     {
                         ZoneHelper.FnResolveZone(uidoc, zn.ElementAt(0),
                             ref txtCurrentProcessElement,
@@ -198,10 +199,12 @@ namespace FacadeHelper
             CommandBinding cbLoadData = new CommandBinding(cmdLoadData,
                 (sender, e) =>
                 {
-                    Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-                    ofd.InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile);
-                    ofd.DefaultExt = "*.data";
-                    ofd.Filter = "Data Files(*.data)|*.data|Data Backup Files(*.bak)|*.bak|All(*.*)|*.*";
+                    Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
+                    {
+                        InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
+                        DefaultExt = "*.data",
+                        Filter = "Data Files(*.data)|*.data|Data Backup Files(*.bak)|*.bak|All(*.*)|*.*"
+                    };
                     if (ofd.ShowDialog() == true)
                         if (MessageBox.Show($"确认加载新的数据文件 {ofd.FileName}？\n\n现有数据将被新的数据覆盖，且不可恢复，但不会影响模型文件。选择确认继续，取消则不会有任何操作。", "加载新的数据文件...",
                             MessageBoxButton.OKCancel,
@@ -428,9 +431,6 @@ namespace FacadeHelper
                 datagridPanels.ItemsSource = _plist;
                 tiPanel.Header = $"嵌板 / {_plist.Count()}, Z/{zi.ZoneCode}]";
                 tiPanel.IsSelected = true;
-                navPanels.ItemsSource = _plist;
-                expPanel.Header = $"幕墙嵌板：{_plist.Count()}，分区[{zi.ZoneCode}]";
-                expPanel.IsExpanded = true;
                 datagridScheduleElements.ItemsSource = null;
                 var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_ZoneCode == zi.ZoneCode);
                 datagridScheduleElements.ItemsSource = _elist;
@@ -438,22 +438,6 @@ namespace FacadeHelper
                 navZone.SelectedItem = null;
             }
         }
-
-        private void navPanels_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var _addeditem = e.AddedItems;
-            if (_addeditem.Count > 0)
-            {
-                var pi = _addeditem[0] as CurtainPanelInfo;
-                datagridScheduleElements.ItemsSource = null;
-                var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_HostCurtainPanel.INF_ElementId == pi.INF_ElementId);
-                datagridScheduleElements.ItemsSource = _elist;
-                tiElement.Header = $"构件 / {_elist.Count()}, Z/{pi.INF_ZoneCode}/P/{pi.INF_Code}";
-                tiElement.IsSelected = true;
-                navPanels.SelectedItem = null;
-            }
-        }
-
 
         #region Command -- bnElementClassify : 嵌板和构件归类
         private void cbElementClassify_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -495,9 +479,11 @@ namespace FacadeHelper
             panels.ForEach(_ele =>
             {
                 var _p = _ele as Autodesk.Revit.DB.Panel;
-                CurtainPanelInfo _gp = new CurtainPanelInfo(_p, Global.DocContent.CurrentZoneInfo.ZoneCode);
-                _gp.INF_Type = CurrentZonePanelType;
-                _gp.INF_HostZoneInfo = Global.DocContent.CurrentZoneInfo;
+                CurtainPanelInfo _gp = new CurtainPanelInfo(_p, Global.DocContent.CurrentZoneInfo.ZoneCode)
+                {
+                    INF_Type = CurrentZonePanelType,
+                    INF_HostZoneInfo = Global.DocContent.CurrentZoneInfo
+                };
                 SelectedCurtainPanelList.Add(_gp);
 
                 //確定嵌板內明細構件數據
@@ -634,10 +620,6 @@ namespace FacadeHelper
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: SECECTSET, SSET/{CurrentZoneInfo.FilterName}, P/{selectset.GetElementIds().Count}");
             }
 
-            MouseBinding mbind = new MouseBinding(cmdNavZone, new MouseGesture(MouseAction.LeftDoubleClick));
-            mbind.CommandParameter = SelectedCurtainPanelList;
-            mbind.CommandTarget = datagridPanels;
-
             Global.DocContent.ZoneList.Add(CurrentZoneInfo);
             Global.DocContent.CurtainPanelList.AddRange(SelectedCurtainPanelList);
 
@@ -658,10 +640,12 @@ namespace FacadeHelper
             ParameterHelper.InitProjectParameters(ref doc);
 
             //加載分區進度數據
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            ofd.InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile);
-            ofd.DefaultExt = "*.txt";
-            ofd.Filter = "Schedule Text Files(*.txt)|*.txt|All(*.*)|*.*";
+            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
+            {
+                InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
+                DefaultExt = "*.txt",
+                Filter = "Schedule Text Files(*.txt)|*.txt|All(*.*)|*.*"
+            };
             if (ofd.ShowDialog() == true)
                 if (MessageBox.Show($"加载新的分区进度定义文件 {ofd.FileName}？\n\n现有的进度数据将被覆盖。选择确认继续。", "加载新的进度数据文件...",
                     MessageBoxButton.OKCancel,

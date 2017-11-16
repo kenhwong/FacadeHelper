@@ -109,7 +109,7 @@ namespace FacadeHelper
             {
                 Zone ucpe = new Zone(commandData);
                 Window winaddin = new Window();
-                ucpe.parentWin = winaddin;
+                ucpe.ParentWin = winaddin;
                 winaddin.Content = ucpe;
                 //winaddin.WindowStyle = WindowStyle.None;
                 winaddin.Padding = new Thickness(0);

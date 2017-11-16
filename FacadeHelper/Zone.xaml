@@ -26,23 +26,27 @@
             </DockPanel.Effect>
             <GroupBox Style="{DynamicResource CommandGroup}" Header="SYSTEM" DockPanel.Dock="Left" Padding="0,5" Margin="20,10,10,10">
                 <WrapPanel>
-                    <ToggleButton x:Name="bnQuickStart" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" Style="{DynamicResource CommonToggleButton}" IsChecked="False">
-                        <ToggleButton.Triggers>
-                            <EventTrigger RoutedEvent="ToggleButton.Click">
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <!--<DoubleAnimation Storyboard.TargetName="TrFQSPop" Storyboard.TargetProperty="(RotateTransform.Angle)" From="0" To="360" Duration="0:0:5" AutoReverse="True"/>-->
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </ToggleButton.Triggers>
-                    </ToggleButton>
+                    <ToggleButton x:Name="bnQuickStart" 
+                                  Tag="{StaticResource IconHelp}" 
+                                  DockPanel.Dock="Left" 
+                                  Width="30" 
+                                  Height="30" 
+                                  Margin="0,0,10,0" 
+                                  Style="{DynamicResource IconPathToggleButton}" 
+                                  IsChecked="False" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" ToolTip="模型初始" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
             <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
                 <WrapPanel>
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnOnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
+                    <ToggleButton Style="{DynamicResource IconPathToggleButton}" 
+                                  Tag="{StaticResource IconClassify}" 
+                                  IsChecked="False" 
+                                  x:Name="bnOnElementClassify" 
+                                  DockPanel.Dock="Left" 
+                                  Width="30" 
+                                  Height="30" 
+                                  Margin="0,0,10,0" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconPlus}" x:Name="bnElementLink" ToolTip="链接外部数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
@@ -62,15 +66,17 @@
 
             <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="实时" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10" />
         </DockPanel>
-        <Popup x:Name="popQS" Width="400" Height="520" HorizontalOffset="0" VerticalOffset="10" AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
-               StaysOpen="True" IsOpen="{Binding ElementName=bnQuickStart, Path=IsChecked}" PlacementTarget="{Binding ElementName=bnQuickStart}" Placement="Bottom" Visibility="Collapsed">
-            <Canvas Name="Main">
+        <Popup x:Name="popQS" Width="420" Height="540" HorizontalOffset="0" VerticalOffset="10" 
+               AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
+               StaysOpen="True" IsOpen="{Binding ElementName=bnQuickStart, Path=IsChecked}" 
+               PlacementTarget="{Binding ElementName=bnQuickStart}" Placement="Bottom" Visibility="Visible">
+            <Canvas Name="Main" Margin="10">
                 <Canvas.RenderTransform>
                     <RotateTransform x:Name="TrFQSPop" />
                 </Canvas.RenderTransform>
                 <Path Stroke="#808080" StrokeThickness="0" Name="BalloonPath" Height="520" Stretch="None"  Width="400" >
                     <Path.Effect>
-                        <DropShadowEffect Color="DarkGray" ShadowDepth="0" Direction="225"  BlurRadius="10" Opacity="1" />
+                        <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.7" />
                     </Path.Effect>
                     <Path.Fill >
                         <SolidColorBrush Color="#f0f0f0"></SolidColorBrush>
@@ -97,6 +103,125 @@
                 </DockPanel>
             </Canvas>
         </Popup>
+
+        <Popup x:Name="popZC" Width="380" Height="400" HorizontalOffset="0" VerticalOffset="10"
+               AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
+               StaysOpen="True" IsOpen="{Binding ElementName=bnOnElementClassify, Path=IsChecked}" 
+               PlacementTarget="{Binding ElementName=bnOnElementClassify}" Placement="Bottom" Visibility="Collapsed">
+            <Canvas Name="ZCMain" Margin="10">
+                <Path Stroke="#808080" StrokeThickness="0" Name="ZCBalloonPath" Stretch="None"  Width="360" Fill="{x:Static SystemColors.ControlBrush}" >
+                    <Path.Effect>
+                        <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.7" />
+                    </Path.Effect>
+                    <Path.Data>
+                        <CombinedGeometry GeometryCombineMode="Union">
+                            <CombinedGeometry.Geometry1>
+                                <RectangleGeometry Rect="0,20,360,360"/>
+                            </CombinedGeometry.Geometry1>
+                            <CombinedGeometry.Geometry2>
+                                <PathGeometry Figures="M0,20 L0,0 20,20Z" />
+                            </CombinedGeometry.Geometry2>
+                        </CombinedGeometry>
+                    </Path.Data>
+                </Path>
+                <DockPanel Margin="20,40,20,20" Width="320" LastChildFill="False">
+                    <DockPanel DockPanel.Dock="Top" Margin="10,0" LastChildFill="False">
+                        <Label Style="{DynamicResource TagLable}" Content="分区编号/ZONECODE" Tag="SET" DockPanel.Dock="Left" Foreground="{StaticResource CyanBrush}" Opacity=".5">
+                            <Label.Effect>
+                                <DropShadowEffect Color="DarkGray" ShadowDepth="0" Direction="225"  BlurRadius="10" Opacity="1" />
+                            </Label.Effect>
+                        </Label>
+                    </DockPanel>
+                    <DockPanel Margin="10" DockPanel.Dock="Top" LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5,0,0">
+                            <Label Content="面板类型：" Width="80" />
+                            <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
+                                <RadioButton Content="玻璃" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 51}" />
+                                <RadioButton Content="石材" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 52}" />
+                                <RadioButton Content="铝板" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 53}" />
+                                <RadioButton Content="百页" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 54}" />
+                                <RadioButton Content="框架" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 61}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5,0,0">
+                            <Label Content="分区楼层：" Width="80" />
+                            <StackPanel x:Name="subbuttongroup_ZoneLevel" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
+                                <RadioButton Content="1" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 1}" />
+                                <RadioButton Content="2" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 2}" />
+                                <RadioButton Content="3" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 3}" />
+                                <RadioButton Content="4" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 4}" />
+                                <RadioButton Content="5" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 5}" />
+                                <RadioButton Content="6" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 6}" />
+                                <RadioButton Content="7" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 7}" />
+                                <RadioButton Content="8" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 8}" />
+                                <RadioButton Content="9" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 9}" />
+                                <RadioButton Content="10" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 10}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5">
+                            <Label Content="分区朝向：" Width="80" />
+                            <StackPanel x:Name="subbuttongroup_ZoneDirection" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
+                                <RadioButton Content="南" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= S}" />
+                                <RadioButton Content="北" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= N}" />
+                                <RadioButton Content="东" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= E}" />
+                                <RadioButton Content="西" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= W}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5,0,0">
+                            <Label Content="分区系统：" Width="80" />
+                            <StackPanel x:Name="subbuttongroup_ZoneSystem" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
+                                <RadioButton Content="A" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= A}" />
+                                <RadioButton Content="B" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= B}" />
+                                <RadioButton Content="C" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= C}" />
+                                <RadioButton Content="D" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= D}" />
+                                <RadioButton Content="E" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= E}" />
+                                <RadioButton Content="F" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= F}" />
+                                <RadioButton Content="G" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= G}" />
+                                <RadioButton Content="H" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= H}" />
+                                <RadioButton Content="J" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= J}" />
+                                <RadioButton Content="K" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= K}" />
+                                <RadioButton Content="L" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= L}" />
+                                <RadioButton Content="M" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= M}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5">
+                            <Label Content="分区序号：" Width="80" />
+                            <StackPanel x:Name="subbuttongroup_ZoneIndex" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
+                                <RadioButton Content="1" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 1}" />
+                                <RadioButton Content="2" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 2}" />
+                                <RadioButton Content="3" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 3}" />
+                                <RadioButton Content="4" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 4}" />
+                                <RadioButton Content="5" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 5}" />
+                                <RadioButton Content="6" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 6}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <DockPanel DockPanel.Dock="Top" Margin="0,5">
+                            <Label x:Name="txtZoneCode" Style="{StaticResource L20}" DockPanel.Dock="Top" HorizontalAlignment="Center" HorizontalContentAlignment="Center">
+                                <Label.Content>
+                                    <TextBlock>
+                                        <TextBlock.Text>
+                                            <MultiBinding StringFormat="Z-00-{0:00}-{1}{2}-{3:00}">
+                                                <Binding Path="CurrentZoneLevel" />
+                                                <Binding Path="CurrentZoneDirection" />
+                                                <Binding Path="CurrentZoneSystem" />
+                                                <Binding Path="CurrentZoneIndex" />
+                                            </MultiBinding>
+                                        </TextBlock.Text>
+                                    </TextBlock>
+                                </Label.Content>
+                            </Label>
+                        </DockPanel>
+                        <DockPanel DockPanel.Dock="Top" Margin="0,5">
+                            <WrapPanel HorizontalAlignment="Right">
+                                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnECCancel" ToolTip="取消归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
+                                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0,10,0" />
+                            </WrapPanel>
+                        </DockPanel>
+                    </DockPanel>
+                </DockPanel>
+            </Canvas>
+        </Popup>
+
 
         <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="True">
             <DockPanel DockPanel.Dock="Left" Margin="10" LastChildFill="False">
@@ -127,145 +252,24 @@
             </DockPanel>
         </DockPanel>
         <DockPanel DockPanel.Dock="Top" Margin="10">
-            <DockPanel DockPanel.Dock="Left" Width="250" x:Name="nav">
-                <Expander x:Name="expLevels" ExpandDirection="Down" Header="項目標高" DockPanel.Dock="Top" Margin="5" Padding="5" IsExpanded="False" Visibility="Collapsed">
-                    <Expander.Content>
-                        <ScrollViewer>
-                            <ListBox x:Name="navLevels" />
-                        </ScrollViewer>
-                    </Expander.Content>
-                </Expander>
-                <Expander x:Name="expZone" ExpandDirection="Down" Header="項目分區" DockPanel.Dock="Top" Margin="5" Padding="5">
-                    <Expander.Content>
-                        <ScrollViewer>
-                            <ListBox x:Name="navZone" ItemsSource="{Binding}" SelectionChanged="navZone_SelectionChanged" IsSynchronizedWithCurrentItem="False">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Padding="15,0,0,0" Text="{Binding ZoneCode}" Tag="{Binding DataContext, ElementName=ProcZone}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </ScrollViewer>
-                    </Expander.Content>
-                </Expander>
-                <Expander x:Name="expPanel" ExpandDirection="Down" Header="幕墻嵌板" DockPanel.Dock="Top" Margin="5" Padding="5" Visibility="Collapsed">
-                    <Expander.Content>
-                        <ScrollViewer>
-                            <ListBox x:Name="navPanels" ItemsSource="{Binding}" SelectionChanged="navPanels_SelectionChanged" IsSynchronizedWithCurrentItem="False">
-                                <ListBox.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Padding="15,0,0,0" Text="{Binding INF_Code}" />
-                                    </DataTemplate>
-                                </ListBox.ItemTemplate>
-                            </ListBox>
-                        </ScrollViewer>
-                    </Expander.Content>
-                </Expander>
-                <Expander x:Name="expZoneCodeInput" ExpandDirection="Down" Header="分区编号" DockPanel.Dock="Top" Margin="5" Padding="5">
-                    <Expander.Content>
-                        <DockPanel Margin="10" LastChildFill="False">
-                            <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
-                                <RadioButton Content="玻璃" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 51}" />
-                                <RadioButton Content="石材" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 52}" />
-                                <RadioButton Content="铝板" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 53}" />
-                                <RadioButton Content="百页" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 54}" />
-                                <RadioButton Content="框架" GroupName="gPanelType" IsChecked="{Binding Path=CurrentZonePanelType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 61}" />
-                            </StackPanel>
-                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5,0,0">
-                                <Label Content="分区楼层：" Width="80" />
-                                <StackPanel x:Name="subbuttongroup_ZoneLevel1" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
-                                    <RadioButton Content="1" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 1}" />
-                                    <RadioButton Content="2" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 2}" />
-                                    <RadioButton Content="3" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 3}" />
-                                    <RadioButton Content="4" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 4}" />
-                                    <RadioButton Content="5" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 5}" />
-                                    <RadioButton Content="6" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 6}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,5">
-                                <Label Content="" Width="80" />
-                                <StackPanel x:Name="subbuttongroup_ZoneLevel2" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
-                                    <RadioButton Content="7" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 7}" />
-                                    <RadioButton Content="8" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 8}" />
-                                    <RadioButton Content="9" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 9}" />
-                                    <RadioButton Content="10" GroupName="gZoneLevel" IsChecked="{Binding Path=CurrentZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 10}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5">
-                                <Label Content="分区朝向：" Width="80" />
-                                <StackPanel x:Name="subbuttongroup_ZoneDirection" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
-                                    <RadioButton Content="南" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= S}" />
-                                    <RadioButton Content="北" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= N}" />
-                                    <RadioButton Content="东" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= E}" />
-                                    <RadioButton Content="西" GroupName="gZoneDirection" IsChecked="{Binding Path=CurrentZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= W}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5,0,0">
-                                <Label Content="分区系统：" Width="80" />
-                                <StackPanel x:Name="subbuttongroup_ZoneSystem1" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
-                                    <RadioButton Content="A" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= A}" />
-                                    <RadioButton Content="B" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= B}" />
-                                    <RadioButton Content="C" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= C}" />
-                                    <RadioButton Content="D" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= D}" />
-                                    <RadioButton Content="E" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= E}" />
-                                    <RadioButton Content="F" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= F}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,5">
-                                <Label Content="" Width="80" />
-                                <StackPanel x:Name="subbuttongroup_ZoneSystem2" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
-                                    <RadioButton Content="G" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= G}" />
-                                    <RadioButton Content="H" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= H}" />
-                                    <RadioButton Content="J" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= J}" />
-                                    <RadioButton Content="K" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= K}" />
-                                    <RadioButton Content="L" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= L}" />
-                                    <RadioButton Content="M" GroupName="gZoneSystem" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= M}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5">
-                                <Label Content="分区序号：" Width="80" />
-                                <StackPanel x:Name="subbuttongroup_ZoneIndex" DockPanel.Dock="Top" Margin="0" Orientation="Horizontal" Visibility="Visible">
-                                    <RadioButton Content="1" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 1}" />
-                                    <RadioButton Content="2" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 2}" />
-                                    <RadioButton Content="3" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 3}" />
-                                    <RadioButton Content="4" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 4}" />
-                                    <RadioButton Content="5" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 5}" />
-                                    <RadioButton Content="6" GroupName="gZoneIndex" IsChecked="{Binding Path=CurrentZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 6}" />
-                                </StackPanel>
-                            </StackPanel>
-                            <DockPanel DockPanel.Dock="Top" Margin="0,5">
-                                <Label x:Name="txtZoneCode" Style="{StaticResource L20}" DockPanel.Dock="Top" HorizontalAlignment="Center" HorizontalContentAlignment="Center">
-                                    <Label.Content>
-                                        <TextBlock>
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="Z-00-{0:00}-{1}{2}-{3:00}">
-                                                    <Binding Path="CurrentZoneLevel" />
-                                                    <Binding Path="CurrentZoneDirection" />
-                                                    <Binding Path="CurrentZoneSystem" />
-                                                    <Binding Path="CurrentZoneIndex" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                    </Label.Content>
-                                </Label>
-                            </DockPanel>
-                            <DockPanel DockPanel.Dock="Top" Margin="0,5">
-                                <WrapPanel HorizontalAlignment="Right">
-                                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnECCancel" ToolTip="取消归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
-                                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0,10,0" />
-                                </WrapPanel>
-                            </DockPanel>
-                        </DockPanel>
-                    </Expander.Content>
-                </Expander>
-                <Expander x:Name="expSubElement" ExpandDirection="Down" Header="构件筛选" DockPanel.Dock="Top" Margin="5" Padding="5">
-                    <Expander.Content>
-                        <ScrollViewer>
-                            <ListBox x:Name="navElementClassFilter" />
-                        </ScrollViewer>
-                    </Expander.Content>
-                </Expander>
-            </DockPanel>
+            <TabControl x:Name="tabSide" DockPanel.Dock="Left" Margin="5,5,-20,-20">
+                <TabItem x:Name="tiZoneList" Header="分区 / 0" Tag="Z">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
+                        <ListBox x:Name="navElementClassFilter" />
+                    </ScrollViewer>
+                </TabItem>
+                <TabItem x:Name="tiClassFilter" Header="分区 / 0" Tag="Z">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
+                        <ListBox x:Name="navZone" ItemsSource="{Binding}" SelectionChanged="navZone_SelectionChanged" IsSynchronizedWithCurrentItem="False">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Padding="15,0,0,0" Text="{Binding ZoneCode}" Tag="{Binding DataContext, ElementName=ProcZone}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
             <DockPanel DockPanel.Dock="Left" LastChildFill="True" ScrollViewer.CanContentScroll="True">
                 <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
                     <TextBox x:Name="txtSearchKeyword" Width="500" />
