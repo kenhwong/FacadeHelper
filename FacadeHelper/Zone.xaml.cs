@@ -624,7 +624,7 @@ namespace FacadeHelper
             Global.DocContent.CurtainPanelList.AddRange(SelectedCurtainPanelList);
 
             ZoneHelper.FnContentSerialize();
-            expZone.IsExpanded = true;
+            //expZone.IsExpanded = true;
             subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
         }
 

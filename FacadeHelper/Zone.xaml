@@ -24,20 +24,28 @@
             <DockPanel.Effect>
                 <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
             </DockPanel.Effect>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="SYSTEM" DockPanel.Dock="Left" Padding="0,5" Margin="20,10,10,10">
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="SYSTEM" DockPanel.Dock="Left" Padding="0,5" Margin="20,10,20,10">
                 <WrapPanel>
                     <ToggleButton x:Name="bnQuickStart" 
                                   Tag="{StaticResource IconHelp}" 
                                   DockPanel.Dock="Left" 
                                   Width="30" 
                                   Height="30" 
-                                  Margin="0,0,10,0" 
+                                  Margin="0,0,20,0" 
                                   Style="{DynamicResource IconPathToggleButton}" 
                                   IsChecked="False" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" ToolTip="模型初始" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" ToolTip="模型初始" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
+                    <ToggleButton x:Name="bnElementFilter" 
+                                  Tag="{StaticResource IconFilter}" 
+                                  DockPanel.Dock="Left" 
+                                  Width="30" 
+                                  Height="30" 
+                                  Margin="0" 
+                                  Style="{DynamicResource IconPathToggleButton}" 
+                                  IsChecked="False" />
                 </WrapPanel>
             </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5"  Margin="20,10">
                 <WrapPanel>
                     <ToggleButton Style="{DynamicResource IconPathToggleButton}" 
                                   Tag="{StaticResource IconClassify}" 
@@ -46,19 +54,19 @@
                                   DockPanel.Dock="Left" 
                                   Width="30" 
                                   Height="30" 
-                                  Margin="0,0,10,0" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconPlus}" x:Name="bnElementLink" ToolTip="链接外部数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
+                                  Margin="0,0,20,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconPlus}" x:Name="bnElementLink" ToolTip="链接外部数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="DATA" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="DATA" DockPanel.Dock="Left" Padding="0,5"  Margin="20,10">
                 <WrapPanel>
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" ToolTip="加载数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" ToolTip="保存修改" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,10,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" ToolTip="加载数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" ToolTip="保存修改" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApplyParamData}" x:Name="bnApplyParameters" ToolTip="保存参数" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="EXPORT" DockPanel.Dock="Left" Padding="0,5"  Margin="10">
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="EXPORT" DockPanel.Dock="Left" Padding="0,5"  Margin="20,10">
                 <WrapPanel>
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" ToolTip="导出计划" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
@@ -223,7 +231,7 @@
         </Popup>
 
 
-        <DockPanel DockPanel.Dock="Top" Margin="10" LastChildFill="True">
+        <DockPanel DockPanel.Dock="Top" Margin="0,10" LastChildFill="True">
             <DockPanel DockPanel.Dock="Left" Margin="10" LastChildFill="False">
                 <WrapPanel DockPanel.Dock="Top" Margin="0,10,0,0">
                     <Label Content="当前处理：" />
@@ -244,48 +252,42 @@
                     <ProgressBar x:Name="progbarGlobalProcess" Width="500" Height="10" Value="0" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
                 </StackPanel>
             </DockPanel>
-            <DockPanel DockPanel.Dock="Left" Margin="10" LastChildFill="True">
-                <ScrollViewer>
-                    <ListBox x:Name="listInformation" MaxHeight="94" SelectionChanged="listInformation_SelectionChanged" 
-                             Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
-                </ScrollViewer>
+            <DockPanel DockPanel.Dock="Left" Margin="10" LastChildFill="True">                
+                    <ListBox x:Name="listInformation" MaxHeight="94" SelectionChanged="listInformation_SelectionChanged"
+                             Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />                
             </DockPanel>
         </DockPanel>
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,0">
+            <TextBox x:Name="txtSearchKeyword" Width="500" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSearch}" x:Name="bnSearch" ToolTip="搜素嵌板和构件" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0" />
+            <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+        </StackPanel>
+        <DockPanel x:Name="spSearchResult" DockPanel.Dock="Top" Margin="10,5" LastChildFill="False" Visibility="Visible">
+            <Label Content="搜索结果：" DockPanel.Dock="Left" />
+            <Label x:Name="txtResultZone" Style="{StaticResource CCyanLabel}"  DockPanel.Dock="Left" />
+            <Label x:Name="txtResultPanel" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
+            <Label x:Name="txtResultElement" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnCloseResult" ToolTip="关闭搜索结果" DockPanel.Dock="Right" Width="30" Height="30" Margin="0" />
+        </DockPanel>
+
         <DockPanel DockPanel.Dock="Top" Margin="10">
-            <TabControl x:Name="tabSide" DockPanel.Dock="Left" Margin="5,5,-20,-20">
-                <TabItem x:Name="tiZoneList" Header="分区 / 0" Tag="Z">
+            <DockPanel DockPanel.Dock="Left" Margin="0,5,10,5">
+                <GroupBox Style="{DynamicResource ListGroupStyle}" Header="分区处理列表" Width="200" Padding="10" Foreground="{StaticResource CyanBrush}">
                     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
-                        <ListBox x:Name="navElementClassFilter" />
-                    </ScrollViewer>
-                </TabItem>
-                <TabItem x:Name="tiClassFilter" Header="分区 / 0" Tag="Z">
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
-                        <ListBox x:Name="navZone" ItemsSource="{Binding}" SelectionChanged="navZone_SelectionChanged" IsSynchronizedWithCurrentItem="False">
+                        <ListBox x:Name="navZone" BorderThickness="0" ItemsSource="{Binding}" SelectionChanged="navZone_SelectionChanged" IsSynchronizedWithCurrentItem="False"> 
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Padding="15,0,0,0" Text="{Binding ZoneCode}" Tag="{Binding DataContext, ElementName=ProcZone}" />
+                                    <TextBlock Padding="5,0" Text="{Binding ZoneCode}" Tag="{Binding DataContext, ElementName=ProcZone}" />
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
                         </ListBox>
-                    </ScrollViewer>
-                </TabItem>
-            </TabControl>
+                    </ScrollViewer>                    
+                </GroupBox>
+            </DockPanel>
             <DockPanel DockPanel.Dock="Left" LastChildFill="True" ScrollViewer.CanContentScroll="True">
-                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                    <TextBox x:Name="txtSearchKeyword" Width="500" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSearch}" x:Name="bnSearch" ToolTip="搜素嵌板和构件" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0" />
-                    <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                    <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                    <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                    <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                </StackPanel>
-                <DockPanel x:Name="spSearchResult" DockPanel.Dock="Top" Margin="0,5" LastChildFill="False" Visibility="Visible">
-                    <Label Content="搜索结果：" DockPanel.Dock="Left" />
-                    <Label x:Name="txtResultZone" Style="{StaticResource CCyanLabel}"  DockPanel.Dock="Left" />
-                    <Label x:Name="txtResultPanel" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
-                    <Label x:Name="txtResultElement" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnCloseResult" ToolTip="关闭搜索结果" DockPanel.Dock="Right" Width="30" Height="30" Margin="0" />
-                </DockPanel>
                 <DockPanel DockPanel.Dock="Top" LastChildFill="True" ScrollViewer.CanContentScroll="True">
                     <TabControl x:Name="tabGrids" DockPanel.Dock="Top" Margin="5,5,-20,-20">
                         <TabItem x:Name="tiZone" Header="分区 / 0" Tag="Z">
