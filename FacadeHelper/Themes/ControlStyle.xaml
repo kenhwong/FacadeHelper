@@ -213,6 +213,9 @@
     </Style>
 
     <!--#region ListBox-->
+    <SolidColorBrush x:Key="ItemSelectedForeground" Color="#FF12DB96"/>
+    <SolidColorBrush x:Key="ItemMouseOverForeground" Color="#FF12DB96"/>
+    
     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Background" Value="{x:Null}" />
         <Setter Property="Foreground" Value="#505050" />
@@ -263,9 +266,10 @@
         <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
         <Setter Property="FontFamily" Value="Consolas" />
         <Setter Property="FontSize" Value="12" />
+        <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="5" Opacity="0.5" />
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
@@ -278,19 +282,6 @@
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="DarkGreen" />
-                            <Setter Property="Foreground" Value="{StaticResource ItemSelectedForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource ItemMouseOverBackground}" />
-                            <Setter Property="Foreground" Value="{StaticResource ItemMouseOverForeground}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="Border" Property="Opacity" Value="{StaticResource DisableOpacity}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -325,6 +316,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -356,6 +348,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Focusable" Value="True" />
         <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -500,17 +493,15 @@
 
     <!--#region TabControl-->
     <SolidColorBrush x:Key="TabControlForegroundBrush" Color="#FF808080"/>
+    <SolidColorBrush x:Key="TabControlLightForegroundBrush" Color="#7F808080"/>
     <SolidColorBrush x:Key="TabItemForegroundBrush" Color="#FF808080"/>
 
     <SolidColorBrush x:Key="TabControlNormalBorderBrush" Color="#FF808080"/>
 
     <Style TargetType="{x:Type TabControl}">
-        <Setter Property="BorderBrush" Value="{StaticResource TabControlNormalBorderBrush}"/>
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="BorderBrush" Value="{StaticResource TabControlForegroundBrush}"/>
+        <Setter Property="Background" Value="{x:Static SystemColors.WindowBrush}" />
+        <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabControl}">
@@ -519,13 +510,13 @@
                             <RowDefinition x:Name="RowDefinition0" Height="Auto"/>
                             <RowDefinition x:Name="RowDefinition1" Height="*"/>
                         </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="{x:Static SystemColors.ControlBrush}">
-                            <TabPanel x:Name="HeaderPanel" IsItemsHost="true" Margin="2,2,2,0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
+                        <Border Grid.Row="0" Background="{TemplateBinding Background}" BorderThickness="0" HorizontalAlignment="Left">
+                            <TabPanel x:Name="HeaderPanel" IsItemsHost="true" Margin="2,2" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
                         </Border>
                         <Border Grid.Row="1" x:Name="ContentPanel" 
                                 BorderBrush="{TemplateBinding BorderBrush}" 
                                 BorderThickness="0" 
-                                Background="{x:Static SystemColors.ControlBrush}" 
+                                Background="{TemplateBinding Background}" 
                                 KeyboardNavigation.DirectionalNavigation="Contained" 
                                 KeyboardNavigation.TabIndex="2" 
                                 KeyboardNavigation.TabNavigation="Local">
@@ -543,11 +534,6 @@
         <Setter Property="BorderBrush" Value="{StaticResource TabControlNormalBorderBrush}"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="VerticalContentAlignment" Value="Stretch"/>
-        <Setter Property="Effect">
-            <Setter.Value>
-                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type TabItem}">

@@ -276,7 +276,7 @@
         <DockPanel DockPanel.Dock="Top" Margin="10">
             <DockPanel DockPanel.Dock="Left" Margin="0,5,10,5">
                 <GroupBox Style="{DynamicResource ListGroupStyle}" Header="分区处理列表" Width="200" Padding="10" Foreground="{StaticResource CyanBrush}">
-                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
+                    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
                         <ListBox x:Name="navZone" BorderThickness="0" ItemsSource="{Binding}" SelectionChanged="navZone_SelectionChanged" IsSynchronizedWithCurrentItem="False"> 
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -289,11 +289,11 @@
             </DockPanel>
             <DockPanel DockPanel.Dock="Left" LastChildFill="True" ScrollViewer.CanContentScroll="True">
                 <DockPanel DockPanel.Dock="Top" LastChildFill="True" ScrollViewer.CanContentScroll="True">
-                    <TabControl x:Name="tabGrids" DockPanel.Dock="Top" Margin="5,5,-20,-20">
+                    <TabControl x:Name="tabGrids" DockPanel.Dock="Top" Margin="5,5,-20,0">
                         <TabItem x:Name="tiZone" Header="分区 / 0" Tag="Z">
                             <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalAlignment="Stretch"  Margin="0">
                                 <DataGrid x:Name="datagridZones" DockPanel.Dock="Top" ItemsSource="{Binding}" 
-                                  AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
+                                  AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" UseLayoutRounding="True" SnapsToDevicePixels="True"
                                   CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single" Margin="5" GotFocus="datagridElements_GotFocus">
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding ZoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

@@ -442,12 +442,16 @@ namespace FacadeHelper
         #region Command -- bnElementClassify : 嵌板和构件归类
         private void cbElementClassify_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            Global.DocContent.CurrentZoneInfo.ZoneLevel = CurrentZoneLevel;
-            Global.DocContent.CurrentZoneInfo.ZoneDirection = CurrentZoneDirection;
-            Global.DocContent.CurrentZoneInfo.ZoneSystem = CurrentZoneSystem;
-            Global.DocContent.CurrentZoneInfo.ZoneIndex = CurrentZoneIndex;
-            Global.DocContent.CurrentZoneInfo.ZoneCode = CurrentZoneCode = (txtZoneCode.Content as TextBlock).Text;
-            CurrentZoneInfo = Global.DocContent.CurrentZoneInfo;
+            bnOnElementClassify.IsChecked = false;
+            popZC.IsOpen = false;
+
+            CurrentZoneInfo = new ZoneInfoBase();
+            CurrentZoneInfo.ZoneLevel = CurrentZoneLevel;
+            CurrentZoneInfo.ZoneDirection = CurrentZoneDirection;
+            CurrentZoneInfo.ZoneSystem = CurrentZoneSystem;
+            CurrentZoneInfo.ZoneIndex = CurrentZoneIndex;
+            CurrentZoneInfo.ZoneCode = CurrentZoneCode = (txtZoneCode.Content as TextBlock).Text;
+            Global.DocContent.CurrentZoneInfo = CurrentZoneInfo;
 
             ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
             if (ids.Count == 0)
@@ -624,8 +628,6 @@ namespace FacadeHelper
             Global.DocContent.CurtainPanelList.AddRange(SelectedCurtainPanelList);
 
             ZoneHelper.FnContentSerialize();
-            //expZone.IsExpanded = true;
-            subbuttongroup_SelectPanels.Visibility = System.Windows.Visibility.Collapsed;
         }
 
         #endregion
