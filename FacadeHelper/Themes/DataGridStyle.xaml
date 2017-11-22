@@ -34,9 +34,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="DataGridColumnHeader">
-                    <Border x:Name="BackgroundBorder" BorderThickness="0,0,0,1"  
-                                 BorderBrush="LightGray"  
-                                  Width="Auto">
+                    <Border x:Name="BackgroundBorder" BorderThickness="0,0,0,1" BorderBrush="LightGray" Width="Auto">
                         <Grid >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -45,8 +43,6 @@
                             <Path x:Name="SortArrow" Visibility="Collapsed" Data="M0,0 L1,0 0.5,1 z" Stretch="Fill"  Grid.Column="2" Width="8" Height="6" Fill="White" Margin="0,0,50,0"  
                                 VerticalAlignment="Bottom" RenderTransformOrigin="1,1" />
                             <Rectangle Width="1" Fill="LightGray" HorizontalAlignment="Right" Grid.ColumnSpan="1" />
-                            <!--<TextBlock  Background="Red">  
-                                <ContentPresenter></ContentPresenter></TextBlock>-->
                         </Grid>
                     </Border>
                 </ControlTemplate>

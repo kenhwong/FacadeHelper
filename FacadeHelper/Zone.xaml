@@ -20,9 +20,8 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid Margin="10">
+    <Grid Margin="10" UseLayoutRounding="True">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -264,22 +263,28 @@
             <ListBox Grid.Column="1" x:Name="listInformation" Margin="10" SelectionChanged="listInformation_SelectionChanged"
                              Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
         </Grid>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10,0">
-            <TextBox x:Name="txtSearchKeyword" Width="500" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSearch}" x:Name="bnSearch" ToolTip="搜素嵌板和构件" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0" />
-            <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-            <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-            <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-            <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+        <StackPanel Grid.Row="2" Margin="-10,0" Background="{x:Static SystemColors.ControlBrush}" SnapsToDevicePixels="True">
+            <StackPanel.Effect>
+                <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
+            </StackPanel.Effect>
+            <StackPanel Orientation="Horizontal" Margin="20,10,20,5">
+                <TextBox x:Name="txtSearchKeyword" Width="500" />
+                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSearch}" x:Name="bnSearch" ToolTip="搜素嵌板和构件" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0" />
+                <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            </StackPanel>
+            <DockPanel x:Name="spSearchResult" LastChildFill="False" Margin="20,5,20,10" Visibility="Visible">
+                <Label Content="搜索结果：" DockPanel.Dock="Left" />
+                <Label x:Name="txtResultZone" Style="{StaticResource CCyanLabel}"  DockPanel.Dock="Left" />
+                <Label x:Name="txtResultPanel" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
+                <Label x:Name="txtResultElement" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
+                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClear}" x:Name="bnCloseResult" ToolTip="关闭搜索结果" DockPanel.Dock="Left" Width="25" Height="15" Margin="0" />
+                <Label Content="Element Seek" FontSize="36" FontFamily="Arial" Style="{StaticResource IconLabel}" Tag="{StaticResource IconSearchR}" Foreground="#3Fd0d0d0" Margin="0,-20,0,0" Height="40" DockPanel.Dock="Right" />
+            </DockPanel>
         </StackPanel>
-        <StackPanel Grid.Row="3" x:Name="spSearchResult" Orientation="Horizontal" Margin="10,5" Visibility="Visible">
-            <Label Content="搜索结果：" DockPanel.Dock="Left" />
-            <Label x:Name="txtResultZone" Style="{StaticResource CCyanLabel}"  DockPanel.Dock="Left" />
-            <Label x:Name="txtResultPanel" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
-            <Label x:Name="txtResultElement" Style="{StaticResource CCyanLabel}" DockPanel.Dock="Left" />
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClear}" x:Name="bnCloseResult" ToolTip="关闭搜索结果" DockPanel.Dock="Right" Width="25" Height="15" Margin="0" />
-        </StackPanel>
-        <Grid Grid.Row="4" Margin="10">
+        <Grid Grid.Row="3" Margin="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />

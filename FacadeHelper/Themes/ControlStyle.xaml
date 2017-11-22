@@ -23,6 +23,12 @@
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
     <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <Geometry x:Key="IconSearchR">M933.308465 890.723577l-146.767692-157.046802c59.488883-71.644737 92.202958-160.954809 92.202958-254.974136 0-220.566488-179.481767-400.048255-400.110677-400.048255
+        -220.566488 0-400.048255 179.451068-400.048255 400.048255s179.481767 400.048255 400.078954 400.048255c57.796334-0.030699 113.530706-12.094456 165.633365-35.82288 15.479553-7.04751 
+        22.312168-25.297153 15.264659-40.74703-7.04751-15.511275-25.38925-22.373567-40.74703-15.264659-44.101427 20.066011-91.249237 30.252001-140.181693 30.2827-186.652074 0-338.498434-151.845337
+        -338.498434-338.498434 0-186.621375 151.845337-338.498434 338.498434-338.498434 186.682773 0 338.559832 151.845337 338.559832 338.498434 0 87.863117-33.514301 171.111123-94.326319 
+        234.415914-11.786441 12.248975-11.387351 31.729655 0.830925 43.516096 0.923022 0.892323 2.12336 1.231037 3.170203 2.000564 0.830925 1.231037 1.261737 2.64627 2.308579 3.75451L888.346437 
+        932.700621c6.03239 6.493901 14.248516 9.756201 22.465664 9.756201 7.53972 0 15.07944-2.739391 21.019733-8.309246C944.234305 922.606729 944.910711 903.126049 933.308465 890.723577z</Geometry>
     <Geometry x:Key="IconClear">M297.984 297.984l598.016 0 0 86.016-598.016 
         0 0-86.016zM128 726.016l0-86.016 598.016 
         0 0 86.016-598.016 0zM214.016 553.984l0-84.010667 596.010667 
@@ -694,6 +700,42 @@
                             <Setter Property="Foreground" Value="#d0d0d0"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+
+    <Style x:Key="IconLabel" TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="2" BlurRadius="5" Opacity="0.3" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Label}">
+                    <Grid Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{TemplateBinding Tag}"
+                              Stretch="Fill" 
+                              Width="{TemplateBinding Height}" 
+                              Height="{TemplateBinding Height}" 
+                              StrokeThickness="0" 
+                              Fill="{TemplateBinding Foreground}" 
+                              HorizontalAlignment="Left" />
+                        <Border Grid.Column="1" BorderBrush="{TemplateBinding Foreground}" BorderThickness="0" Background="Transparent" Padding="10,0">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="0" 
+                                              VerticalAlignment="Center" 
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
