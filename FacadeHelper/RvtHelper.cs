@@ -589,16 +589,18 @@ namespace FacadeHelper
         public static void FnLoadZoneScheduleData(string ZoneScheduleDataFile)
         {
             Global.DocContent.ZoneLayerList.Clear();
-
             using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
             {
                 string dataline;
                 reader.ReadLine();
-                ZoneLayerInfo zli = new ZoneLayerInfo();
                 string linehandleid;
                 string linezonecode = string.Empty;
                 while ((dataline = reader.ReadLine()) != null)
                 {
+                    ZoneLayerInfo L0 = new ZoneLayerInfo();
+                    ZoneLayerInfo L1 = new ZoneLayerInfo();
+                    ZoneLayerInfo L2 = new ZoneLayerInfo();
+
                     string[] rowdata = dataline.Split('\t');
                     linehandleid = rowdata[0].Replace(@"'", ""); //AutoCAD Attribute Block Handle ID.
 
@@ -611,27 +613,25 @@ namespace FacadeHelper
                     if (rowdata.Length > 2)
                         if (int.TryParse(rowdata[2].Substring(2, 2), out int lv2))
                         {
-                            if (lv2 > 3 || lv2 < 1)
+                            if (lv2 != 1)
                             {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[2]}]的工序层{lv2}小于预设的1层下限或大于3层上限，不能继续读取分析数据。", "错误 - 分区进度数据");
+                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[2]}]的工序层 0 数据位置/数据段 2 错误，不能继续读取。", "错误 - 分区进度数据");
                                 return;
                             }
                             linezonecode = Regex.Replace(rowdata[2], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase);
-                            Global.DocContent.ZoneLayerList.Add(new ZoneLayerInfo()
-                            {
-                                HandleId = linehandleid,
-                                ZoneLayer = lv2 - 1,
-                                ZoneCode = linezonecode,
-                                ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}"),
-                                ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}")
-                            });
+                            L0.HandleId = linehandleid;
+                            L0.ZoneLayer = 0;
+                            L0.ZoneCode = linezonecode;
+                            L0.ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}");
+                            L0.ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}");
                         }
                     if (rowdata.Length > 5)
+                    {
                         if (int.TryParse(rowdata[5].Substring(2, 2), out int lv5))
                         {
-                            if (lv5 > 3 || lv5 < 1)
+                            if (lv5 != 2)
                             {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[5]}]的工序层{lv5}小于预设的1层下限或大于3层上限，不能继续读取分析数据。", "错误 - 分区进度数据");
+                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[5]}]的工序层 1 数据位置/数据段 5 错误，不能继续读取。", "错误 - 分区进度数据");
                                 return;
                             }
                             if (linezonecode != Regex.Replace(rowdata[5], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
@@ -639,21 +639,29 @@ namespace FacadeHelper
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{linezonecode}]编号不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
                                 return;
                             }
-                            Global.DocContent.ZoneLayerList.Add(new ZoneLayerInfo()
-                            {
-                                HandleId = linehandleid,
-                                ZoneLayer = lv5 - 1,
-                                ZoneCode = linezonecode,
-                                ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}"),
-                                ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}")
-                            });
+                            L1.HandleId = linehandleid;
+                            L1.ZoneLayer = 1;
+                            L1.ZoneCode = linezonecode;
+                            L1.ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}");
+                            L1.ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}");
                         }
+                    }
+                    else
+                    {
+                        //L1,L2层缺失，预设L1层，起始为上一层后一天，工期1天
+                        L1.HandleId = linehandleid;
+                        L1.ZoneLayer = 1;
+                        L1.ZoneCode = linezonecode;
+                        L1.ZoneStart = L0.ZoneStart + TimeSpan.FromDays(1);
+                        L1.ZoneFinish = L0.ZoneFinish + TimeSpan.FromDays(1);
+                    }
                     if (rowdata.Length > 8)
+                    {
                         if (int.TryParse(rowdata[8].Substring(2, 2), out int lv8))
                         {
-                            if (lv8 > 3 || lv8 < 1)
+                            if (lv8 != 3)
                             {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[8]}]的工序层{lv8}小于预设的1层下限或大于3层上限，不能继续读取分析数据。", "错误 - 分区进度数据");
+                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[8]}]的工序层 2 数据位置/数据段 8 错误，不能继续读取。", "错误 - 分区进度数据");
                                 return;
                             }
                             if (linezonecode != Regex.Replace(rowdata[8], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
@@ -661,15 +669,26 @@ namespace FacadeHelper
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区编号[{linezonecode}]不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
                                 return;
                             }
-                            Global.DocContent.ZoneLayerList.Add(new ZoneLayerInfo()
-                            {
-                                HandleId = linehandleid,
-                                ZoneLayer = lv8 - 1,
-                                ZoneCode = linezonecode,
-                                ZoneStart = DateTime.Parse($"{rowdata[9].Substring(0, 2)}/{rowdata[9].Substring(2, 2)}/{rowdata[9].Substring(4, 2)}"),
-                                ZoneFinish = DateTime.Parse($"{rowdata[10].Substring(0, 2)}/{rowdata[10].Substring(2, 2)}/{rowdata[10].Substring(4, 2)}")
-                            });
+                            L2.HandleId = linehandleid;
+                            L2.ZoneLayer = 2;
+                            L2.ZoneCode = linezonecode;
+                            L2.ZoneStart = DateTime.Parse($"{rowdata[9].Substring(0, 2)}/{rowdata[9].Substring(2, 2)}/{rowdata[9].Substring(4, 2)}");
+                            L2.ZoneFinish = DateTime.Parse($"{rowdata[10].Substring(0, 2)}/{rowdata[10].Substring(2, 2)}/{rowdata[10].Substring(4, 2)}");
                         }
+                    }
+                    else
+                    {
+                        //L2层缺失，预设L2层，起始为上一层后一天，工期1天
+                        L2.HandleId = linehandleid;
+                        L2.ZoneLayer = 2;
+                        L2.ZoneCode = linezonecode;
+                        L2.ZoneStart = L1.ZoneStart + TimeSpan.FromDays(1);
+                        L2.ZoneFinish = L1.ZoneFinish + TimeSpan.FromDays(1);
+                    }
+
+                    Global.DocContent.ZoneLayerList.Add(L0);
+                    Global.DocContent.ZoneLayerList.Add(L1);
+                    Global.DocContent.ZoneLayerList.Add(L2);
                 }
             }
         }
@@ -847,8 +866,10 @@ namespace FacadeHelper
                 System.Windows.Forms.Application.DoEvents();
                 Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
 
-                _pi.INF_Index = pindex;
+                _pi.INF_Index = ++pindex;
                 _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
+
+                Global.DocContent.FullCurtainPanelList.Add(_pi);
             }
             #endregion
 
@@ -927,7 +948,7 @@ namespace FacadeHelper
                 }
                 #endregion
             }
-            
+
 
         }
 

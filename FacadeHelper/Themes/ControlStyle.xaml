@@ -23,6 +23,25 @@
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
     <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <Geometry x:Key="IconClear">M297.984 297.984l598.016 0 0 86.016-598.016 
+        0 0-86.016zM128 726.016l0-86.016 598.016 
+        0 0 86.016-598.016 0zM214.016 553.984l0-84.010667 596.010667 
+        0 0 84.010667-596.010667 0z</Geometry>
+    <Geometry x:Key="IconLink">M890.398304 135.025714c-94.821204-94.771203-249.020161-94.771203-343.841365 0L417.604302 263.953351c-94.771203 94.821204-94.771203 249.095162 0 343.891366 5.276067 
+        5.301067 12.193155 7.927101 19.110243 7.927101 6.917088 0 13.834176-2.625033 19.110243-7.927101 10.552134-10.552134 10.552134-27.618351 0-38.170485-73.741936-73.766936-73.741936-193.75746 
+        0-267.499396L584.727423 173.247199c73.816937-73.766936 193.682459-73.766936 267.499396 0 35.696453 35.722454 55.388703 83.209056 55.388703 133.699697 0 50.515641-19.69125 98.002244-55.388703 
+        133.724698L750.488528 542.433886c-10.552134 10.552134-10.552134 27.643351 0 38.196485 10.502133 10.603135 27.669351 10.603135 38.170485 0l101.738292-101.738292c45.946583-45.921583 
+        71.241904-106.989358 71.241904-171.946183C961.640208 242.015072 936.344887 180.946297 890.398304 135.025714z
+        M571.650257 418.177309c-10.552134 10.552134-10.552134 27.643351 0 38.196485 73.665935 73.766936 73.665935 193.732459 0 267.499396L442.64762 852.825827c-73.715936 73.715936-193.707459 
+        73.614935-267.423395 0-73.741936-73.766936-73.741936-193.732459 0-267.499396l101.738292-101.713291c10.552134-10.552134 10.552134-27.669351 0-38.221485-10.552134-10.552134-27.669351-10.552134
+        -38.221485 0L137.002739 547.129946c-94.796203 94.796203-94.796203 249.095162 0 343.866365 47.410602 47.410602 109.665392 71.090903 171.920183 71.090903 62.279791 0 124.535581-23.680301 
+        171.946183-71.090903l128.952637-128.952637c94.771203-94.771203 94.771203-249.045162 0-343.866365C599.319609 407.624175 582.152391 407.624175 571.650257 418.177309z</Geometry>
+    <Geometry x:Key="IconMassSort">M224.025291 616.991094l-48.453403 19.381361 332.713365 177.662477 332.713366-180.892704-45.223176-19.381361-287.49019 145.360208-284.259962-142.129981z
+        M795.775443 484.551793l-287.49019 148.590435-284.259962-145.360208-48.453403 19.381361 332.713365 177.662477 332.713366-177.662477-45.223176-22.611588z
+        M935.967288 316.579997a452.231759 452.231759 0 0 1 45.223176 197.043838A466.767779 466.767779 0 1 1 512.807571 48.471169a472.259165 472.259165 0 0 1 213.194972 51.68363 174.109227 
+        174.109227 0 0 1 22.611588-41.992949A490.348435 490.348435 0 0 0 512.807571 0.017766a511.990955 511.990955 0 0 0 0 1023.981911A509.729797 509.729797 0 0 0 971.499783 
+        290.738183a143.422072 143.422072 0 0 1-35.532495 25.841814z
+        M506.67014 206.752285l-335.943592 174.432249 335.943592 174.43225 339.173819-174.43225z m-242.267014 174.432249l239.036787-129.209074 242.267014 129.209074-242.267014 119.518394z</Geometry>
     <Geometry x:Key="IconFilter">M302.327525 504.7808l-146.944-88.064c-11.776-7.168-27.136-3.328-34.048 8.448-7.168 11.776-3.328 27.136 8.448 34.304l146.944 88.064c11.776 7.168 27.136 
         3.328 34.048-8.704C317.943525 527.0272 314.103525 511.6672 302.327525 504.7808zM458.999525 1020.8768c5.888 1.792 12.544 1.28 18.688-2.304C472.055525 1021.6448 465.399525 
         1022.6688 458.999525 1020.8768zM302.327525 504.7808l-146.944-88.064c-11.776-7.168-27.136-3.328-34.048 8.448-7.168 11.776-3.328 27.136 8.448 34.304l146.944 88.064c11.776 7.168 
@@ -215,10 +234,26 @@
     <!--#region ListBox-->
     <SolidColorBrush x:Key="ItemSelectedForeground" Color="#FF12DB96"/>
     <SolidColorBrush x:Key="ItemMouseOverForeground" Color="#FF12DB96"/>
-    
+
     <Style TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
-        <Setter Property="Background" Value="{x:Null}" />
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="#505050" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBox}">
+                    <Grid SnapsToDevicePixels="true">
+                        <ScrollViewer>
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     <Style x:Key="MonitorScreen" TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="BorderBrush" Value="{StaticResource LightCyanBrush}" />
@@ -254,8 +289,26 @@
                 <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
             </Setter.Value>
         </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                    <Border x:Name="Border" Background="Transparent" BorderThickness="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                        <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" 
+                                          Margin="{TemplateBinding Padding}" 
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.Setters>
+                    <Setter Property="Foreground" Value="DarkGreen" />
+                </Trigger.Setters>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
                 <Trigger.Setters>
                     <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
                 </Trigger.Setters>
@@ -1000,6 +1053,63 @@
         </Setter>
     </Style>
 
+    <SolidColorBrush x:Key="RadioTabForegroundBrush" Color="#FF808080"/>
+    <SolidColorBrush x:Key="RadioTabLightForegroundBrush" Color="#7F808080"/>
+    <SolidColorBrush x:Key="RadioTabNormalBorderBrush" Color="#FF808080"/>
+
+    <Style x:Key="RadioTabStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Foreground" Value="#808080" />
+        <Setter Property="BorderBrush" Value="{StaticResource RadioTabNormalBorderBrush}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <BulletDecorator>
+                        <BulletDecorator.Bullet>
+                            <Grid Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Border x:Name="G1" Grid.Column="0" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Background="{TemplateBinding BorderBrush}" Padding="2">
+                                    <TextBlock Name="HeaderArrow" FontWeight="Bold"  Text="{TemplateBinding Tag}" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                                </Border>
+                                <Border x:Name="Bd" Grid.Column="1" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" Background="{x:Static SystemColors.WindowBrush}" Padding="10,2">
+                                    <ContentPresenter x:Name="Content"
+                                              HorizontalAlignment="Left" 
+                                              RecognizesAccessKey="True" 
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                              VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+                        </BulletDecorator.Bullet>
+                    </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="BorderBrush" Value="{StaticResource CyanBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="BorderBrush" Value="DarkGreen" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="BorderBrush" Value="#CCCCCC" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <Style x:Key="AFocusVisualStyte" >
         <Setter Property="Control.Template">
@@ -1049,10 +1159,17 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <Path x:Name="ButtonBack" Data="M15,0 A15,15 0 1 0 15,30 A15,15 0 1 0 15,0Z" Fill="Transparent" Stretch="Fill" Width="30" Height="30" HorizontalAlignment="Left" StrokeThickness="1"/>
+                        <Path x:Name="ButtonBack" 
+                              Data="M15,0 A15,15 0 1 0 15,30 A15,15 0 1 0 15,0Z" 
+                              Fill="Transparent" 
+                              Stretch="Fill" 
+                              Width="{TemplateBinding Width}" 
+                              Height="{TemplateBinding Height}" 
+                              HorizontalAlignment="Left" 
+                              StrokeThickness="1"/>
                         <Path x:Name="BookShape"
                           Data="{TemplateBinding Tag}"
-                          Stretch="Fill" Width="30" Height="30" StrokeThickness="0"
+                          Stretch="Fill" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" StrokeThickness="0"
                           Fill="{TemplateBinding Foreground}" HorizontalAlignment="Left" />
                     </Grid>
                     <ControlTemplate.Triggers>

@@ -160,6 +160,7 @@ namespace FacadeHelper
                     if (ofd.ShowDialog() == true)
                     {
                         ZoneHelper.FnLinkedElementsDeserialize(ofd.FileNames);
+                        bnElementResolve.SetResourceReference(ContentControl.TagProperty, "IconMassSort");
                         bnElementLink.Foreground = new SolidColorBrush(Colors.DarkGreen);
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LINK: FILE, {string.Join(",", ofd.SafeFileNames)}.");
                     }
@@ -169,10 +170,12 @@ namespace FacadeHelper
             CommandBinding cbElementResolve = new CommandBinding(cmdElementResolve,
                 (sender, e) =>
                 {
-                    //Clear ScheduleElementList
-                    Global.DocContent.ScheduleElementList.Clear();
+                    //Global.DocContent.ScheduleElementList.Clear();
+                    if(Global.DocContent.FullCurtainPanelList.Count == 0) Global.DocContent.FullCurtainPanelList.AddRange(Global.DocContent.CurtainPanelList);
+                    if (Global.DocContent.FullScheduleElementList.Count == 0) Global.DocContent.FullScheduleElementList.AddRange(Global.DocContent.ScheduleElementList);
+                    if (Global.DocContent.FullZoneList.Count == 0) foreach (var z in Global.DocContent.ZoneList) Global.DocContent.FullZoneList.Add(z);
 
-                    progbarGlobalProcess.Maximum = Global.DocContent.ZoneList.Count;
+                    progbarGlobalProcess.Maximum = Global.DocContent.FullZoneList.Count;
                     progbarGlobalProcess.Value = 0;
 
                     foreach (var zn in Global.DocContent.FullZoneList.GroupBy(z => z.ZoneCode))
@@ -192,7 +195,7 @@ namespace FacadeHelper
                 {
                     datagridPanels.ItemsSource = null;
                     datagridPanels.ItemsSource = e.Parameter as List<CurtainPanelInfo>;
-                    tiPanel.Header = $"嵌板 / {(e.Parameter as List<CurtainPanelInfo>).Count}, Z/{((navZone.SelectedItem as ListBoxItem).Tag as ZoneInfoBase).ZoneCode}";
+                    tabPanel.Content = $"嵌板 / {(e.Parameter as List<CurtainPanelInfo>).Count}, Z/{((navZone.SelectedItem as ListBoxItem).Tag as ZoneInfoBase).ZoneCode}";
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -249,39 +252,39 @@ namespace FacadeHelper
                         txtResultZone.Content = $"Z/{ResultZoneInfo.Count}; ";
                         datagridZones.ItemsSource = null;
                         datagridZones.ItemsSource = ResultZoneInfo;
-                        tiZone.Header = $"分区 / {ResultZoneInfo.Count}";
+                        tabZone.Content = $"分区 / {ResultZoneInfo.Count}";
                     }
                     else
                     {
                         txtResultZone.Content = $"Z/SKIP; ";
                         datagridZones.ItemsSource = null;
-                        tiZone.Header = $"分区 / SKIP";
+                        tabZone.Content = $"分区 / SKIP";
                     }
                     if (IsSearchRangePanel)
                     {
                         txtResultPanel.Content = $"P/{ResultPanelInfo.Count}; ";
                         datagridPanels.ItemsSource = null;
                         datagridPanels.ItemsSource = ResultPanelInfo;
-                        tiPanel.Header = $"嵌板 / {ResultPanelInfo.Count}";
+                        tabPanel.Content = $"嵌板 / {ResultPanelInfo.Count}";
                     }
                     else
                     {
                         txtResultPanel.Content = $"P/SKIP; ";
                         datagridPanels.ItemsSource = null;
-                        tiPanel.Header = $"嵌板 / SKIP";
+                        tabPanel.Content = $"嵌板 / SKIP";
                     }
                     if (IsSearchRangeElement)
                     {
                         txtResultElement.Content = $"E/{ResultElementInfo.Count}; ";
                         datagridScheduleElements.ItemsSource = null;
                         datagridScheduleElements.ItemsSource = ResultElementInfo;
-                        tiElement.Header = $"构件 / {ResultElementInfo.Count}";
+                        tabElement.Content = $"构件 / {ResultElementInfo.Count}";
                     }
                     else
                     {
                         txtResultElement.Content = $"E/SKIP; ";
                         datagridScheduleElements.ItemsSource = null;
-                        tiElement.Header = $"构件 / SKIP";
+                        tabElement.Content = $"构件 / SKIP";
                     }
 
                     #endregion
@@ -420,23 +423,23 @@ namespace FacadeHelper
             });
         }
 
-        private void navZone_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void navZone_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            var _addeditems = e.AddedItems;
-            if (_addeditems.Count > 0)
+            var item = ItemsControl.ContainerFromElement(sender as ListBox, e.OriginalSource as DependencyObject) as ListBoxItem;
+            if (item != null)
             {
-                var zi = _addeditems[0] as ZoneInfoBase;
+                var zi = item.Content as ZoneInfoBase;
                 datagridPanels.ItemsSource = null;
-                var _plist = Global.DocContent.CurtainPanelList.Where(p => p.INF_ZoneCode == zi.ZoneCode);
+                var _plist = Global.DocContent.FullCurtainPanelList.Where(p => p.INF_ZoneCode == zi.ZoneCode);
                 datagridPanels.ItemsSource = _plist;
-                tiPanel.Header = $"嵌板 / {_plist.Count()}, Z/{zi.ZoneCode}]";
-                tiPanel.IsSelected = true;
+                tabPanel.Content = $"嵌板 / {_plist.Count()}, Z/{zi.ZoneCode}]";
+                tabPanel.IsChecked = true;
                 datagridScheduleElements.ItemsSource = null;
-                var _elist = Global.DocContent.ScheduleElementList.Where(ele => ele.INF_ZoneCode == zi.ZoneCode);
+                var _elist = Global.DocContent.FullScheduleElementList.Where(ele => ele.INF_ZoneCode == zi.ZoneCode);
                 datagridScheduleElements.ItemsSource = _elist;
-                tiElement.Header = $"构件 / {_elist.Count()}, Z/{zi.ZoneCode}";
-                navZone.SelectedItem = null;
+                tabElement.Content = $"构件 / {_elist.Count()}, Z/{zi.ZoneCode}";
             }
+
         }
 
         #region Command -- bnElementClassify : 嵌板和构件归类
@@ -445,12 +448,14 @@ namespace FacadeHelper
             bnOnElementClassify.IsChecked = false;
             popZC.IsOpen = false;
 
-            CurrentZoneInfo = new ZoneInfoBase();
-            CurrentZoneInfo.ZoneLevel = CurrentZoneLevel;
-            CurrentZoneInfo.ZoneDirection = CurrentZoneDirection;
-            CurrentZoneInfo.ZoneSystem = CurrentZoneSystem;
-            CurrentZoneInfo.ZoneIndex = CurrentZoneIndex;
-            CurrentZoneInfo.ZoneCode = CurrentZoneCode = (txtZoneCode.Content as TextBlock).Text;
+            CurrentZoneInfo = new ZoneInfoBase()
+            {
+                ZoneLevel = CurrentZoneLevel,
+                ZoneDirection = CurrentZoneDirection,
+                ZoneSystem = CurrentZoneSystem,
+                ZoneIndex = CurrentZoneIndex,
+                ZoneCode = CurrentZoneCode = (txtZoneCode.Content as TextBlock).Text
+            };
             Global.DocContent.CurrentZoneInfo = CurrentZoneInfo;
 
             ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
@@ -605,7 +610,7 @@ namespace FacadeHelper
 
             datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
-            tiPanel.Header = $"嵌板 / {SelectedCurtainPanelList.Count}";
+            tabPanel.Content = $"嵌板 / {SelectedCurtainPanelList.Count}";
 
             uidoc.Selection.Elements.Clear();
             foreach (var _ele in panels) uidoc.Selection.Elements.Add(_ele);
@@ -657,6 +662,7 @@ namespace FacadeHelper
                     ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - L: {ofd.FileName}.");
                 }
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - IN: LAYER, L/3, ZL/{Global.DocContent.ZoneLayerList.Count:N0}");
 
             //统计 
             FilteredElementCollector panelcollector = new FilteredElementCollector(doc);
@@ -716,6 +722,7 @@ namespace FacadeHelper
             if (datagridScheduleElements.CurrentItem != null) currentsei = (ScheduleElementInfo)(datagridScheduleElements.CurrentItem);
 
         }
+
     }
 
     public class IntToBoolConverter : IValueConverter
@@ -760,6 +767,24 @@ namespace FacadeHelper
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value.Equals(true) ? parameter : System.Windows.Data.Binding.DoNothing;
+        }
+    }
+
+    public class BoolToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool bValue = (bool)value;
+            if (bValue) return System.Windows.Visibility.Visible;
+            else return System.Windows.Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            System.Windows.Visibility visibility = (System.Windows.Visibility)value;
+
+            if (visibility == System.Windows.Visibility.Visible) return true;
+            else return false;
         }
     }
 
