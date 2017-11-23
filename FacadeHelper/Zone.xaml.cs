@@ -64,6 +64,10 @@ namespace FacadeHelper
 
         private bool _isRealTimeProgress = true;
         public bool IsRealTimeProgress { get { return _isRealTimeProgress; } set { _isRealTimeProgress = value; OnPropertyChanged(nameof(IsRealTimeProgress)); } }
+        private bool _isDataInitialized = false;
+        public bool IsDataInitialized { get { return _isDataInitialized; } set { _isDataInitialized = value; OnPropertyChanged(nameof(IsDataInitialized)); } }
+        private bool _isExteriorDataLinked = false;
+        public bool IsExteriorDataLinked { get { return _isExteriorDataLinked; } set { _isExteriorDataLinked = value; OnPropertyChanged(nameof(IsExteriorDataLinked)); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

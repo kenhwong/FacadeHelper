@@ -78,8 +78,38 @@
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" ToolTip="导出计划" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
                 </WrapPanel>
             </GroupBox>
+            <GroupBox Style="{DynamicResource CommandGroup}" Header="SWITCH" DockPanel.Dock="Right" Padding="0,5"  Margin="20,10">
+                <WrapPanel>
+                    <CheckBox x:Name="chkDataInit"
+                              Style="{DynamicResource IconPathToggleButton}"
+                              Tag="{StaticResource IconRectInit}" 
+                              DockPanel.Dock="Right" 
+                              Content="分区初始化：" 
+                              IsChecked="{Binding Path=IsDataInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                              Width="30" 
+                              Height="30" 
+                              Margin="0,0,20,0" />
+                    <CheckBox x:Name="chkExtLink"
+                              Style="{DynamicResource IconPathToggleButton}"
+                              Tag="{StaticResource IconRectLink}" 
+                              DockPanel.Dock="Right" 
+                              Content="外链数据：" 
+                              IsChecked="{Binding Path=IsExteriorDataLinked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                              Width="30" 
+                              Height="30" 
+                              Margin="0,0,20,0" />
+                    <CheckBox x:Name="chkRTProgress"
+                              Style="{DynamicResource IconPathToggleButton}"
+                              Tag="{StaticResource IconRectReadlTime}" 
+                              DockPanel.Dock="Right" 
+                              Content="过程监控：" 
+                              IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                              Width="30" 
+                              Height="30" 
+                              Margin="0,0,0,0" />
+                </WrapPanel>
+            </GroupBox>
 
-            <CheckBox x:Name="chkRTProgress" DockPanel.Dock="Right" Content="实时" IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  Margin="10" />
         </DockPanel>
         <Popup x:Name="popQS" Width="420" Height="540" HorizontalOffset="0" VerticalOffset="10" 
                AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
@@ -260,7 +290,7 @@
                     <ProgressBar x:Name="progbarGlobalProcess" Width="500" Height="10" Value="0" OverridesDefaultStyle="true" RenderTransformOrigin="0,0" Margin="0" />
                 </StackPanel>
             </StackPanel>
-            <ListBox Grid.Column="1" x:Name="listInformation" Margin="10" SelectionChanged="listInformation_SelectionChanged"
+            <ListBox Grid.Column="1" x:Name="listInformation" MaxHeight="94" Margin="10" SelectionChanged="listInformation_SelectionChanged"
                              Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
         </Grid>
         <StackPanel Grid.Row="2" Margin="-10,0" Background="{x:Static SystemColors.ControlBrush}" SnapsToDevicePixels="True">
@@ -310,14 +340,13 @@
                     <RadioButton x:Name="tabPanel" Style="{StaticResource RadioTabStyle}" Tag="P" Content="嵌板 / 0" GroupName="gGridTabs" />
                     <RadioButton x:Name="tabElement" Style="{StaticResource RadioTabStyle}" Tag="E" Content="构件 / 0" GroupName="gGridTabs" />
                 </StackPanel>
-                <DataGrid Grid.Row="1" x:Name="datagridZones" DockPanel.Dock="Top" ItemsSource="{Binding}" 
+                <DataGrid Grid.Row="1" x:Name="datagridZones" ItemsSource="{Binding}" 
                           Visibility="{Binding ElementName=tabZone, Path=IsChecked, Converter={StaticResource B2VConverter}}"
                           AutoGenerateColumns="False" 
                           AlternationCount="2" 
                           HeadersVisibility="All" 
                           CanUserAddRows="False" 
                           UseLayoutRounding="True" 
-                          SnapsToDevicePixels="True"
                           CanUserResizeRows="False" 
                           EnableRowVirtualization="True" 
                           VirtualizingStackPanel.VirtualizationMode="Standard"
@@ -360,7 +389,7 @@
                         <DataGridTextColumn Header="工期" Width="60" Binding="{Binding ZoneDurationHours, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </DataGrid.Columns>
                 </DataGrid>
-                <DataGrid Grid.Row="1" x:Name="datagridPanels" DockPanel.Dock="Top" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
+                <DataGrid Grid.Row="1" x:Name="datagridPanels" ItemsSource="{Binding UpdateSourceTrigger = PropertyChanged}" 
                           Visibility="{Binding ElementName=tabPanel, Path=IsChecked, Converter={StaticResource B2VConverter}}"
                           AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
                           CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single" Margin="5" GotFocus="datagridElements_GotFocus">
