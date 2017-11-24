@@ -64,8 +64,8 @@ namespace FacadeHelper
 
         private bool _isRealTimeProgress = true;
         public bool IsRealTimeProgress { get { return _isRealTimeProgress; } set { _isRealTimeProgress = value; OnPropertyChanged(nameof(IsRealTimeProgress)); } }
-        private bool _isDataInitialized = false;
-        public bool IsDataInitialized { get { return _isDataInitialized; } set { _isDataInitialized = value; OnPropertyChanged(nameof(IsDataInitialized)); } }
+        private bool _isZoneDataInitialized = false;
+        public bool IsZoneDataInitialized { get { return _isZoneDataInitialized; } set { _isZoneDataInitialized = value; OnPropertyChanged(nameof(IsZoneDataInitialized)); } }
         private bool _isExteriorDataLinked = false;
         public bool IsExteriorDataLinked { get { return _isExteriorDataLinked; } set { _isExteriorDataLinked = value; OnPropertyChanged(nameof(IsExteriorDataLinked)); } }
 
@@ -125,6 +125,8 @@ namespace FacadeHelper
         private RoutedCommand cmdSearch = new RoutedCommand();
 
         private RoutedCommand cmdPopupClose = new RoutedCommand();
+
+        private RoutedCommand cmdCheckZoneData = new RoutedCommand();
 
         private void InitializeCommand()
         {
@@ -399,6 +401,18 @@ namespace FacadeHelper
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose, (sender, e) => { bnQuickStart.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
+            CommandBinding cbCheckZoneData = new CommandBinding(cmdCheckZoneData, (sender, e) => 
+            {
+                using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(uiapp.Application.AllUsersAddinsLocation,"test.zone")))
+                {
+                    string title = string.Empty; 
+                    string rows = "test";
+                    sw.WriteLine(title);
+                    sw.Write(rows);
+                }
+            },
+            (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
             bnModelInit.Command = cmdModelInit;
             bnOnElementClassify.Command = cmdOnElementClassify;
             bnElementClassify.Command = cmdElementClassify;
@@ -410,6 +424,8 @@ namespace FacadeHelper
             bnExportElementSchedule.Command = cmdExportElementSchedule;
             bnSearch.Command = cmdSearch;
             bnPopupClose.Command = cmdPopupClose;
+
+            chkZoneData.Command = cmdCheckZoneData;
 
             ProcZone.CommandBindings.AddRange(new CommandBinding[]
             {
@@ -423,7 +439,8 @@ namespace FacadeHelper
                 cbSaveData,
                 cbApplyParameters,
                 cbSearch,
-                cbPopupClose
+                cbPopupClose,
+                cbCheckZoneData
             });
         }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Linq;
 using System.Windows.Interop;
 //http://www.cnblogs.com/CreateMyself/p/6238455.html EntityFramework Core 1.1 Add、Attach、Update、Remove方法如何高效使用详解
@@ -94,6 +95,7 @@ namespace FacadeHelper
         public List<CurtainPanelInfo> FullCurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public List<ScheduleElementInfo> FullScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
         public ObservableCollection<ZoneInfoBase> FullZoneList { get; set; } = new ObservableCollection<ZoneInfoBase>();
+
 
         [NonSerializableMember] public ILookup<string, CurtainPanelInfo> Lookup_CurtainPanels { get; set; }
         [NonSerializableMember] public ILookup<string, ScheduleElementInfo> Lookup_ScheduleElements { get; set; }
@@ -196,7 +198,36 @@ namespace FacadeHelper
 
         public static List<ElementClass> ElementClassList = new List<ElementClass>();
         public static int[][] TaskLevelClass;
-        
+
+        public static void UpdateAppConfig(string newKey, string newValue)
+        {
+            bool isModified = false;
+            foreach (string key in ConfigurationManager.AppSettings)
+            {
+                if (key == newKey)
+                {
+                    isModified = true;
+                }
+            }
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            if (isModified) config.AppSettings.Settings.Remove(newKey);
+            config.AppSettings.Settings.Add(newKey, newValue);
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
+        }
+
+        public static string GetAppConfig(string strKey)
+        {
+            foreach (string key in ConfigurationManager.AppSettings)
+            {
+                if (key == strKey)
+                {
+                    return ConfigurationManager.AppSettings[strKey];
+                }
+            }
+            return null;
+        }
     }
 
 

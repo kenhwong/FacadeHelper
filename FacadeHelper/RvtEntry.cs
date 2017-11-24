@@ -1,8 +1,11 @@
-﻿using Autodesk.Revit.DB;
+﻿using Autodesk.Revit.ApplicationServices;
+using Autodesk.Revit.Attributes;
+using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Events;
 using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -19,27 +22,19 @@ namespace FacadeHelper
         // Both OnStartup and OnShutdown must be implemented as public method
         public Result OnStartup(UIControlledApplication application)
         {
+
             application.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(Application_DocumentOpened);
-            // Add a new ribbon panel
             RibbonPanel rpanel = application.CreateRibbonPanel("Facade Helper");
 
-            // Create a push button to trigger a command add it to the ribbon panel.
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
+            PushButtonData bndata_appconfig = new PushButtonData("cmdConfig", "全局设定", thisAssemblyPath, "FacadeHelper.Config_Command");
             PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
             PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
-            //PushButtonData bndata_zone4d = new PushButtonData("cmdZone4D", "簡化分區", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone4D");
-            //PushButtonData bndata_zonecodeinput = new PushButtonData("cmdZoneCodeInput", "分区输入", thisAssemblyPath, "FacadeHelper.ICommand_Document_ZoneCodeInput");
+            bndata_appconfig.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "config32.png")));
             bndata_process_elements.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "se32.png")));
-            //bndata_zone4d.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
-            //bndata_zonecodeinput.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "id32.png")));
-            //rpanel.AddItem(bndata_process_elements);
+            rpanel.AddItem(bndata_appconfig);
             rpanel.AddItem(bndata_zone);
-            //rpanel.AddItem(bndata_zone4d);
-            //rpanel.AddItem(bndata_zonecodeinput);
-
-            //PushButtonData bndata_test = new PushButtonData("cmdTEST", "TEST", thisAssemblyPath, "FacadeHelper.ICommand_Document_TEST");
-            //rpanel.AddItem(bndata_test);
             return Result.Succeeded;
         }
 
@@ -66,16 +61,43 @@ namespace FacadeHelper
 
     }
 
-    [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
-    public class ICommand_Document_TEST : IExternalCommand
+    [Transaction(TransactionMode.Manual)]
+    public class Config_Command : IExternalCommand
     {
-        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        //http://blog.rodhowarth.com/2009/07/how-to-use-appconfig-file-in-dll-plugin.html
+        //http://adndevblog.typepad.com/aec/2014/09/get-value-from-appconfig-file-and-sur-la-france.html
+
+        public Result Execute(
+          ExternalCommandData commandData,
+          ref string message,
+          ElementSet elements)
         {
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             var app = uiapp.Application;
             Document doc = uidoc.Document;
 
+            Global.UpdateAppConfig("TestProperty", "Test Value");
+            Configuration config = ConfigurationManager.OpenExeConfiguration (Assembly.GetExecutingAssembly().Location);
+            //string value = config.AppSettings.Settings["pdfOutput"].Value;
+            config.AppSettings.Settings["TestProperty"].Value = "Test Value";
+            config.Save(ConfigurationSaveMode.Full);
+            //TaskDialog.Show("App config Value", value);
+
+            return Result.Succeeded;
+        }
+    }
+
+    [Transaction(TransactionMode.Manual)]
+    public class ICommand_Document_TEST : IExternalCommand
+    {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            UIApplication uiapp = commandData.Application;
+              UIDocument uidoc = uiapp.ActiveUIDocument;
+            var app = uiapp.Application;
+            Document doc = uidoc.Document;
+            
             using (Transaction trans = new Transaction(doc, "CreateProjectParameters"))
             {
                 trans.Start();
@@ -98,7 +120,7 @@ namespace FacadeHelper
         }
     }
 
-    [Autodesk.Revit.Attributes.Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
+    [Transaction(Autodesk.Revit.Attributes.TransactionMode.Manual)]
     public class ICommand_Document_Zone : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
