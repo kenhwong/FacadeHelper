@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="FacadeHelper.FacadeConfig" x:Name="ProcConfig"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:local="clr-namespace:FacadeHelper"
+             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <local:Global x:Key="GlobalData" xmlns:local="clr-namespace:FacadeHelper" />
+            <local:IntToBoolConverter x:Key="I2BConverter" />
+            <local:VarToBoolConverter x:Key="VarConverter" />
+            <local:BoolToVisibilityConverter x:Key="B2VConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes\DataGridStyle.xaml" />
+                <ResourceDictionary Source="Themes\ControlStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="10" UseLayoutRounding="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Margin="-10,-10,-10,0" Orientation="Horizontal" Background="{x:Static SystemColors.ControlBrush}">
+            <StackPanel.Effect>
+                <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
+            </StackPanel.Effect>
+            <Label Tag="Z" Content="当前项目编号：" Margin="10" />
+            <TextBox x:Name="textProjectID" Text="BIM2017090001C" Style="{DynamicResource LabelTextBoxStyle}" />
+            <Label Tag="Z" Content="当前项目名称：" Margin="10" />
+            <TextBox x:Name="textProjectName" Text="上海市轨道交通网络运营指挥调度大楼" Style="{DynamicResource LabelTextBoxStyle}" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10">
+            <RadioButton x:Name="tabGeneral" Style="{StaticResource RadioTabStyle}" IsChecked="True" Tag="S" Content="常规设置" GroupName="gconfigTabs" />
+            <RadioButton x:Name="tabApperence" Style="{StaticResource RadioTabStyle}" Tag="S" Content="界面设置" GroupName="gconfigTabs" />
+        </StackPanel>
+        <Grid Grid.Row="2" Margin="-10,0,-10,-10" Background="{x:Static SystemColors.ControlBrush}">
+            <Grid.Effect>
+                <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
+            </Grid.Effect>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Grid.Row="1" Tag="Z" Content="构件类型筛选：" Margin="10,5" VerticalAlignment="Bottom" />
+            <StackPanel x:Name="subbuttongroup_ZoneSystem" Grid.Column="1" Grid.Row="1" Margin="10,5" Orientation="Horizontal" Visibility="Visible">
+                <CheckBox Content="1" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= A}" />
+                <CheckBox Content="2" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= B}" />
+                <CheckBox Content="3" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= C}" />
+                <CheckBox Content="4" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= D}" />
+                <CheckBox Content="5" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= E}" />
+                <CheckBox Content="6" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= F}" />
+                <CheckBox Content="7" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= G}" />
+                <CheckBox Content="8" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= H}" />
+                <CheckBox Content="9" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= J}" />
+                <CheckBox Content="10" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= K}" />
+                <CheckBox Content="11" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= L}" />
+                <CheckBox Content="12" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= M}" />
+            </StackPanel>
+            <Label Grid.Column="0" Grid.Row="2" Tag="Z" Content="构件类型工序：" Margin="10,5" VerticalAlignment="Bottom" />
+            <WrapPanel Grid.Column="1" Grid.Row="2" Margin="10,5">
+                <Label Tag="Z" Content="123344" VerticalAlignment="Bottom" />
+                <ListBox>
+                    <Button Style="{DynamicResource Solid12Button}" Content="01" VerticalAlignment="Bottom" />
+                </ListBox>
+            </WrapPanel>
+        </Grid>
+    </Grid>
+</UserControl>

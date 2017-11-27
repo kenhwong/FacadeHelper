@@ -93,6 +93,9 @@
   <ItemGroup>
     <Compile Include="DocumentContext.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="FacadeConfig.xaml.cs">
+      <DependentUpon>FacadeConfig.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Manual.xaml.cs">
       <DependentUpon>Manual.xaml</DependentUpon>
     </Compile>
@@ -116,6 +119,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="FacadeConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Manual.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

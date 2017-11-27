@@ -747,6 +747,32 @@
 
     </Style>
 
+    <Style x:Key="Solid12Label" TargetType="{x:Type Label}">
+        <Setter Property="Foreground" Value="#808080" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Label}">
+                    <Border x:Name="G1"  Margin="2" BorderBrush="{TemplateBinding Foreground}" BorderThickness="1" Background="{TemplateBinding Foreground}" Padding="5,2">
+                        <ContentPresenter RecognizesAccessKey="True" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" TextElement.Foreground="White" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="BorderBrush" Value="#d0d0d0"/>
+                            <Setter Property="Foreground" Value="#d0d0d0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+
     <Style x:Key="IconLabel" TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
         <Setter Property="Effect">
@@ -879,6 +905,33 @@
     <Style TargetType="{x:Type Button}" x:Key="SubButtonStyle" BasedOn="{StaticResource ButtonBaseStyle}">
         <Setter Property="Background" Value="#f0f0f0" />
     </Style>
+
+    <Style x:Key="Solid12Button" TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="#808080" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="G1"  Margin="2" BorderBrush="{TemplateBinding Foreground}" BorderThickness="1" Background="{TemplateBinding Foreground}" Padding="5,2">
+                        <ContentPresenter Name="Presenter" RecognizesAccessKey="True" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" TextElement.Foreground="White" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="BorderBrush" Value="#d0d0d0"/>
+                            <Setter Property="Foreground" Value="#d0d0d0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+
     <!--#endregion-->
 
     <!--#region TextBox-->
@@ -956,6 +1009,39 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="LabelTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                    <Border Name="MainBorder" Background="Transparent">
+                        <Border Name="BorderUnderline"
+                                    BorderBrush="#808080"
+                                    BorderThickness="0">
+                            <ScrollViewer Margin="0" x:Name="PART_ContentHost" />
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="BorderUnderline" Property="BorderBrush" Value="#cccccc" />
+                            <Setter Property="Foreground" Value="#cccccc" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--#endregion-->
 
     <!--#region CheckBox & RadioButton-->
@@ -1084,8 +1170,7 @@
         </Setter>
     </Style>
     <Style TargetType="{x:Type CheckBox}" BasedOn="{StaticResource CheckBaseStyle}" />
-    <Style TargetType="{x:Type RadioButton}" x:Key="RadioCheck" BasedOn="{StaticResource CheckBaseStyle}" />
-    <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource baseStyle}">
+    <Style x:Key="ULToggleStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Foreground" Value="{StaticResource GroupBoxBorderLightBrush}" />
@@ -1135,6 +1220,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="{x:Type RadioButton}" BasedOn="{StaticResource ULToggleStyle}" />
+    <Style TargetType="{x:Type RadioButton}" x:Key="RadioCheck" BasedOn="{StaticResource CheckBaseStyle}" />
 
     <SolidColorBrush x:Key="RadioTabForegroundBrush" Color="#FF808080"/>
     <SolidColorBrush x:Key="RadioTabLightForegroundBrush" Color="#7F808080"/>

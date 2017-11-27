@@ -77,11 +77,7 @@ namespace FacadeHelper
             var app = uiapp.Application;
             Document doc = uidoc.Document;
 
-            Global.UpdateAppConfig("TestProperty", "Test Value");
-            Configuration config = ConfigurationManager.OpenExeConfiguration (Assembly.GetExecutingAssembly().Location);
-            //string value = config.AppSettings.Settings["pdfOutput"].Value;
-            config.AppSettings.Settings["TestProperty"].Value = "Test Value";
-            config.Save(ConfigurationSaveMode.Full);
+            Global.UpdateAppConfig("TestProperty", "Test Value, update");
             //TaskDialog.Show("App config Value", value);
 
             return Result.Succeeded;
