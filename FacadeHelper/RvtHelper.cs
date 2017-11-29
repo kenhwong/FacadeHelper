@@ -587,8 +587,8 @@ namespace FacadeHelper
         /// <param name="ZoneScheduleDataFile">进度数据文件(*.txt)</param>
         #region 加载ACADE导出的分区进度数据至当前项目
         public static void FnApplyZoneData(string ZoneScheduleDataFile)
-        {
-            Global.DocContent.ZoneLayerList.Clear();
+        {//TODO::::::::
+            Global.DocContent.ZoneLayerList.Clear(); 
             List<ZoneLayerInfo> zllist = new List<ZoneLayerInfo>();
             using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
             {

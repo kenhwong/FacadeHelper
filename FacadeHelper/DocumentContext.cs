@@ -202,7 +202,9 @@ namespace FacadeHelper
         public static void UpdateAppConfig(string newKey, string newValue)
         {
             bool isModified = false;
-            foreach (string key in ConfigurationManager.AppSettings)
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            foreach (string key in config.AppSettings.Settings)
             {
                 if (key == newKey)
                 {
@@ -210,7 +212,6 @@ namespace FacadeHelper
                 }
             }
 
-            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (isModified) config.AppSettings.Settings.Remove(newKey);
             config.AppSettings.Settings.Add(newKey, newValue);
             config.Save(ConfigurationSaveMode.Modified);
@@ -219,11 +220,12 @@ namespace FacadeHelper
 
         public static string GetAppConfig(string strKey)
         {
-            foreach (string key in ConfigurationManager.AppSettings)
+            Configuration config = ConfigurationManager.OpenExeConfiguration(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            foreach (string key in config.AppSettings.Settings)
             {
                 if (key == strKey)
                 {
-                    return ConfigurationManager.AppSettings[strKey];
+                    return config.AppSettings.Settings[strKey].Value;
                 }
             }
             return null;

@@ -89,16 +89,17 @@ namespace FacadeHelper
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             #endregion
 
+            #region CommandBinding : PNEdit
             CommandBinding cbPNEdit = new CommandBinding(cmdPNEdit,
-                (sender, e) =>
-                {
-                    txtProjectName.IsReadOnly = false;
-                    bnPNEditOk.IsEnabled = true;
-                    bnPNEditCancel.IsEnabled = true;
-                    bnPNEdit.IsEnabled = false;
-                    IsSuspend = true;
-                },
-                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+        (sender, e) =>
+        {
+            txtProjectName.IsReadOnly = false;
+            bnPNEditOk.IsEnabled = true;
+            bnPNEditCancel.IsEnabled = true;
+            bnPNEdit.IsEnabled = false;
+            IsSuspend = true;
+        },
+        (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPNEditOk = new CommandBinding(cmdPNEditOk,
                 (sender, e) =>
                 {
@@ -130,6 +131,7 @@ namespace FacadeHelper
                     IsSuspend = false;
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            #endregion
 
             CommandBinding cbBrowseZoneData = new CommandBinding(cmdBrowseZoneData,
                 (sender, e) =>
@@ -140,8 +142,13 @@ namespace FacadeHelper
                         DefaultExt = "*.zone",
                         Filter = "Zone Data Files(*.zone)|*.zone|All(*.*)|*.*"
                     };
-                    ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
-                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - L: {ofd.FileName}.");
+                    if(Global.GetAppConfig("CurrentProjectID") is null)
+                    {
+                        MessageBox.Show("导入分区数据之前必须先设置当前项目的项目编号。");
+                        return;
+                    }
+                    ZoneHelper.FnApplyZoneData(ofd.FileName);
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - L: ZONEDATA/{ofd.FileName}.");
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
