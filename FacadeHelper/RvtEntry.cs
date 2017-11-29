@@ -64,21 +64,26 @@ namespace FacadeHelper
     [Transaction(TransactionMode.Manual)]
     public class Config_Command : IExternalCommand
     {
-        //http://blog.rodhowarth.com/2009/07/how-to-use-appconfig-file-in-dll-plugin.html
-        //http://adndevblog.typepad.com/aec/2014/09/get-value-from-appconfig-file-and-sur-la-france.html
-
-        public Result Execute(
-          ExternalCommandData commandData,
-          ref string message,
-          ElementSet elements)
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiapp = commandData.Application;
-            UIDocument uidoc = uiapp.ActiveUIDocument;
-            var app = uiapp.Application;
-            Document doc = uidoc.Document;
 
-            Global.UpdateAppConfig("TestProperty", "Test Value, update");
-            //TaskDialog.Show("App config Value", value);
+            try
+            {
+                FacadeConfig ucpe = new FacadeConfig();
+                Window winaddin = new Window();
+                ucpe.ParentWin = winaddin;
+                winaddin.Content = ucpe;
+                //winaddin.WindowStyle = WindowStyle.None;
+                winaddin.Padding = new Thickness(0);
+                Global.winhelper = new System.Windows.Interop.WindowInteropHelper(winaddin);
+                winaddin.ShowDialog();
+            }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error", e.ToString());
+                return Result.Failed;
+            }
 
             return Result.Succeeded;
         }

@@ -5,13 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:FacadeHelper"
-             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="800">
+             mc:Ignorable="d" Height="700" Width="800">
     <UserControl.Resources>
         <ResourceDictionary>
             <local:Global x:Key="GlobalData" xmlns:local="clr-namespace:FacadeHelper" />
             <local:IntToBoolConverter x:Key="I2BConverter" />
             <local:VarToBoolConverter x:Key="VarConverter" />
             <local:BoolToVisibilityConverter x:Key="B2VConverter" />
+            <local:NegateBoolConverter x:Key="NeBConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes\DataGridStyle.xaml" />
                 <ResourceDictionary Source="Themes\ControlStyle.xaml" />
@@ -29,9 +30,15 @@
                 <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
             </StackPanel.Effect>
             <Label Tag="Z" Content="当前项目编号：" Margin="10" />
-            <TextBox x:Name="textProjectID" Text="BIM2017090001C" Style="{DynamicResource LabelTextBoxStyle}" />
+            <TextBox x:Name="txtProjectID" Text="BIM2017090001C" IsReadOnly="True" Style="{DynamicResource LabelTextBoxStyle}" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconEdit}" x:Name="bnIDEdit" Foreground="Blue" IsEnabled="True" Width="15" Height="15" Margin="2,0" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconEditOk}" x:Name="bnIDEditOk" Foreground="Green" IsEnabled="False" Width="15" Height="15" Margin="2,0" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconEditCancel}" x:Name="bnIDEditCancel" Foreground="Red" IsEnabled="False" Width="15" Height="15" Margin="2,0" />
             <Label Tag="Z" Content="当前项目名称：" Margin="10" />
-            <TextBox x:Name="textProjectName" Text="上海市轨道交通网络运营指挥调度大楼" Style="{DynamicResource LabelTextBoxStyle}" />
+            <TextBox x:Name="txtProjectName" Text="上海市轨道交通网络运营指挥调度大楼" Style="{DynamicResource LabelTextBoxStyle}" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconEdit}" x:Name="bnPNEdit" Foreground="Blue" IsEnabled="True" Width="15" Height="15" Margin="2,0" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconEditOk}" x:Name="bnPNEditOk" Foreground="Green" IsEnabled="False" Width="15" Height="15" Margin="2,0" />
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconEditCancel}" x:Name="bnPNEditCancel" Foreground="Red" IsEnabled="False" Width="15" Height="15" Margin="2,0" />
         </StackPanel>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10">
             <RadioButton x:Name="tabGeneral" Style="{StaticResource RadioTabStyle}" IsChecked="True" Tag="S" Content="常规设置" GroupName="gconfigTabs" />
@@ -45,7 +52,14 @@
                 <RowDefinition Height="20" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120" />
@@ -66,13 +80,44 @@
                 <CheckBox Content="11" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= L}" />
                 <CheckBox Content="12" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= M}" />
             </StackPanel>
-            <Label Grid.Column="0" Grid.Row="2" Tag="Z" Content="构件类型工序：" Margin="10,5" VerticalAlignment="Bottom" />
-            <WrapPanel Grid.Column="1" Grid.Row="2" Margin="10,5">
-                <Label Tag="Z" Content="123344" VerticalAlignment="Bottom" />
-                <ListBox>
+            <Label Grid.Column="0" Grid.Row="2" Tag="Z" Content="构件工序 Lay1：" Margin="10,5" VerticalAlignment="Bottom" />
+            <DockPanel Grid.Column="1" Grid.Row="2" Margin="10,5" LastChildFill="False">
+                <Label Tag="Z" Content="1,2,3,3,4,4" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
+                <ListBox DockPanel.Dock="Right">
                     <Button Style="{DynamicResource Solid12Button}" Content="01" VerticalAlignment="Bottom" />
                 </ListBox>
-            </WrapPanel>
+            </DockPanel>
+            <Label Grid.Column="0" Grid.Row="3" Tag="Z" Content="构件工序 Lay2：" Margin="10,5" VerticalAlignment="Bottom" />
+            <DockPanel Grid.Column="1" Grid.Row="3" Margin="10,5" LastChildFill="False">
+                <Label Tag="Z" Content="1,2,3,3,4,4" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
+                <ListBox DockPanel.Dock="Right">
+                    <Button Style="{DynamicResource Solid12Button}" Content="01" VerticalAlignment="Bottom" />
+                </ListBox>
+            </DockPanel>
+            <Label Grid.Column="0" Grid.Row="4" Tag="Z" Content="构件工序 Lay3：" Margin="10,5" VerticalAlignment="Bottom" />
+            <DockPanel Grid.Column="1" Grid.Row="4" Margin="10,5" LastChildFill="False">
+                <Label Tag="Z" Content="1,2,3,3,4,4" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
+                <ListBox DockPanel.Dock="Right">
+                    <Button Style="{DynamicResource Solid12Button}" Content="01" VerticalAlignment="Bottom" />
+                </ListBox>
+            </DockPanel>
+            <Label Grid.Column="0" Grid.Row="5" Tag="Z" Content="项目分区设置：" Margin="10,5" VerticalAlignment="Bottom" />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" Margin="10,5">
+                <TextBox Width="200" />
+                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconBrowse}" x:Name="bnBrowseZoneData" ToolTip="浏览分区数据文件..." Width="30" Height="30" Margin="10,0,10,0" />
+            </StackPanel>
+            <Label Grid.Column="0" Grid.Row="6" Tag="Z" Content="几何误差控制：" Margin="10,5" VerticalAlignment="Bottom" />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="6" Margin="10,5">
+                <TextBox Width="200" Text="0.001" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Grid.Row="9" Margin="10,5">
+                <ListBox Grid.Column="1" x:Name="listInformation" Height="100" Margin="10" SelectionChanged="listInformation_SelectionChanged"
+                             Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="10" Margin="10,20">
+                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApply}" x:Name="bnApplyConfigure" Width="20" Height="20" Margin="10,0" />
+                <Label Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" />
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

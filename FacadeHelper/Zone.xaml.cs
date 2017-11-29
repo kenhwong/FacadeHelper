@@ -809,4 +809,47 @@ namespace FacadeHelper
         }
     }
 
+    public class NegateBoolConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !(bool)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !(bool)value;
+        }
+    }
+
+    public class NotNullValidationRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            if (string.IsNullOrEmpty(value as string) || string.IsNullOrWhiteSpace(value as string))
+            {
+                return new ValidationResult(false, "不能为空！");
+            }
+            return new ValidationResult(true, null);
+        }
+    }
+    public class ProjectIDRule : ValidationRule
+    {
+        public override ValidationResult Validate(object value, CultureInfo cultureInfo)
+        {
+            string _id = value as string;
+
+            if (!string.IsNullOrWhiteSpace(_id))
+            {
+                string pIDFormartRegex = @"^BIM\d{10}[C|W]$";
+
+                // 检查输入的字符串是否符合IP地址格式
+                if (!System.Text.RegularExpressions.Regex.IsMatch(_id, pIDFormartRegex))
+                {
+                    return new ValidationResult(false, "项目编号格式不正确");
+                }
+            }
+            return new ValidationResult(true, null);
+        }
+    }
 }
