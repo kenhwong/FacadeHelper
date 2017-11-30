@@ -23,6 +23,16 @@
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
     <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <Geometry x:Key="IconWrite">M678.140413 828.647777 289.596166 828.647777c-53.759391 0-97.482195-43.742247-97.482195-97.500615L192.113971 342.620311c0-53.759391 43.722804-97.501638 
+        97.482195-97.501638l194.281845 0c11.493775 0 20.807908 9.314133 20.807908 20.807908 0 11.494799-9.314133 20.807908-20.807908 20.807908L289.596166 286.73449
+        c-30.806633 0-55.866379 25.077142-55.866379 55.884798l0 388.525827c0 30.80561 25.059745 55.883775 55.866379 55.883775l388.544247 0c30.80561 0 55.884798-25.078165 55.884798-55.883775
+        L734.025211 536.883737c0-11.496845 9.31311-20.808932 20.805862-20.808932 11.494799 0 20.807908 9.31311 20.807908 20.808932l0 194.262402
+        C775.640004 784.90553 731.897757 828.647777 678.140413 828.647777z
+        M348.399433 693.169199c-5.470595 0-10.773368-2.14178-14.710027-6.096858-4.933359-4.919033-7.059789-11.976776-5.710049-18.796088L355.070366 532.797675
+        c0.812505-4.028757 2.789533-7.722892 5.711072-10.623965l325.139172-325.140195c8.093329-8.131191 21.324678-8.131191 29.421077 0
+        L823.726186 305.419038c8.131191 8.112772 8.131191 21.308305 0 29.420053L498.588037 659.978263c-2.901073 2.920516-6.598278 4.898567-10.627035 5.711072l-135.478578 27.094078
+        C351.116311 693.040263 349.748151 693.169199 348.399433 693.169199zM394.673339 547.139312l-19.73753 98.68458 98.685603-19.735483 305.957297-305.95832-78.948073-78.94705
+        L394.673339 547.139312z</Geometry>
     <Geometry x:Key="IconEdit">M916.823514 412.032194c-12.507872 0-22.648836 10.119475-22.720468 22.603811l0 0.069585c0 0.023536 0 0.023536 0 0.070608 0 0 0 0.023536 0 0.046049
         l0 402.968771c0 25.109887-20.354584 45.439912-45.437865 45.439912L414.133553 883.230929c-0.022513 0-0.022513 0-0.047072 0L166.98157 883.230929c-25.084305 0-45.438888-20.330024-45.438888-45.439912
         l0-657.709593c0-25.108864 20.354584-45.438888 45.438888-45.438888l439.051571 0c12.531408-0.022513 22.695908-10.188037 22.695908-22.719444 0-12.554944-10.1645-22.719444-22.695908-22.719444
@@ -378,6 +388,27 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="WrapListBox" TargetType="{x:Type ListBox}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="BorderBrush" Value="{StaticResource LightCyanBrush}" />
+        <Setter Property="Background" Value="{x:Static SystemColors.ControlBrush}" />
+        <Setter Property="ItemContainerStyle" Value="{DynamicResource WrapListBoxItem}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBox}">
+                    <Grid SnapsToDevicePixels="true">
+                        <ScrollViewer>
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
     <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Foreground" Value="#808080" />
         <Setter Property="Effect">
@@ -431,6 +462,31 @@
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Trigger.Setters>
+                    <Setter Property="Foreground" Value="DarkGreen" />
+                </Trigger.Setters>
+            </Trigger>
+            <DataTrigger Binding="{Binding Path=Tag, Converter={StaticResource PrefixConverter}, ConverterParameter=ERR }" Value="True">
+                <Setter Property="Foreground" Value="Red" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="WrapListBoxItem" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" 
+                                          Margin="0"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -548,8 +604,6 @@
     <!--#endregion-->
 
     <!--#region Expander-->
-    <!--#region Expander-->
-
     <Style TargetType="Expander" BasedOn="{StaticResource baseStyle}">
         <Setter Property="BorderBrush" Value="{StaticResource GroupBoxBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -637,7 +691,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <!--#endregion-->
     <!--#endregion-->
 
     <!--#region TabControl-->
@@ -956,11 +1009,11 @@
     </Style>
 
     <Style x:Key="Solid12Button" TargetType="{x:Type Button}">
-        <Setter Property="Foreground" Value="#808080" />
+        <Setter Property="Foreground" Value="#A0A0A0" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+                <DropShadowEffect Color="Gray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
@@ -971,8 +1024,8 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="BorderBrush" Value="#d0d0d0"/>
-                            <Setter Property="Foreground" Value="#d0d0d0"/>
+                            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+                            <Setter Property="Foreground" Value="#E0E0E0"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1012,12 +1065,14 @@
                                     BorderThickness="0,0,0,1">
                                 <ScrollViewer Margin="0" x:Name="PART_ContentHost" />
                             </Border>
-                            <Path Grid.Column="1"
+                            <Path 
+                                Grid.Column="1" Margin="5,0,0,0"
                                 Name="PathTriangle"
-                                Data="M0,60 L20,60 20,40 M20,5 L5,45"
-                                Stroke="#808080"
-                                Height="10"
-                                Stretch="Fill" Width="10"
+                                Data="{StaticResource IconWrite}"
+                                Fill="#808080"
+                                StrokeThickness="0"
+                                Height="15" Width="15"
+                                Stretch="Fill"
                                 VerticalAlignment="Bottom"/>
                         </Grid>
                     </Border>
@@ -1035,7 +1090,7 @@
                                                                 To="#55029cc7" Duration="0:0:0.3" />
                                         <ColorAnimation Storyboard.TargetName="BorderUnderline" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
                                                                 To="#029cc7" Duration="0:0:0.3" />
-                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Stroke).(SolidColorBrush.Color)"
+                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                                 To="#029cc7" Duration="0:0:0.3"/>
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -1047,7 +1102,7 @@
                                                                 To="Transparent" Duration="0:0:0.3" />
                                         <ColorAnimation Storyboard.TargetName="BorderUnderline" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
                                                                 To="#808080" Duration="0:0:0.3" />
-                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Stroke).(SolidColorBrush.Color)"
+                                        <ColorAnimation Storyboard.TargetName="PathTriangle" Storyboard.TargetProperty="(Path.Fill).(SolidColorBrush.Color)"
                                                                 To="#808080" Duration="0:0:0.3"/>
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -1669,103 +1724,6 @@
     <!--#endregion-->
 
     <!--#region AndroidSliderStyle-->
-    <Style x:Key="AndroidSliderStyle" TargetType="{x:Type Slider}" BasedOn="{StaticResource baseStyle}">
-        <Setter Property="FocusVisualStyle" Value="{StaticResource SliderFocusVisualStyte}" />
-        <Setter Property="SnapsToDevicePixels" Value="true" />
-        <Setter Property="OverridesDefaultStyle" Value="true" />
-        <Style.Triggers>
-            <Trigger Property="Orientation" Value="Horizontal">
-                <Setter Property="MinWidth" Value="104" />
-                <Setter Property="MinHeight" Value="21" />
-                <Setter Property="Template" Value="{StaticResource HorizontalSlider}" />
-            </Trigger>
-            <Trigger Property="Orientation" Value="Vertical">
-                <Setter Property="MinWidth" Value="21" />
-                <Setter Property="MinHeight" Value="104" />
-                <Setter Property="Template" Value="{StaticResource VerticalSlider}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-    <ControlTemplate x:Key="VerticalSlider" TargetType="{x:Type Slider}">
-        <Grid Margin="5">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" MinWidth="{TemplateBinding MinWidth}"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <TickBar x:Name="TopTick" Visibility="Collapsed" Fill="LightGray" Placement="Left" SnapsToDevicePixels="True" Width="4" Margin="0,0,2,0" />
-            <Border x:Name="TrackBackground"
-                Grid.Column="1"
-                Margin="0,10"
-                BorderThickness="2"
-                BorderBrush="LightGray"
-                HorizontalAlignment="Center" Width="4" />
-            <Track x:Name="PART_Track" Grid.Column="1">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}"  Style="{StaticResource SliderRepeatButtonStyle}" />
-                </Track.DecreaseRepeatButton>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource SliderRepeatButtonStyle}"/>
-                </Track.IncreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb x:Name="Thumb" Style="{StaticResource SliderThumbStyle}" />
-                </Track.Thumb>
-            </Track>
-            <TickBar x:Name="BottomTick" Grid.Column="2" Visibility="Collapsed" Fill="LightGray" Placement="Right" Width="4" Margin="2,0,0,0" SnapsToDevicePixels="True" />
-        </Grid>
-        <ControlTemplate.Triggers>
-            <Trigger Property="TickPlacement" Value="TopLeft">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="BottomRight">
-                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="Both">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
-                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
-    <ControlTemplate x:Key="HorizontalSlider" TargetType="{x:Type Slider}">
-        <Grid Margin="5">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <TickBar x:Name="TopTick" Visibility="Collapsed" Fill="LightGray" Placement="Top" SnapsToDevicePixels="True" Height="4" Margin="0,0,0,2" />
-            <Border x:Name="TrackBackground"
-                Grid.Row="1"
-                Margin="10,0"
-                BorderThickness="2"
-                BorderBrush="LightGray"
-                VerticalAlignment="Center" Height="4" />
-            <Track x:Name="PART_Track" Grid.Row="1">
-                <Track.DecreaseRepeatButton>
-                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}"  Style="{StaticResource SliderRepeatButtonStyle}" />
-                </Track.DecreaseRepeatButton>
-                <Track.IncreaseRepeatButton>
-                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource SliderRepeatButtonStyle}"/>
-                </Track.IncreaseRepeatButton>
-                <Track.Thumb>
-                    <Thumb x:Name="Thumb" Style="{StaticResource SliderThumbStyle}" />
-                </Track.Thumb>
-            </Track>
-            <TickBar x:Name="BottomTick" Grid.Row="2" Visibility="Collapsed" Fill="LightGray" Placement="Bottom" SnapsToDevicePixels="True" Height="4" Margin="0,2,0,0"/>
-        </Grid>
-        <ControlTemplate.Triggers>
-            <Trigger Property="TickPlacement" Value="TopLeft">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="BottomRight">
-                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-            <Trigger Property="TickPlacement" Value="Both">
-                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
-                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
-            </Trigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
     <Style x:Key="SliderRepeatButtonStyle" TargetType="{x:Type RepeatButton}">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Setter Property="IsTabStop" Value="false"/>
@@ -1808,6 +1766,103 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+    <ControlTemplate x:Key="VerticalSlider" TargetType="{x:Type Slider}">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" MinWidth="{TemplateBinding MinWidth}"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TickBar x:Name="TopTick" Visibility="Collapsed" Fill="LightGray" Placement="Left" SnapsToDevicePixels="True" Width="4" Margin="0,0,2,0" />
+            <Border x:Name="TrackBackground"
+                Grid.Column="1"
+                Margin="0,10"
+                BorderThickness="2"
+                BorderBrush="LightGray"
+                HorizontalAlignment="Center" Width="4" />
+            <Track x:Name="PART_Track" Grid.Column="1">
+                <Track.DecreaseRepeatButton>
+                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}"  Style="{StaticResource SliderRepeatButtonStyle}" />
+                </Track.DecreaseRepeatButton>
+                <Track.IncreaseRepeatButton>
+                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource SliderRepeatButtonStyle}"/>
+                </Track.IncreaseRepeatButton>
+                <Track.Thumb>
+                    <Thumb x:Name="Thumb" Style="{StaticResource SliderThumbStyle}" />
+                </Track.Thumb>
+            </Track>
+            <TickBar x:Name="BottomTick" Grid.Column="2" Visibility="Collapsed" Fill="LightGray" Placement="Right" Width="4" Margin="2,0,0,0" SnapsToDevicePixels="True" />
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="TickPlacement" Value="TopLeft">
+                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="BottomRight">
+                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <ControlTemplate x:Key="HorizontalSlider" TargetType="{x:Type Slider}">
+        <Grid Margin="5,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TickBar x:Name="TopTick" Visibility="Collapsed" Fill="LightGray" Placement="Top" SnapsToDevicePixels="True" Height="4" Margin="0,0,0,2" />
+            <Border x:Name="TrackBackground"
+                Grid.Row="1"
+                Margin="10,0"
+                BorderThickness="2"
+                BorderBrush="LightGray"
+                VerticalAlignment="Center" Height="4" />
+            <Track x:Name="PART_Track" Grid.Row="1">
+                <Track.DecreaseRepeatButton>
+                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}"  Style="{StaticResource SliderRepeatButtonStyle}" />
+                </Track.DecreaseRepeatButton>
+                <Track.IncreaseRepeatButton>
+                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Style="{StaticResource SliderRepeatButtonStyle}"/>
+                </Track.IncreaseRepeatButton>
+                <Track.Thumb>
+                    <Thumb x:Name="Thumb" Style="{StaticResource SliderThumbStyle}" />
+                </Track.Thumb>
+            </Track>
+            <TickBar x:Name="BottomTick" Grid.Row="2" Visibility="Collapsed" Fill="LightGray" Placement="Bottom" SnapsToDevicePixels="True" Height="4" Margin="0,2,0,0"/>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="TickPlacement" Value="TopLeft">
+                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="BottomRight">
+                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="TickPlacement" Value="Both">
+                <Setter TargetName="TopTick" Property="Visibility" Value="Visible" />
+                <Setter TargetName="BottomTick" Property="Visibility" Value="Visible" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <Style TargetType="{x:Type Slider}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource SliderFocusVisualStyte}" />
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Style.Triggers>
+            <Trigger Property="Orientation" Value="Horizontal">
+                <Setter Property="MinWidth" Value="104" />
+                <Setter Property="MinHeight" Value="21" />
+                <Setter Property="Template" Value="{StaticResource HorizontalSlider}" />
+            </Trigger>
+            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="MinWidth" Value="21" />
+                <Setter Property="MinHeight" Value="104" />
+                <Setter Property="Template" Value="{StaticResource VerticalSlider}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
     <Style x:Key="SliderFocusVisualStyte" >
         <Setter Property="Control.Template">

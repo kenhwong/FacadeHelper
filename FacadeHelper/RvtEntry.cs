@@ -71,13 +71,14 @@ namespace FacadeHelper
             try
             {
                 FacadeConfig ucpe = new FacadeConfig();
-                Window winaddin = new Window();
-                ucpe.ParentWin = winaddin;
-                winaddin.Content = ucpe;
+                Window winopt = new Window();
+                ucpe.ParentWin = winopt;
+                winopt.Content = ucpe;
+                winopt.SizeToContent = SizeToContent.WidthAndHeight;
                 //winaddin.WindowStyle = WindowStyle.None;
-                winaddin.Padding = new Thickness(0);
-                Global.winhelper = new System.Windows.Interop.WindowInteropHelper(winaddin);
-                winaddin.ShowDialog();
+                winopt.Padding = new Thickness(0);
+                Global.winhelper = new System.Windows.Interop.WindowInteropHelper(winopt);
+                winopt.ShowDialog();
             }
             catch (Exception e)
             {

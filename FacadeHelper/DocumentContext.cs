@@ -178,13 +178,22 @@ namespace FacadeHelper
     }
 
     [SerializableType]
-    public class ElementClass
+    public class ElementClass : INotifyPropertyChanged
     {
-        public int EClassIndex { get; set; }
-        public string EClassName { get; set; } = "Unset";
-        public bool IsScheduled { get; set; } = false;
-        public int ETaskLayer { get; set; } = -1;
-        public int ETaskSubLayer { get; set; } = -1;
+        private int _eClassIndex { get; set; }
+        private string _eClassName { get; set; } = "Unset";
+        private bool _isScheduled { get; set; } = false;
+        private int _eTaskLayer { get; set; } = -1;
+        private int _eTaskSubLayer { get; set; } = -1;
+
+        public int EClassIndex { get { return _eClassIndex; } set { _eClassIndex = value; OnPropertyChanged(nameof(EClassIndex)); } }
+        public string EClassName { get { return _eClassName; } set { _eClassName = value; OnPropertyChanged(nameof(EClassName)); } }
+        public bool IsScheduled { get { return _isScheduled; } set { _isScheduled = value; OnPropertyChanged(nameof(IsScheduled)); } }
+        public int ETaskLayer { get { return _eTaskLayer; } set { _eTaskLayer = value; OnPropertyChanged(nameof(ETaskLayer)); } }
+        public int ETaskSubLayer { get { return _eTaskSubLayer; } set { _eTaskSubLayer = value; OnPropertyChanged(nameof(ETaskSubLayer)); } }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     public class Global
@@ -204,7 +213,7 @@ namespace FacadeHelper
             bool isModified = false;
             Configuration config = ConfigurationManager.OpenExeConfiguration(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            foreach (string key in config.AppSettings.Settings)
+            foreach (string key in config.AppSettings.Settings.AllKeys)
             {
                 if (key == newKey)
                 {
@@ -221,7 +230,7 @@ namespace FacadeHelper
         public static string GetAppConfig(string strKey)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            foreach (string key in config.AppSettings.Settings)
+            foreach (string key in config.AppSettings.Settings.AllKeys)
             {
                 if (key == strKey)
                 {

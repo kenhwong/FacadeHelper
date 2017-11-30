@@ -822,6 +822,26 @@ namespace FacadeHelper
         }
     }
 
+    public class MultiValueElementClassConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            bool bsch = (bool)values[0]; //IsScheduled, bool
+            int ilayer = (int)values[1]; //ETaskLayer, int
+            int ilc = int.Parse(parameter as string);
+            if (bsch && ilayer == ilc)
+            {
+                return System.Windows.Visibility.Visible;
+            }
+            return System.Windows.Visibility.Collapsed;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class NotNullValidationRule : ValidationRule
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)

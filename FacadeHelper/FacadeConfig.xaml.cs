@@ -22,9 +22,12 @@ namespace FacadeHelper
     public partial class FacadeConfig : UserControl, INotifyPropertyChanged
     {
         public Window ParentWin { get; set; }
+        private bool isModified = false;
 
         private bool _isSuspend = false;
         public bool IsSuspend { get { return _isSuspend; } set { _isSuspend = value; OnPropertyChanged(nameof(IsSuspend)); } }
+
+        public List<ElementClass> CurrentElementClassList { get; set; } = new List<ElementClass>();
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -33,6 +36,9 @@ namespace FacadeHelper
         {
             InitializeComponent();
             InitializeCommand();
+            this.DataContext = this;
+
+            CurrentElementClassList = ZoneHelper.InitElementClass();
         }
 
         private RoutedCommand cmdIDEdit = new RoutedCommand();
@@ -42,6 +48,13 @@ namespace FacadeHelper
         private RoutedCommand cmdPNEditOk = new RoutedCommand();
         private RoutedCommand cmdPNEditCancel = new RoutedCommand();
         private RoutedCommand cmdBrowseZoneData = new RoutedCommand();
+
+        private RoutedCommand cmdApplyConfigure = new RoutedCommand();
+
+        public RoutedCommand cmdChangeClassLayer { get; set; } = new RoutedCommand(
+            "CommandChangeClassLayer", 
+            typeof(FacadeConfig), 
+            new InputGestureCollection(new InputGesture[] { new MouseGesture( MouseAction.RightClick, ModifierKeys.None) }));
 
         private void InitializeCommand()
         {
@@ -91,15 +104,15 @@ namespace FacadeHelper
 
             #region CommandBinding : PNEdit
             CommandBinding cbPNEdit = new CommandBinding(cmdPNEdit,
-        (sender, e) =>
-        {
-            txtProjectName.IsReadOnly = false;
-            bnPNEditOk.IsEnabled = true;
-            bnPNEditCancel.IsEnabled = true;
-            bnPNEdit.IsEnabled = false;
-            IsSuspend = true;
-        },
-        (sender, e) => { e.CanExecute = true; e.Handled = true; });
+                (sender, e) =>
+                {
+                    txtProjectName.IsReadOnly = false;
+                    bnPNEditOk.IsEnabled = true;
+                    bnPNEditCancel.IsEnabled = true;
+                    bnPNEdit.IsEnabled = false;
+                    IsSuspend = true;
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPNEditOk = new CommandBinding(cmdPNEditOk,
                 (sender, e) =>
                 {
@@ -138,19 +151,29 @@ namespace FacadeHelper
                 {
                     Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
                     {
-                        InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
                         DefaultExt = "*.zone",
                         Filter = "Zone Data Files(*.zone)|*.zone|All(*.*)|*.*"
                     };
-                    if(Global.GetAppConfig("CurrentProjectID") is null)
+                    if(ofd.ShowDialog() == false) return;
+                    if (Global.GetAppConfig("CurrentProjectID") is null)
                     {
                         MessageBox.Show("导入分区数据之前必须先设置当前项目的项目编号。");
                         return;
                     }
-                    ZoneHelper.FnApplyZoneData(ofd.FileName);
+                    var pzfile = ZoneHelper.FnApplyZoneData(ofd.FileName);
                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - L: ZONEDATA/{ofd.FileName}.");
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - S: ZONEDATA/{pzfile}.");
+                    txtProjectZoneFile.Text = pzfile;
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
+            CommandBinding cbApplyConfigure = new CommandBinding(cmdApplyConfigure, 
+                (sender, e) => 
+                {
+                    Global.UpdateAppConfig("RVTPrecision", txtRVTPrecision.Text);
+                    isModified = false;
+                }, 
+                (sender, e) => { if (isModified) { e.CanExecute = true; e.Handled = true; } });
 
             bnIDEdit.Command = cmdIDEdit;
             bnIDEditOk.Command = cmdIDEditOk;
@@ -176,5 +199,10 @@ namespace FacadeHelper
         }
 
         private void listInformation_SelectionChanged(object sender, SelectionChangedEventArgs e) { var lb = sender as ListBox; lb.ScrollIntoView(lb.Items[lb.Items.Count - 1]); }
+
+        private void txtRVTPrecision_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            isModified = true;
+        }
     }
 }

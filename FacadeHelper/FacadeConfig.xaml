@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:FacadeHelper"
-             mc:Ignorable="d" Height="700" Width="800">
+             mc:Ignorable="d" Height="700" Width="900">
     <UserControl.Resources>
         <ResourceDictionary>
             <local:Global x:Key="GlobalData" xmlns:local="clr-namespace:FacadeHelper" />
@@ -13,6 +13,7 @@
             <local:VarToBoolConverter x:Key="VarConverter" />
             <local:BoolToVisibilityConverter x:Key="B2VConverter" />
             <local:NegateBoolConverter x:Key="NeBConverter" />
+            <local:MultiValueElementClassConverter x:Key="MvECConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes\DataGridStyle.xaml" />
                 <ResourceDictionary Source="Themes\ControlStyle.xaml" />
@@ -67,48 +68,104 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Grid.Row="1" Tag="Z" Content="构件类型筛选：" Margin="10,5" VerticalAlignment="Bottom" />
             <StackPanel x:Name="subbuttongroup_ZoneSystem" Grid.Column="1" Grid.Row="1" Margin="10,5" Orientation="Horizontal" Visibility="Visible">
-                <CheckBox Content="1" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= A}" />
-                <CheckBox Content="2" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= B}" />
-                <CheckBox Content="3" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= C}" />
-                <CheckBox Content="4" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= D}" />
-                <CheckBox Content="5" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= E}" />
-                <CheckBox Content="6" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= F}" />
-                <CheckBox Content="7" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= G}" />
-                <CheckBox Content="8" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= H}" />
-                <CheckBox Content="9" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= J}" />
-                <CheckBox Content="10" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= K}" />
-                <CheckBox Content="11" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= L}" />
-                <CheckBox Content="12" Style="{DynamicResource ULToggleStyle}" IsChecked="{Binding Path=CurrentZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource VarConverter}, ConverterParameter= M}" />
+                <ListBox ItemsSource="{Binding Path=CurrentElementClassList}" Margin="0" Style="{DynamicResource WrapListBox}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox Content="{Binding Path=EClassIndex}" Style="{DynamicResource ULToggleStyle}" ToolTip="{Binding Path=EClassName}" Margin="0"
+                                    IsChecked="{Binding Path=IsScheduled, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                </ListBox>
             </StackPanel>
             <Label Grid.Column="0" Grid.Row="2" Tag="Z" Content="构件工序 Lay1：" Margin="10,5" VerticalAlignment="Bottom" />
-            <DockPanel Grid.Column="1" Grid.Row="2" Margin="10,5" LastChildFill="False">
-                <Label Tag="Z" Content="1,2,3,3,4,4" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
-                <ListBox DockPanel.Dock="Right">
-                    <Button Style="{DynamicResource Solid12Button}" Content="01" VerticalAlignment="Bottom" />
+            <StackPanel Grid.Column="1" Grid.Row="2" Margin="10,5" Orientation="Horizontal">
+                <ListBox ItemsSource="{Binding Path=CurrentElementClassList}" Margin="0" Style="{DynamicResource WrapListBox}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Path=EClassIndex}" ContentStringFormat="{}{0:00}" Style="{DynamicResource Solid12Button}" 
+                                    ToolTip="{Binding Path=EClassName}" Margin="1,0" HorizontalAlignment="Left"
+                                    Command="{Binding Path=DataContext.cmdChangeClassLayer,RelativeSource={RelativeSource AncestorType=Window, AncestorLevel=1}}">
+                                <Button.Visibility>
+                                    <MultiBinding Converter="{StaticResource MvECConverter}" ConverterParameter="0">
+                                        <Binding Path="IsScheduled" />
+                                        <Binding Path="ETaskLayer" />
+                                    </MultiBinding>
+                                </Button.Visibility>
+                            </Button>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
                 </ListBox>
-            </DockPanel>
+            </StackPanel>
             <Label Grid.Column="0" Grid.Row="3" Tag="Z" Content="构件工序 Lay2：" Margin="10,5" VerticalAlignment="Bottom" />
-            <DockPanel Grid.Column="1" Grid.Row="3" Margin="10,5" LastChildFill="False">
-                <Label Tag="Z" Content="1,2,3,3,4,4" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
-                <ListBox DockPanel.Dock="Right">
-                    <Button Style="{DynamicResource Solid12Button}" Content="01" VerticalAlignment="Bottom" />
+            <StackPanel Grid.Column="1" Grid.Row="3" Margin="10,5" Orientation="Horizontal">
+                <ListBox ItemsSource="{Binding Path=CurrentElementClassList}" Margin="0" Style="{DynamicResource WrapListBox}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Path=EClassIndex}" ContentStringFormat="{}{0:00}" Style="{DynamicResource Solid12Button}" 
+                                    ToolTip="{Binding Path=EClassName}" Margin="1,0" HorizontalAlignment="Left">
+                                <Button.Visibility>
+                                    <MultiBinding Converter="{StaticResource MvECConverter}" ConverterParameter="1">
+                                        <Binding Path="IsScheduled" />
+                                        <Binding Path="ETaskLayer" />
+                                    </MultiBinding>
+                                </Button.Visibility>
+                            </Button>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
                 </ListBox>
-            </DockPanel>
+            </StackPanel>
             <Label Grid.Column="0" Grid.Row="4" Tag="Z" Content="构件工序 Lay3：" Margin="10,5" VerticalAlignment="Bottom" />
-            <DockPanel Grid.Column="1" Grid.Row="4" Margin="10,5" LastChildFill="False">
-                <Label Tag="Z" Content="1,2,3,3,4,4" DockPanel.Dock="Left" VerticalAlignment="Bottom" />
-                <ListBox DockPanel.Dock="Right">
-                    <Button Style="{DynamicResource Solid12Button}" Content="01" VerticalAlignment="Bottom" />
+            <StackPanel Grid.Column="1" Grid.Row="4" Margin="10,5" Orientation="Horizontal">
+                <ListBox ItemsSource="{Binding Path=CurrentElementClassList}" Margin="1,0" Style="{DynamicResource WrapListBox}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Button Content="{Binding Path=EClassIndex}" ContentStringFormat="{}{0:00}" Style="{DynamicResource Solid12Button}" 
+                                    ToolTip="{Binding Path=EClassName}" Margin="0" HorizontalAlignment="Left">
+                                <Button.Visibility>
+                                    <MultiBinding Converter="{StaticResource MvECConverter}" ConverterParameter="2">
+                                        <Binding Path="IsScheduled" />
+                                        <Binding Path="ETaskLayer" />
+                                    </MultiBinding>
+                                </Button.Visibility>
+                            </Button>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
                 </ListBox>
-            </DockPanel>
+            </StackPanel>
             <Label Grid.Column="0" Grid.Row="5" Tag="Z" Content="项目分区设置：" Margin="10,5" VerticalAlignment="Bottom" />
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" Margin="10,5">
-                <TextBox Width="200" />
-                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconBrowse}" x:Name="bnBrowseZoneData" ToolTip="浏览分区数据文件..." Width="30" Height="30" Margin="10,0,10,0" />
+                <TextBox x:Name="txtProjectZoneFile" IsReadOnly="True" Width="600" />
+                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconBrowse}" x:Name="bnBrowseZoneData" ToolTip="浏览分区数据文件..." Width="15" Height="15" VerticalAlignment="Bottom" Margin="10,0,10,2.8" />
             </StackPanel>
             <Label Grid.Column="0" Grid.Row="6" Tag="Z" Content="几何误差控制：" Margin="10,5" VerticalAlignment="Bottom" />
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="6" Margin="10,5">
-                <TextBox Width="200" Text="0.001" />
+                <TextBox 
+                    x:Name="txtRVTPrecision" 
+                    Text="{Binding ElementName=slideRVTPrecision, Path=Value, StringFormat={}{0:0.000}}" 
+                    Style="{DynamicResource LabelTextBoxStyle}" 
+                    Margin="0,0,10,0" 
+                    TextChanged="txtRVTPrecision_TextChanged" />
+                <Slider x:Name="slideRVTPrecision" Width="600" SmallChange="0.001" LargeChange="0.01" Maximum="0.1" TickFrequency="0.01" Value="0.003"/>
             </StackPanel>
             <StackPanel Grid.Column="1" Grid.Row="9" Margin="10,5">
                 <ListBox Grid.Column="1" x:Name="listInformation" Height="100" Margin="10" SelectionChanged="listInformation_SelectionChanged"

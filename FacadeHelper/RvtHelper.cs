@@ -581,14 +581,53 @@ namespace FacadeHelper
 
     public static class ZoneHelper
     {
+        public static List<ElementClass> InitElementClass()
+        {
+            List<ElementClass> eclist = new List<ElementClass>();
+            eclist.Add(new ElementClass { EClassIndex = 1, EClassName = "玻璃", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 22 });
+            eclist.Add(new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 33 });
+            eclist.Add(new ElementClass { EClassIndex = 3, EClassName = "鋁板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 23 });
+            eclist.Add(new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 24 });
+            eclist.Add(new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 12 });
+            eclist.Add(new ElementClass { EClassIndex = 6, EClassName = "鋼立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 11 });
+            eclist.Add(new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 24 });
+            eclist.Add(new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 23 });
+            eclist.Add(new ElementClass { EClassIndex = 9, EClassName = "緊固件", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 10, EClassName = "鐵板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 21 });
+            eclist.Add(new ElementClass { EClassIndex = 11, EClassName = "保溫棉", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 12, EClassName = "膠", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 13, EClassName = "焊縫", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 14, EClassName = "鋼件", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 15, EClassName = "預埋件", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 16, EClassName = "連接板", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 17, EClassName = "钢线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 31 });
+            eclist.Add(new ElementClass { EClassIndex = 18, EClassName = "铝线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 32 });
+            eclist.Add(new ElementClass { EClassIndex = 21, EClassName = "窗扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 27 });
+            eclist.Add(new ElementClass { EClassIndex = 22, EClassName = "門扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 28 });
+            eclist.Add(new ElementClass { EClassIndex = 23, EClassName = "大五金", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 51, EClassName = "石材嵌板", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 52, EClassName = "玻璃嵌板", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 53, EClassName = "鋁板嵌板", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 54, EClassName = "百頁嵌板", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 61, EClassName = "立柱嵌板", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 71, EClassName = "连接组", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 81, EClassName = "金屬未歸類", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 82, EClassName = "非金屬未歸類", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 91, EClassName = "吊籃", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 92, EClassName = "汽吊", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 93, EClassName = "捲揚", IsScheduled = false });
+            eclist.Add(new ElementClass { EClassIndex = 94, EClassName = "配電", IsScheduled = false });
+
+            return eclist;
+        }
+
         /// <summary>
         /// 加载ACADE导出的分区进度数据 - 4D设计模型
         /// </summary>
         /// <param name="ZoneScheduleDataFile">进度数据文件(*.txt)</param>
         #region 加载ACADE导出的分区进度数据至当前项目
-        public static void FnApplyZoneData(string ZoneScheduleDataFile)
-        {//TODO::::::::
-            Global.DocContent.ZoneLayerList.Clear(); 
+        public static string FnApplyZoneData(string ZoneScheduleDataFile)
+        {
             List<ZoneLayerInfo> zllist = new List<ZoneLayerInfo>();
             using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
             {
@@ -608,7 +647,7 @@ namespace FacadeHelper
                     if ((rowdata.Length > 5 && rowdata[2] == rowdata[5]) || (rowdata.Length > 8 && (rowdata[2] == rowdata[8] || rowdata[5] == rowdata[8])))
                     {
                         MessageBox.Show($"当前行[{rowdata[0]}]的分区编号有重复，不能继续读取分析数据。", "错误 - 分区进度数据");
-                        return;
+                        return null;
                     }
 
                     if (rowdata.Length > 2)
@@ -617,7 +656,7 @@ namespace FacadeHelper
                             if (lv2 != 1)
                             {
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[2]}]的工序层 0 数据位置/数据段 2 错误，不能继续读取。", "错误 - 分区进度数据");
-                                return;
+                                return null;
                             }
                             linezonecode = Regex.Replace(rowdata[2], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase);
                             L0.HandleId = linehandleid;
@@ -633,12 +672,12 @@ namespace FacadeHelper
                             if (lv5 != 2)
                             {
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[5]}]的工序层 1 数据位置/数据段 5 错误，不能继续读取。", "错误 - 分区进度数据");
-                                return;
+                                return null;
                             }
                             if (linezonecode != Regex.Replace(rowdata[5], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
                             {
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{linezonecode}]编号不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
-                                return;
+                                return null;
                             }
                             L1.HandleId = linehandleid;
                             L1.ZoneLayer = 1;
@@ -663,12 +702,12 @@ namespace FacadeHelper
                             if (lv8 != 3)
                             {
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[8]}]的工序层 2 数据位置/数据段 8 错误，不能继续读取。", "错误 - 分区进度数据");
-                                return;
+                                return null;
                             }
                             if (linezonecode != Regex.Replace(rowdata[8], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
                             {
                                 MessageBox.Show($"当前行[{rowdata[0]}]的分区编号[{linezonecode}]不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
-                                return;
+                                return null;
                             }
                             L2.HandleId = linehandleid;
                             L2.ZoneLayer = 2;
@@ -687,21 +726,19 @@ namespace FacadeHelper
                         L2.ZoneFinish = L1.ZoneFinish + TimeSpan.FromDays(1);
                     }
 
-                    Global.DocContent.ZoneLayerList.Add(L0);
-                    Global.DocContent.ZoneLayerList.Add(L1);
-                    Global.DocContent.ZoneLayerList.Add(L2);
                     zllist.Add(L0);
                     zllist.Add(L1);
                     zllist.Add(L2);
                 }
             }
 
-            if (File.Exists(Global.DataFile)) File.Delete(Global.DataFile);
-            using (FileStream fs = new FileStream(Global.DataFile, FileMode.Create))
+            var zfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.zone");
+            if (File.Exists(zfile)) File.Delete(zfile);
+            using (FileStream fs = new FileStream(zfile, FileMode.Create))
             {
-                Serializer.Serialize(fs, Global.DocContent);
+                Serializer.Serialize(fs, zllist);
             }
-
+            return zfile;
         }
 
         #endregion
