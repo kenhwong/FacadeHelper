@@ -88,8 +88,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Button Content="{Binding Path=EClassIndex}" ContentStringFormat="{}{0:00}" Style="{DynamicResource Solid12Button}" 
-                                    ToolTip="{Binding Path=EClassName}" Margin="1,0" HorizontalAlignment="Left"
-                                    Command="{Binding Path=DataContext.cmdChangeClassLayer,RelativeSource={RelativeSource AncestorType=Window, AncestorLevel=1}}">
+                                    ToolTip="{Binding Path=EClassName}" Margin="1,0" HorizontalAlignment="Left">
                                 <Button.Visibility>
                                     <MultiBinding Converter="{StaticResource MvECConverter}" ConverterParameter="0">
                                         <Binding Path="IsScheduled" />
@@ -173,7 +172,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="10" Margin="10,20">
                 <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApply}" x:Name="bnApplyConfigure" Width="20" Height="20" Margin="10,0" />
-                <Label Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" />
+                <Label x:Name="lblApplied" Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" Visibility="Collapsed" />
             </StackPanel>
         </Grid>
     </Grid>

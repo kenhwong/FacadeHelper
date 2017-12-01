@@ -13,6 +13,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xml;
+using System.Xml.Serialization;
 using RvtApplication = Autodesk.Revit.ApplicationServices.Application;
 
 // The Building Coder Samples https://github.com/jeremytammik/the_building_coder_samples
@@ -621,12 +623,26 @@ namespace FacadeHelper
             return eclist;
         }
 
+        public static void FnFilterClassSerialize(List<ElementClass> eclist)
+        {
+            var ecfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.class.xml");
+            if (File.Exists(ecfile)) File.Delete(ecfile);
+            XMLDeserializerHelper.Serialization<List<ElementClass>>(eclist, ecfile);
+        }
+
+        public static List<ElementClass> FnFilterClassDeserialize()
+        {
+            var ecfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.class.xml");
+            if (!File.Exists(ecfile)) return null;
+            return XMLDeserializerHelper.Deserialization<List<ElementClass>>(ecfile);
+        }
+
         /// <summary>
         /// 加载ACADE导出的分区进度数据 - 4D设计模型
         /// </summary>
         /// <param name="ZoneScheduleDataFile">进度数据文件(*.txt)</param>
         #region 加载ACADE导出的分区进度数据至当前项目
-        public static string FnApplyZoneData(string ZoneScheduleDataFile)
+        public static string FnZoneDataSerialize(string ZoneScheduleDataFile)
         {
             List<ZoneLayerInfo> zllist = new List<ZoneLayerInfo>();
             using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
@@ -732,13 +748,17 @@ namespace FacadeHelper
                 }
             }
 
-            var zfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.zone");
+            var zfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.zone.xml");
             if (File.Exists(zfile)) File.Delete(zfile);
-            using (FileStream fs = new FileStream(zfile, FileMode.Create))
-            {
-                Serializer.Serialize(fs, zllist);
-            }
+            XMLDeserializerHelper.Serialization<List<ZoneLayerInfo>>(zllist, zfile);
             return zfile;
+        }
+
+        public static List<ZoneLayerInfo> FnZoneDataDeserialize()
+        {
+            var zfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.class.xml");
+            if (!File.Exists(zfile)) return null;
+            return XMLDeserializerHelper.Deserialization<List<ZoneLayerInfo>>(zfile);
         }
 
         #endregion
@@ -1193,6 +1213,201 @@ namespace FacadeHelper
                 input.CopyTo(ms);
                 return ms.ToArray();
             }
+        }
+    }
+
+    public static class XMLDeserializerHelper
+    {
+        /// <summary>
+        /// Deserialization XML document
+        /// </summary>
+        /// <typeparam name="T">>The class type which need to deserializate</typeparam>
+        /// <param name="xmlPath">XML path</param>
+        /// <returns>Deserialized class object</returns>
+        public static T Deserialization<T>(string xmlPath)
+        {
+            //check file is exists in case
+            if (File.Exists(xmlPath))
+            {
+                //read file to memory
+                StreamReader stream = new StreamReader(xmlPath);
+                //declare a serializer
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                try
+                {
+                    //Do deserialize 
+                    return (T)serializer.Deserialize(stream);
+                }
+                //if some error occured,throw it
+                catch (InvalidOperationException error)
+                {
+                    throw error;
+                }
+                //finally close all resourece
+                finally
+                {
+                    //close the reader stream
+                    stream.Close();
+                    //release the stream resource
+                    stream.Dispose();
+                }
+            }
+            //File not exists
+            else
+            {
+                //throw data error exception
+                throw new InvalidDataException("Can not open xml file,please check is file exists.");
+            }
+        }
+
+        /// <summary>
+        /// Serializate class object to xml document
+        /// </summary>
+        /// <typeparam name="T">The class type which need to serializate</typeparam>
+        /// <param name="obj">The class object which need to serializate</param>
+        /// <param name="outPutFilePath">The xml path where need to save the result</param>
+        /// <returns>run result</returns>
+        public static bool Serialization<T>(T obj, string outPutFilePath)
+        {
+            //Declare a boolean value to mark the run result
+            bool result = true;
+            //Declare a xml writer
+            XmlWriter writer = null;
+            MemoryStream ms = new MemoryStream();
+            try
+            {
+ 
+                //create a stream which write data to xml document.
+                writer = XmlWriter.Create(outPutFilePath, new XmlWriterSettings
+                {
+                    //set xml document style - auto create new line
+                    Indent = true,
+                });
+            }
+            //if some error occured,throw it
+            catch (ArgumentException error)
+            {
+                result = false;
+                throw error;
+            }
+            //declare a serializer.
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            try
+            {
+                //Serializate the object
+                serializer.Serialize(writer, obj);
+ 
+            }
+            //if some error occured,throw it
+            catch (InvalidOperationException error)
+            {
+                result = false;
+                throw error;
+            }
+            //At finally close all resource
+            finally
+            {
+                //close xml stream
+                writer.Close();
+            }
+            return result;
+        }
+
+        public static string SerializationWithoutNameSpaceAndDeclare<T>(T obj)
+        {
+            //Declare a boolean value to mark the run result
+            string result = string.Empty;
+            //Declare a xml writer
+            XmlWriter writer = null;
+            XmlSerializerNamespaces nameSpace;
+            MemoryStream ms = new MemoryStream();
+            try
+            {
+
+                //create a stream which write data to xml document.
+                writer = XmlWriter.Create(ms, new XmlWriterSettings
+                {
+                    //set xml document style - auto create new line
+                    Indent = true,
+                    //set xml has no declaration
+                    OmitXmlDeclaration = true,
+                    DoNotEscapeUriAttributes = true,
+                    NamespaceHandling = NamespaceHandling.OmitDuplicates
+                });
+                nameSpace = new XmlSerializerNamespaces();
+                nameSpace.Add("", "");
+            }
+            //if some error occured,throw it
+            catch (ArgumentException error)
+            {
+                throw error;
+            }
+            //declare a serializer.
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            try
+            {
+                //Serializate the object
+                serializer.Serialize(writer, obj, nameSpace);
+                return Encoding.UTF8.GetString(ms.GetBuffer());
+            }
+            //if some error occured,throw it
+            catch (InvalidOperationException error)
+            {
+                throw error;
+            }
+            //At finally close all resource
+            finally
+            {
+                //close xml stream
+                writer.Close();
+
+                ms.Close();
+            }
+        }
+
+        /// <summary>
+        /// Serializate class object to string
+        /// </summary>
+        /// <typeparam name="T">The class type which need to serializate</typeparam>
+        /// <param name="obj">The class object which need to serializate</param>
+        /// <param name="outPutFilePath">The xml path where need to save the result</param>
+        /// <returns>run result</returns>
+        public static string Serialization<T>(T obj)
+        {
+            //Declare a boolean value to mark the run result
+            string result = string.Empty;
+            //Declare a MemoryStream to save result
+            MemoryStream stream = null;
+            try
+            {
+                //create a memorystream which write data to memory.
+                stream = new MemoryStream();
+            }
+            //if some error occured,throw it
+            catch (ArgumentException error)
+            {
+                throw error;
+            }
+            //declare a serializer.
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            try
+            {
+                //Serializate the object
+                serializer.Serialize(stream, obj);
+                result = Encoding.UTF8.GetString(stream.ToArray());
+            }
+            //if some error occured,throw it
+            catch (InvalidOperationException error)
+            {
+                throw error;
+            }
+            //At finally close all resource
+            finally
+            {
+                //close xml stream
+                stream.Close();
+            }
+            return result;
         }
     }
 

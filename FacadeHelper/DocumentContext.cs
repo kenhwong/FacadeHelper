@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
 using System.Windows.Interop;
-//http://www.cnblogs.com/CreateMyself/p/6238455.html EntityFramework Core 1.1 Add、Attach、Update、Remove方法如何高效使用详解
+using System.Xml.Serialization;
 
 namespace FacadeHelper
 {
@@ -177,6 +177,7 @@ namespace FacadeHelper
         public DateTime[] ZoneLayerFinish { get; set; } = new DateTime[3];
     }
 
+    [Serializable]
     [SerializableType]
     public class ElementClass : INotifyPropertyChanged
     {
@@ -186,11 +187,19 @@ namespace FacadeHelper
         private int _eTaskLayer { get; set; } = -1;
         private int _eTaskSubLayer { get; set; } = -1;
 
-        public int EClassIndex { get { return _eClassIndex; } set { _eClassIndex = value; OnPropertyChanged(nameof(EClassIndex)); } }
-        public string EClassName { get { return _eClassName; } set { _eClassName = value; OnPropertyChanged(nameof(EClassName)); } }
-        public bool IsScheduled { get { return _isScheduled; } set { _isScheduled = value; OnPropertyChanged(nameof(IsScheduled)); } }
-        public int ETaskLayer { get { return _eTaskLayer; } set { _eTaskLayer = value; OnPropertyChanged(nameof(ETaskLayer)); } }
-        public int ETaskSubLayer { get { return _eTaskSubLayer; } set { _eTaskSubLayer = value; OnPropertyChanged(nameof(ETaskSubLayer)); } }
+        [XmlAttribute] public int EClassIndex { get { return _eClassIndex; } set { _eClassIndex = value; OnPropertyChanged(nameof(EClassIndex)); } }
+        [XmlAttribute] public string EClassName { get { return _eClassName; } set { _eClassName = value; OnPropertyChanged(nameof(EClassName)); } }
+        [XmlAttribute] public bool IsScheduled { get { return _isScheduled; } set { _isScheduled = value; OnPropertyChanged(nameof(IsScheduled)); } }
+        [XmlAttribute] public int ETaskLayer { get { return _eTaskLayer; } set { _eTaskLayer = value; OnPropertyChanged(nameof(ETaskLayer)); } }
+        [XmlAttribute] public int ETaskSubLayer { get { return _eTaskSubLayer; } set { _eTaskSubLayer = value; OnPropertyChanged(nameof(ETaskSubLayer)); } }
+
+        public ElementClass()
+        {
+            EClassName = "Unset";
+            IsScheduled = false;
+            ETaskLayer = -1;
+            ETaskSubLayer = -1;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
