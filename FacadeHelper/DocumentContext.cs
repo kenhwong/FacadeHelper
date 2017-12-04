@@ -70,16 +70,16 @@ namespace FacadeHelper
     public static class Constants
     {
         public const double Pi = 3.14159;
-        public const double RVTPrecision = 0.001; 
+        public const double RVTPrecision = 0.001;
     }
 
     [SerializableType]
     public class DocumentContent// : INotifyPropertyChanged
     {
         //private ObservableCollection<ZoneInfoBase> _zoneList = new ObservableCollection<ZoneInfoBase>();
-        public List<ZoneLayerInfo> ZoneScheduleSimpleList { get; set; } = new List<ZoneLayerInfo>();
+        //public List<ZoneLayerInfo> ZoneScheduleSimpleList { get; set; } = new List<ZoneLayerInfo>();
         //public List<ZoneScheduleLayerInfo> ZoneScheduleLayerList { get; set; } = new List<ZoneScheduleLayerInfo>(); //Obsoleted property.
-        public List<ZoneLayerInfo> ZoneLayerList { get; set; } = new List<ZoneLayerInfo>();
+        //public List<ZoneLayerInfo> ZoneLayerList { get; set; } = new List<ZoneLayerInfo>();
 
         public List<CurtainPanelInfo> CurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public Dictionary<int, double> LevelDictionary { get; set; } = new Dictionary<int, double>();
@@ -109,40 +109,6 @@ namespace FacadeHelper
 
         public DocumentContent()
         {
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 1, EClassName = "玻璃", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 22 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 33 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 3, EClassName = "鋁板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 23 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 24 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 12 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 6, EClassName = "鋼立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 11 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 24 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 23 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 9, EClassName = "緊固件", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 10, EClassName = "鐵板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 21});
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 11, EClassName = "保溫棉", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 12, EClassName = "膠", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 13, EClassName = "焊縫", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 14, EClassName = "鋼件", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 15, EClassName = "預埋件", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 16, EClassName = "連接板", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 17, EClassName = "钢线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 31 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 18, EClassName = "铝线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 32 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 21, EClassName = "窗扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 27 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 22, EClassName = "門扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 28 });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 23, EClassName = "大五金", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 51, EClassName = "石材嵌板", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 52, EClassName = "玻璃嵌板", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 53, EClassName = "鋁板嵌板", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 54, EClassName = "百頁嵌板", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 61, EClassName = "立柱嵌板", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 71, EClassName = "连接组", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 81, EClassName = "金屬未歸類", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 82, EClassName = "非金屬未歸類", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 91, EClassName = "吊籃", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 92, EClassName = "汽吊", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 93, EClassName = "捲揚", IsScheduled = false });
-            Global.ElementClassList.Add(new ElementClass { EClassIndex = 94, EClassName = "配電", IsScheduled = false });
-            Global.TaskLevelClass = new int[][] { new int[] { 5, 6, 7, 8 }, new int[] { 1, 3, 4, 10, 21, 22 }, new int[] { 17, 18 } };
         }
     }
 
@@ -215,6 +181,7 @@ namespace FacadeHelper
         public static int OptionDaysPerWeek = 7;
 
         public static List<ElementClass> ElementClassList = new List<ElementClass>();
+        public static List<ZoneLayerInfo> ZoneLayerList = new List<ZoneLayerInfo>();
         public static int[][] TaskLevelClass;
 
         public static void UpdateAppConfig(string newKey, string newValue)

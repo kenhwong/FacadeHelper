@@ -771,7 +771,7 @@ namespace FacadeHelper
         #region 加载ACADE导出的分区进度数据 - 4D设计模型
         public static void FnLoadZoneScheduleData(string ZoneScheduleDataFile)
         {
-            Global.DocContent.ZoneLayerList.Clear();
+            Global.ZoneLayerList.Clear();
             using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
             {
                 string dataline;
@@ -869,9 +869,9 @@ namespace FacadeHelper
                         L2.ZoneFinish = L1.ZoneFinish + TimeSpan.FromDays(1);
                     }
 
-                    Global.DocContent.ZoneLayerList.Add(L0);
-                    Global.DocContent.ZoneLayerList.Add(L1);
-                    Global.DocContent.ZoneLayerList.Add(L2);
+                    Global.ZoneLayerList.Add(L0);
+                    Global.ZoneLayerList.Add(L1);
+                    Global.ZoneLayerList.Add(L2);
                 }
             }
         }
@@ -1056,7 +1056,7 @@ namespace FacadeHelper
             }
             #endregion
 
-            var _layersinzone = Global.DocContent.ZoneLayerList.Where(zs => zs.ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase));
+            var _layersinzone = Global.ZoneLayerList.Where(zs => zs.ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase));
 
             var layersgroupsScheduleElement = Global.DocContent.FullScheduleElementList
                 .Where(ele => ele.INF_ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase))

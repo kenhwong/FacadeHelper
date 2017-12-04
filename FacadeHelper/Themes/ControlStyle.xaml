@@ -792,6 +792,8 @@
                 <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+        </Style.Triggers>
     </Style>
     <Style x:Key="CCyanLabel" TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />

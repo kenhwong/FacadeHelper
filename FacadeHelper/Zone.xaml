@@ -121,11 +121,21 @@
                     <RowDefinition Height="1" />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="BIM2017090001" Foreground="{StaticResource CyanBrush}" Margin="0,8,0,0" FontFamily="Consolas" />
-                <Label Grid.Row="2" Grid.Column="0" Content="Z / 0, L / 3" Foreground="{StaticResource CyanBrush}" Margin="0,0,0,8" FontFamily="Consolas" />
+                <Label 
+                    Grid.Row="0" Grid.Column="0" 
+                    Foreground="Green" 
+                    Margin="0,5,0,0" 
+                    FontFamily="Consolas" 
+                    Content="{Binding Path=CurrentProjectID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="PID: {0}"
+                    IsEnabled="{Binding Path=IsPIDInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <DockPanel Grid.Row="2" Grid.Column="0" LastChildFill="False" Margin="0,0,0,5">
+                    <Label DockPanel.Dock="Left" Content="分区信息" Foreground="Green" IsEnabled="{Binding Path=IsZoneLayerInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label DockPanel.Dock="Right" Content="构件筛选" Foreground="Green" IsEnabled="{Binding Path=IsElementClassInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />                    
+                </DockPanel>
+                
                 <Path Grid.Row="1" Grid.Column="0" Margin="5,0"
                                   Data="M0,0.5 L1,0.5"
-                                  Stretch="Fill" Stroke="{StaticResource CyanBrush}" StrokeThickness="1"
+                                  Stretch="Fill" Stroke="#FFC0C0C0" StrokeThickness="1"
                                   StrokeDashArray="4.0 2.0"/>
             </Grid>
         </DockPanel>

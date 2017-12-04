@@ -40,6 +40,9 @@ namespace FacadeHelper
 
         public Window ParentWin { get; set; }
 
+        private string _currentProjectID;
+        public string CurrentProjectID { get { return _currentProjectID; } set { _currentProjectID = value; OnPropertyChanged(nameof(CurrentProjectID)); } }
+        
         private int _currentZonePanelType = 51;
         public int CurrentZonePanelType { get { return _currentZonePanelType; } set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
         private int _currentZoneLevel = 1;
@@ -64,8 +67,12 @@ namespace FacadeHelper
 
         private bool _isRealTimeProgress = true;
         public bool IsRealTimeProgress { get { return _isRealTimeProgress; } set { _isRealTimeProgress = value; OnPropertyChanged(nameof(IsRealTimeProgress)); } }
-        private bool _isZoneDataInitialized = false;
-        public bool IsZoneDataInitialized { get { return _isZoneDataInitialized; } set { _isZoneDataInitialized = value; OnPropertyChanged(nameof(IsZoneDataInitialized)); } }
+        private bool _isPIDInitialized = false;
+        public bool IsPIDInitialized { get { return _isPIDInitialized; } set { _isPIDInitialized = value; OnPropertyChanged(nameof(IsPIDInitialized)); } }
+        private bool _isZoneLayerInitialized = false;
+        public bool IsZoneLayerInitialized { get { return _isZoneLayerInitialized; } set { _isZoneLayerInitialized = value; OnPropertyChanged(nameof(IsZoneLayerInitialized)); } }
+        private bool _isElementClassInitialized = false;
+        public bool IsElementClassInitialized { get { return _isElementClassInitialized; } set { _isElementClassInitialized = value; OnPropertyChanged(nameof(IsElementClassInitialized)); } }
         private bool _isExteriorDataLinked = false;
         public bool IsExteriorDataLinked { get { return _isExteriorDataLinked; } set { _isExteriorDataLinked = value; OnPropertyChanged(nameof(IsExteriorDataLinked)); } }
 
@@ -83,6 +90,38 @@ namespace FacadeHelper
             uidoc = uiapp.ActiveUIDocument;
             doc = uidoc.Document;
 
+            string cid = Global.GetAppConfig("CurrentProjectID");
+            if (cid is null)
+            {
+                CurrentProjectID = "NOT INITIALIZED.";
+                IsPIDInitialized = false;
+            }
+            else
+            {
+                CurrentProjectID = cid;
+                IsPIDInitialized = true;
+            }
+
+
+            #region 检测 ElementClass 是否加载
+            var eclist = ZoneHelper.FnFilterClassDeserialize();
+            if (eclist is null) IsElementClassInitialized = false;
+            else
+            {
+                Global.ElementClassList = eclist;
+                IsElementClassInitialized = true;
+            }
+            #endregion
+
+            #region 检测 ZoneLayer 是否加载
+            var zllist = ZoneHelper.FnZoneDataDeserialize();
+            if (zllist is null) IsZoneLayerInitialized = false;
+            else
+            {
+                Global.ZoneLayerList = zllist;
+                IsZoneLayerInitialized = true;
+            }
+            #endregion
 
             Global.DataFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.data");
             if (Global.DocContent is null)
@@ -683,7 +722,7 @@ namespace FacadeHelper
                     ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - L: {ofd.FileName}.");
                 }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - IN: LAYER, L/3, ZL/{Global.DocContent.ZoneLayerList.Count:N0}");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - IN: LAYER, L/3, ZL/{Global.ZoneLayerList.Count:N0}");
 
             //统计 
             FilteredElementCollector panelcollector = new FilteredElementCollector(doc);
