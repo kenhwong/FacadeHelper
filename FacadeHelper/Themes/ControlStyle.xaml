@@ -483,7 +483,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" 
+                    <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" 
                                           Margin="0"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
@@ -793,6 +793,11 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="false">
+                <Trigger.Setters>
+                    <Setter Property="Foreground" Value="#FFC0C0C0" />
+                </Trigger.Setters>
+            </Trigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="CCyanLabel" TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
@@ -802,6 +807,14 @@
                 <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="false">
+                <Trigger.Setters>
+                    <Setter Property="Foreground" Value="#FFC0C0C0" />
+                </Trigger.Setters>
+            </Trigger>
+        </Style.Triggers>
+
     </Style>
 
     <Style x:Key="L20" TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">

@@ -123,6 +123,9 @@ namespace FacadeHelper
             }
             #endregion
 
+            //确认PID/分区表/类型表都已加载才可允许工具条
+            if (!(IsPIDInitialized && IsZoneLayerInitialized && IsElementClassInitialized)) panelCommandBar.IsEnabled = false;
+
             Global.DataFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.data");
             if (Global.DocContent is null)
             {
@@ -165,7 +168,6 @@ namespace FacadeHelper
 
         private RoutedCommand cmdPopupClose = new RoutedCommand();
 
-        private RoutedCommand cmdCheckZoneData = new RoutedCommand();
 
         private void InitializeCommand()
         {
@@ -440,18 +442,6 @@ namespace FacadeHelper
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose, (sender, e) => { bnQuickStart.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
-            CommandBinding cbCheckZoneData = new CommandBinding(cmdCheckZoneData, (sender, e) => 
-            {
-                using (StreamWriter sw = new StreamWriter(System.IO.Path.Combine(uiapp.Application.AllUsersAddinsLocation,"test.zone")))
-                {
-                    string title = string.Empty; 
-                    string rows = "test";
-                    sw.WriteLine(title);
-                    sw.Write(rows);
-                }
-            },
-            (sender, e) => { e.CanExecute = true; e.Handled = true; });
-
             bnModelInit.Command = cmdModelInit;
             bnOnElementClassify.Command = cmdOnElementClassify;
             bnElementClassify.Command = cmdElementClassify;
@@ -463,8 +453,6 @@ namespace FacadeHelper
             bnExportElementSchedule.Command = cmdExportElementSchedule;
             bnSearch.Command = cmdSearch;
             bnPopupClose.Command = cmdPopupClose;
-
-            chkZoneData.Command = cmdCheckZoneData;
 
             ProcZone.CommandBindings.AddRange(new CommandBinding[]
             {
@@ -478,8 +466,7 @@ namespace FacadeHelper
                 cbSaveData,
                 cbApplyParameters,
                 cbSearch,
-                cbPopupClose,
-                cbCheckZoneData
+                cbPopupClose
             });
         }
 

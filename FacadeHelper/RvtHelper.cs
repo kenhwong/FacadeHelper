@@ -585,41 +585,42 @@ namespace FacadeHelper
     {
         public static List<ElementClass> InitElementClass()
         {
-            List<ElementClass> eclist = new List<ElementClass>();
-            eclist.Add(new ElementClass { EClassIndex = 1, EClassName = "玻璃", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 22 });
-            eclist.Add(new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 33 });
-            eclist.Add(new ElementClass { EClassIndex = 3, EClassName = "鋁板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 23 });
-            eclist.Add(new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 24 });
-            eclist.Add(new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 12 });
-            eclist.Add(new ElementClass { EClassIndex = 6, EClassName = "鋼立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 11 });
-            eclist.Add(new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 24 });
-            eclist.Add(new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 23 });
-            eclist.Add(new ElementClass { EClassIndex = 9, EClassName = "緊固件", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 10, EClassName = "鐵板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 21 });
-            eclist.Add(new ElementClass { EClassIndex = 11, EClassName = "保溫棉", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 12, EClassName = "膠", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 13, EClassName = "焊縫", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 14, EClassName = "鋼件", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 15, EClassName = "預埋件", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 16, EClassName = "連接板", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 17, EClassName = "钢线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 31 });
-            eclist.Add(new ElementClass { EClassIndex = 18, EClassName = "铝线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 32 });
-            eclist.Add(new ElementClass { EClassIndex = 21, EClassName = "窗扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 27 });
-            eclist.Add(new ElementClass { EClassIndex = 22, EClassName = "門扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 28 });
-            eclist.Add(new ElementClass { EClassIndex = 23, EClassName = "大五金", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 51, EClassName = "石材嵌板", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 52, EClassName = "玻璃嵌板", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 53, EClassName = "鋁板嵌板", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 54, EClassName = "百頁嵌板", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 61, EClassName = "立柱嵌板", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 71, EClassName = "连接组", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 81, EClassName = "金屬未歸類", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 82, EClassName = "非金屬未歸類", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 91, EClassName = "吊籃", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 92, EClassName = "汽吊", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 93, EClassName = "捲揚", IsScheduled = false });
-            eclist.Add(new ElementClass { EClassIndex = 94, EClassName = "配電", IsScheduled = false });
-
+            List<ElementClass> eclist = new List<ElementClass>()
+            {
+                new ElementClass { EClassIndex = 1, EClassName = "玻璃", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 22 },
+                new ElementClass { EClassIndex = 2, EClassName = "鋁件", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 33 },
+                new ElementClass { EClassIndex = 3, EClassName = "鋁板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 23 },
+                new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 24 },
+                new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 12 },
+                new ElementClass { EClassIndex = 6, EClassName = "鋼立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 11 },
+                new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 24 },
+                new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 23 },
+                new ElementClass { EClassIndex = 9, EClassName = "緊固件", IsScheduled = false },
+                new ElementClass { EClassIndex = 10, EClassName = "鐵板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 21 },
+                new ElementClass { EClassIndex = 11, EClassName = "保溫棉", IsScheduled = false },
+                new ElementClass { EClassIndex = 12, EClassName = "膠", IsScheduled = false },
+                new ElementClass { EClassIndex = 13, EClassName = "焊縫", IsScheduled = false },
+                new ElementClass { EClassIndex = 14, EClassName = "鋼件", IsScheduled = false },
+                new ElementClass { EClassIndex = 15, EClassName = "預埋件", IsScheduled = false },
+                new ElementClass { EClassIndex = 16, EClassName = "連接板", IsScheduled = false },
+                new ElementClass { EClassIndex = 17, EClassName = "钢线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 31 },
+                new ElementClass { EClassIndex = 18, EClassName = "铝线条", IsScheduled = true, ETaskLayer = 2, ETaskSubLayer = 32 },
+                new ElementClass { EClassIndex = 21, EClassName = "窗扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 27 },
+                new ElementClass { EClassIndex = 22, EClassName = "門扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 28 },
+                new ElementClass { EClassIndex = 23, EClassName = "大五金", IsScheduled = false },
+                new ElementClass { EClassIndex = 51, EClassName = "石材嵌板", IsScheduled = false },
+                new ElementClass { EClassIndex = 52, EClassName = "玻璃嵌板", IsScheduled = false },
+                new ElementClass { EClassIndex = 53, EClassName = "鋁板嵌板", IsScheduled = false },
+                new ElementClass { EClassIndex = 54, EClassName = "百頁嵌板", IsScheduled = false },
+                new ElementClass { EClassIndex = 61, EClassName = "立柱嵌板", IsScheduled = false },
+                new ElementClass { EClassIndex = 71, EClassName = "连接组", IsScheduled = false },
+                new ElementClass { EClassIndex = 81, EClassName = "金屬未歸類", IsScheduled = false },
+                new ElementClass { EClassIndex = 82, EClassName = "非金屬未歸類", IsScheduled = false },
+                new ElementClass { EClassIndex = 91, EClassName = "吊籃", IsScheduled = false },
+                new ElementClass { EClassIndex = 92, EClassName = "汽吊", IsScheduled = false },
+                new ElementClass { EClassIndex = 93, EClassName = "捲揚", IsScheduled = false },
+                new ElementClass { EClassIndex = 94, EClassName = "配電", IsScheduled = false }
+            };
             return eclist;
         }
 
@@ -756,7 +757,7 @@ namespace FacadeHelper
 
         public static List<ZoneLayerInfo> FnZoneDataDeserialize()
         {
-            var zfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.class.xml");
+            var zfile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{Global.GetAppConfig("CurrentProjectID")}.zone.xml");
             if (!File.Exists(zfile)) return null;
             return XMLDeserializerHelper.Deserialization<List<ZoneLayerInfo>>(zfile);
         }
@@ -1231,12 +1232,14 @@ namespace FacadeHelper
             {
                 //read file to memory
                 StreamReader stream = new StreamReader(xmlPath);
+                XmlTextReader xreader = new XmlTextReader(stream) { Namespaces = false };
                 //declare a serializer
                 XmlSerializer serializer = new XmlSerializer(typeof(T));
                 try
                 {
                     //Do deserialize 
-                    return (T)serializer.Deserialize(stream);
+                    //return (T)serializer.Deserialize(stream);
+                    return (T)serializer.Deserialize(xreader);
                 }
                 //if some error occured,throw it
                 catch (InvalidOperationException error)
@@ -1273,16 +1276,24 @@ namespace FacadeHelper
             bool result = true;
             //Declare a xml writer
             XmlWriter writer = null;
+            XmlSerializerNamespaces nameSpace;
             MemoryStream ms = new MemoryStream();
             try
             {
- 
+
                 //create a stream which write data to xml document.
                 writer = XmlWriter.Create(outPutFilePath, new XmlWriterSettings
                 {
                     //set xml document style - auto create new line
                     Indent = true,
+                    //set xml has no declaration
+                    //OmitXmlDeclaration = true,
+                    DoNotEscapeUriAttributes = true,
+                    NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                    Encoding = Encoding.UTF8
                 });
+                nameSpace = new XmlSerializerNamespaces();
+                nameSpace.Add("", "");
             }
             //if some error occured,throw it
             catch (ArgumentException error)
@@ -1295,8 +1306,8 @@ namespace FacadeHelper
             try
             {
                 //Serializate the object
-                serializer.Serialize(writer, obj);
- 
+                serializer.Serialize(writer, obj, nameSpace);
+
             }
             //if some error occured,throw it
             catch (InvalidOperationException error)

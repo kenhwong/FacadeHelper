@@ -76,11 +76,6 @@ namespace FacadeHelper
     [SerializableType]
     public class DocumentContent// : INotifyPropertyChanged
     {
-        //private ObservableCollection<ZoneInfoBase> _zoneList = new ObservableCollection<ZoneInfoBase>();
-        //public List<ZoneLayerInfo> ZoneScheduleSimpleList { get; set; } = new List<ZoneLayerInfo>();
-        //public List<ZoneScheduleLayerInfo> ZoneScheduleLayerList { get; set; } = new List<ZoneScheduleLayerInfo>(); //Obsoleted property.
-        //public List<ZoneLayerInfo> ZoneLayerList { get; set; } = new List<ZoneLayerInfo>();
-
         public List<CurtainPanelInfo> CurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public Dictionary<int, double> LevelDictionary { get; set; } = new Dictionary<int, double>();
         public List<LevelInfo> LevelList { get; set; } = new List<LevelInfo>();
@@ -95,10 +90,7 @@ namespace FacadeHelper
         public List<CurtainPanelInfo> FullCurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public List<ScheduleElementInfo> FullScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
         public ObservableCollection<ZoneInfoBase> FullZoneList { get; set; } = new ObservableCollection<ZoneInfoBase>();
-
-
-        [NonSerializableMember] public ILookup<string, CurtainPanelInfo> Lookup_CurtainPanels { get; set; }
-        [NonSerializableMember] public ILookup<string, ScheduleElementInfo> Lookup_ScheduleElements { get; set; }
+        
         [NonSerializableMember] public List<ParameterHelper.RawProjectParameterInfo> ParameterInfoList { get; set; } = new List<ParameterHelper.RawProjectParameterInfo>();
 
         public ZoneInfoBase CurrentZoneInfo = new ZoneInfoBase();
@@ -122,16 +114,19 @@ namespace FacadeHelper
         public List<ZoneInfoBase> ZoneList { get; set; } = new List<ZoneInfoBase>();
     }
 
+    [Serializable, XmlRoot(Namespace = "", IsNullable = false)]
     [SerializableType]
     public class ZoneLayerInfo
     {
-        public string HandleId { get; set; }
-        public string ZoneCode { get; set; }
-        public int ZoneLayer { get; set; }
-        public DateTime ZoneStart { get; set; }
-        public DateTime ZoneFinish { get; set; }
-        public int ZoneDays { get; set; }
-        public int ZoneHours { get; set; }
+        [XmlAttribute] public string HandleId { get; set; }
+        [XmlAttribute] public string ZoneCode { get; set; }
+        [XmlAttribute] public int ZoneLayer { get; set; }
+        [XmlAttribute] public DateTime ZoneStart { get; set; }
+        [XmlAttribute] public DateTime ZoneFinish { get; set; }
+        [XmlAttribute] public int ZoneDays { get; set; }
+        [XmlAttribute] public int ZoneHours { get; set; }
+
+        public ZoneLayerInfo() { }
     }
 
     [SerializableType]
@@ -143,7 +138,7 @@ namespace FacadeHelper
         public DateTime[] ZoneLayerFinish { get; set; } = new DateTime[3];
     }
 
-    [Serializable]
+    [Serializable, XmlRoot(Namespace = "", IsNullable = false)]
     [SerializableType]
     public class ElementClass : INotifyPropertyChanged
     {

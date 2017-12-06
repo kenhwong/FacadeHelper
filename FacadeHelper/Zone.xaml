@@ -27,7 +27,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" Margin="-10,-10,-10,0" LastChildFill="False" Background="{x:Static SystemColors.ControlBrush}">
+        <DockPanel x:Name="panelCommandBar" Grid.Row="0" Margin="-10,-10,-10,0" LastChildFill="False" Background="{x:Static SystemColors.ControlBrush}">
             <DockPanel.Effect>
                 <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
             </DockPanel.Effect>
@@ -80,20 +80,11 @@
             </GroupBox>
             <GroupBox Style="{DynamicResource CommandGroup}" Header="SWITCH" DockPanel.Dock="Right" Padding="0,5"  Margin="20,10">
                 <WrapPanel>
-                    <CheckBox x:Name="chkZoneData"
-                              Style="{DynamicResource IconPathToggleButton}"
-                              Tag="{StaticResource IconRectInit}" 
-                              DockPanel.Dock="Right"
-                              Content="分区初始化：" 
-                              IsChecked="True"
-                              Width="30" 
-                              Height="30" 
-                              Margin="0,0,20,0" /><!--{Binding Path=IsZoneDataInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  -->
                     <CheckBox x:Name="chkExtLink"
                               Style="{DynamicResource IconPathToggleButton}"
                               Tag="{StaticResource IconRectLink}" 
                               DockPanel.Dock="Right" 
-                              Content="外链数据：" 
+                              ToolTip="外部链接数据" 
                               IsChecked="{Binding Path=IsExteriorDataLinked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                               Width="30" 
                               Height="30" 
@@ -102,7 +93,7 @@
                               Style="{DynamicResource IconPathToggleButton}"
                               Tag="{StaticResource IconRectReadlTime}" 
                               DockPanel.Dock="Right" 
-                              Content="过程监控：" 
+                              ToolTip="过程进度监视"
                               IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
                               Width="30" 
                               Height="30" 
@@ -123,14 +114,14 @@
                 </Grid.RowDefinitions>
                 <Label 
                     Grid.Row="0" Grid.Column="0" 
-                    Foreground="Green" 
+                    Style="{DynamicResource CCyanLabel}" 
                     Margin="0,5,0,0" 
                     FontFamily="Consolas" 
                     Content="{Binding Path=CurrentProjectID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="PID: {0}"
                     IsEnabled="{Binding Path=IsPIDInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <DockPanel Grid.Row="2" Grid.Column="0" LastChildFill="False" Margin="0,0,0,5">
-                    <Label DockPanel.Dock="Left" Content="分区信息" Foreground="Green" IsEnabled="{Binding Path=IsZoneLayerInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Label DockPanel.Dock="Right" Content="构件筛选" Foreground="Green" IsEnabled="{Binding Path=IsElementClassInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />                    
+                    <Label DockPanel.Dock="Left" Content="分区信息" Style="{DynamicResource CCyanLabel}" IsEnabled="{Binding Path=IsZoneLayerInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Label DockPanel.Dock="Right" Content="构件筛选" Style="{DynamicResource CCyanLabel}" IsEnabled="{Binding Path=IsElementClassInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />                    
                 </DockPanel>
                 
                 <Path Grid.Row="1" Grid.Column="0" Margin="5,0"
