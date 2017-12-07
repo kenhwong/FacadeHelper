@@ -31,53 +31,28 @@
             <DockPanel.Effect>
                 <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
             </DockPanel.Effect>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="SYSTEM" DockPanel.Dock="Left" Padding="0,5" Margin="20,10,20,10">
+            <StackPanel DockPanel.Dock="Left" Margin="20,10,20,10">
                 <WrapPanel>
-                    <ToggleButton x:Name="bnQuickStart" 
-                                  Tag="{StaticResource IconHelp}" 
-                                  DockPanel.Dock="Left" 
-                                  Width="30" 
-                                  Height="30" 
-                                  Margin="0,0,20,0" 
-                                  Style="{DynamicResource IconPathToggleButton}" 
-                                  IsChecked="False" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" ToolTip="模型初始" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
-                    <ToggleButton x:Name="bnElementFilter" 
-                                  Tag="{StaticResource IconFilter}" 
-                                  DockPanel.Dock="Left" 
-                                  Width="30" 
-                                  Height="30" 
-                                  Margin="0" 
-                                  Style="{DynamicResource IconPathToggleButton}" 
-                                  IsChecked="False" />
+                    <ToggleButton Style="{DynamicResource IconText30PathToggleButton}" x:Name="bnQuickStart" Tag="{StaticResource IconHelp}" IsChecked="False" 
+                                  Content="操作指南" DockPanel.Dock="Left" Margin="0,0,10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" 
+                            Content="模型初始" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <ToggleButton Style="{DynamicResource IconText30PathToggleButton}" Tag="{StaticResource IconClassify}" IsChecked="False" x:Name="bnOnElementClassify" 
+                                  Content="分区划定" DockPanel.Dock="Left" Width="50" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconLink}" x:Name="bnElementLink" 
+                            Content="外链数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementResolve" 
+                            Content="构件分析" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" 
+                            Content="加载数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" 
+                            Content="保存数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconApplyParamData}" x:Name="bnApplyParameters" 
+                            Content="参数写入" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" 
+                            Content="导出计划" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                 </WrapPanel>
-            </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="ELEMENT" DockPanel.Dock="Left" Padding="0,5"  Margin="20,10">
-                <WrapPanel>
-                    <ToggleButton Style="{DynamicResource IconPathToggleButton}" 
-                                  Tag="{StaticResource IconClassify}" 
-                                  IsChecked="False" 
-                                  x:Name="bnOnElementClassify" 
-                                  DockPanel.Dock="Left" 
-                                  Width="30" 
-                                  Height="30" 
-                                  Margin="0,0,20,0" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLink}" x:Name="bnElementLink" ToolTip="链接外部数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementResolve" ToolTip="构件分析" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
-                </WrapPanel>
-            </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="DATA" DockPanel.Dock="Left" Padding="0,5"  Margin="20,10">
-                <WrapPanel>
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" ToolTip="加载数据" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" ToolTip="保存修改" DockPanel.Dock="Left" Width="30" Height="30" Margin="0,0,20,0" />
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApplyParamData}" x:Name="bnApplyParameters" ToolTip="保存参数" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
-                </WrapPanel>
-            </GroupBox>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="EXPORT" DockPanel.Dock="Left" Padding="0,5"  Margin="20,10">
-                <WrapPanel>
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" ToolTip="导出计划" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
-                </WrapPanel>
-            </GroupBox>
+            </StackPanel>
             <GroupBox Style="{DynamicResource CommandGroup}" Header="SWITCH" DockPanel.Dock="Right" Padding="0,5"  Margin="20,10">
                 <WrapPanel>
                     <CheckBox x:Name="chkExtLink"

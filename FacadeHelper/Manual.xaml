@@ -17,38 +17,91 @@
     <Grid>
         <DockPanel LastChildFill="False">
             <ScrollViewer>
-            <RichTextBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0" BorderThickness="0" DockPanel.Dock="Top" Background="{x:Null}" IsReadOnly="True">
-                <FlowDocument LineHeight="20" FontSize="13" Foreground="#808080">
-                    <List MarkerStyle="Decimal">
-                        <ListItem>
-                            <Paragraph><Span>創建項目分區圖（AutoCAD），手動設置<Bold Foreground="DodgerBlue">分區編號</Bold> ，並設定分區分格，確定每個分格內重疊的不同工序嵌板的安裝<Bold Foreground="DodgerBlue">開始時間</Bold>
-                                    和<Bold Foreground="DodgerBlue">結束時間</Bold>；</Span></Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph><Span>進入<Bold Foreground="DodgerBlue">Revit</Bold>/<Bold Foreground="DodgerBlue">附加模塊</Bold>/<Bold Foreground="DodgerBlue">分區處理</Bold>，對分部模型進行參數初始化：
-                                <Bold Foreground="DodgerBlue">模型初始</Bold>；</Span></Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph><Span>關閉插件窗口，按分區圖選擇某一分區的所有嵌板，手動設置編號分佈至<Bold Foreground="Green">分區編號</Bold>參數；</Span></Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph><Span>打開<Bold Foreground="DodgerBlue">分區處理</Bold>窗口，點擊<Bold Foreground="DodgerBlue">選擇嵌板</Bold>打開下屬按鈕區，選擇當前嵌板類型後，依次執行<Bold Foreground="DodgerBlue">
-                                檢查數據</Bold>和<Bold Foreground="DodgerBlue">生成集合</Bold>，以生成當前分區的嵌板分析數據，自動將當前分區名加入左側<Bold Foreground="DodgerBlue">項目分區</Bold>
-                                列表中，單擊列表項在右側表格中列表分區中的嵌板清單，並後臺保存分區內的嵌板至選擇集，選擇集名稱為分區編號；</Span></Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph><Span>執行<Bold Foreground="DodgerBlue">嵌板分析</Bold>，處理嵌板內明細子構件數據，自動將處理后的嵌板加入左側<Bold Foreground="DodgerBlue">幕墻嵌板</Bold>列表中，單擊列表項在右側表格中列表嵌板中的明細子構件清單；</Span></Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph><Span>執行<Bold Foreground="DodgerBlue">保存參數</Bold>，將處理后的嵌板和明細子構件數據寫入模型文件，包含其<Bold Foreground="Green">分區編碼</Bold>參數；</Span></Paragraph>
-                        </ListItem>
-                        <ListItem>
-                            <Paragraph><Span>後續分區的4D信息數據模塊待更新；</Span></Paragraph>
-                        </ListItem>
-
-                    </List>
-                </FlowDocument>
-            </RichTextBox>
+                <RichTextBox HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,10,0,0" BorderThickness="0" DockPanel.Dock="Top" Background="{x:Null}" IsReadOnly="True">
+                    <FlowDocument LineHeight="20" FontSize="13" Foreground="#808080">
+                        <List MarkerStyle="Decimal">
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>创建项目分区图（AutoCAD），手动设置
+                                        <Bold Foreground="DodgerBlue">分区编号</Bold> ，并设定分区分格，根据当前项目进度计划手动设定每个分格内不同工序层的安装
+                                        <Bold Foreground="DodgerBlue">开始时间</Bold> 和
+                                        <Bold Foreground="DodgerBlue">结束时间</Bold> ；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>
+                                        <Bold Foreground="DodgerBlue">Revit</Bold> /
+                                        <Bold Foreground="DodgerBlue">附加模块</Bold> /
+                                        <Bold Foreground="DodgerBlue">项目设置</Bold> ，
+                                        设定当前操作项目基本信息（必须在其他操作前完成）；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>进入模块
+                                        <Bold Foreground="DodgerBlue">Revit</Bold> /
+                                        <Bold Foreground="DodgerBlue">附加模块</Bold> /
+                                        <Bold Foreground="DodgerBlue">分区处理</Bold> ；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>
+                                        <Bold Foreground="DodgerBlue">模型初始</Bold> ，对分部模型进行参数初始化；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>关闭模块窗口，按分区图选择某一分区的所有嵌板，再次进入
+                                        <Bold Foreground="DodgerBlue">分区处理</Bold> 模块，设定当前选择的
+                                        <Bold Foreground="DodgerBlue">分区编号</Bold> 等参数；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>
+                                        <Bold Foreground="DodgerBlue">分区划定</Bold> ，将自动将当前选择的分区/嵌板/内含构件进行归类，并生成相应嵌板选择集（选择集名为分区编号）。当前分区加入左侧分区处理列表；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>执行
+                                        <Bold Foreground="DodgerBlue">构件分析</Bold> 前 ，如当前项目含多个工序层，应通过
+                                        <Bold Foreground="DodgerBlue">外链数据</Bold> 将同立面部位的其他工序层模型导入；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>
+                                        <Bold Foreground="DodgerBlue">构件分析</Bold> ，处理嵌板内需输出明细的子构件数据，并分别将嵌板和构件按设定工序排序。处理后的分区/嵌板/构件清单将在主表格中列出；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>
+                                        <Bold Foreground="DodgerBlue">保存数据</Bold> ，保存当前状态数据，并将排序后的本模型数据(.data)和外链模型数据(.sort)分别保存；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                            <ListItem>
+                                <Paragraph>
+                                    <Span>
+                                        <Bold Foreground="DodgerBlue">参数写入</Bold> ，将本模型的排序后的嵌板和子构件参数数据写入模型文件（外链数据需打开外链模型为当前模型后写入）；
+                                    </Span>
+                                </Paragraph>
+                            </ListItem>
+                        </List>
+                    </FlowDocument>
+                </RichTextBox>
             </ScrollViewer>
         </DockPanel>
     </Grid>

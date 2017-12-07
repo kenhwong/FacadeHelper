@@ -17,17 +17,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using RvtApplication = Autodesk.Revit.ApplicationServices.Application;
 
-// The Building Coder Samples https://github.com/jeremytammik/the_building_coder_samples
-//http://www.revitapidocs.com
-
-//https://forums.autodesk.com/t5/revit-api-forum/project-parameter-id-amp-guid/td-p/5834037
-//https://forums.autodesk.com/autodesk/attachments/autodesk/160/5205/1/GetProjectParameterGUIDs.txt
-//https://forums.autodesk.com/t5/revit-api-forum/reporting-on-project-parameter-definitions-need-guids/td-p/4684297
-
 namespace FacadeHelper
 {
-
-
     public class ProjectParameterData
     {
         public Definition Definition = null;
@@ -583,6 +574,11 @@ namespace FacadeHelper
 
     public static class ZoneHelper
     {
+        #region 初始化Filter Element Class
+        /// <summary>
+        /// 初始化Filter Element Class
+        /// </summary>
+        /// <returns>List<ElementClass> FilterElementClass 列表</returns>
         public static List<ElementClass> InitElementClass()
         {
             List<ElementClass> eclist = new List<ElementClass>()
@@ -623,6 +619,7 @@ namespace FacadeHelper
             };
             return eclist;
         }
+        #endregion
 
         public static void FnFilterClassSerialize(List<ElementClass> eclist)
         {
@@ -764,126 +761,9 @@ namespace FacadeHelper
 
         #endregion
 
-
-        /// <summary>
-        /// 加载ACADE导出的分区进度数据 - 4D设计模型
-        /// </summary>
-        /// <param name="ZoneScheduleDataFile">进度数据文件(*.txt)</param>
-        #region 加载ACADE导出的分区进度数据 - 4D设计模型
-        public static void FnLoadZoneScheduleData(string ZoneScheduleDataFile)
-        {
-            Global.ZoneLayerList.Clear();
-            using (StreamReader reader = new StreamReader(ZoneScheduleDataFile))
-            {
-                string dataline;
-                reader.ReadLine();
-                string linehandleid;
-                string linezonecode = string.Empty;
-                while ((dataline = reader.ReadLine()) != null)
-                {
-                    ZoneLayerInfo L0 = new ZoneLayerInfo();
-                    ZoneLayerInfo L1 = new ZoneLayerInfo();
-                    ZoneLayerInfo L2 = new ZoneLayerInfo();
-
-                    string[] rowdata = dataline.Split('\t');
-                    linehandleid = rowdata[0].Replace(@"'", ""); //AutoCAD Attribute Block Handle ID.
-
-                    if ((rowdata.Length > 5 && rowdata[2] == rowdata[5]) || (rowdata.Length > 8 && (rowdata[2] == rowdata[8] || rowdata[5] == rowdata[8])))
-                    {
-                        MessageBox.Show($"当前行[{rowdata[0]}]的分区编号有重复，不能继续读取分析数据。", "错误 - 分区进度数据");
-                        return;
-                    }
-
-                    if (rowdata.Length > 2)
-                        if (int.TryParse(rowdata[2].Substring(2, 2), out int lv2))
-                        {
-                            if (lv2 != 1)
-                            {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[2]}]的工序层 0 数据位置/数据段 2 错误，不能继续读取。", "错误 - 分区进度数据");
-                                return;
-                            }
-                            linezonecode = Regex.Replace(rowdata[2], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase);
-                            L0.HandleId = linehandleid;
-                            L0.ZoneLayer = 0;
-                            L0.ZoneCode = linezonecode;
-                            L0.ZoneStart = DateTime.Parse($"{rowdata[3].Substring(0, 2)}/{rowdata[3].Substring(2, 2)}/{rowdata[3].Substring(4, 2)}");
-                            L0.ZoneFinish = DateTime.Parse($"{rowdata[4].Substring(0, 2)}/{rowdata[4].Substring(2, 2)}/{rowdata[4].Substring(4, 2)}");
-                        }
-                    if (rowdata.Length > 5)
-                    {
-                        if (int.TryParse(rowdata[5].Substring(2, 2), out int lv5))
-                        {
-                            if (lv5 != 2)
-                            {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[5]}]的工序层 1 数据位置/数据段 5 错误，不能继续读取。", "错误 - 分区进度数据");
-                                return;
-                            }
-                            if (linezonecode != Regex.Replace(rowdata[5], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
-                            {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{linezonecode}]编号不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
-                                return;
-                            }
-                            L1.HandleId = linehandleid;
-                            L1.ZoneLayer = 1;
-                            L1.ZoneCode = linezonecode;
-                            L1.ZoneStart = DateTime.Parse($"{rowdata[6].Substring(0, 2)}/{rowdata[6].Substring(2, 2)}/{rowdata[6].Substring(4, 2)}");
-                            L1.ZoneFinish = DateTime.Parse($"{rowdata[7].Substring(0, 2)}/{rowdata[7].Substring(2, 2)}/{rowdata[7].Substring(4, 2)}");
-                        }
-                    }
-                    else
-                    {
-                        //L1,L2层缺失，预设L1层，起始为上一层后一天，工期1天
-                        L1.HandleId = linehandleid;
-                        L1.ZoneLayer = 1;
-                        L1.ZoneCode = linezonecode;
-                        L1.ZoneStart = L0.ZoneStart + TimeSpan.FromDays(1);
-                        L1.ZoneFinish = L0.ZoneFinish + TimeSpan.FromDays(1);
-                    }
-                    if (rowdata.Length > 8)
-                    {
-                        if (int.TryParse(rowdata[8].Substring(2, 2), out int lv8))
-                        {
-                            if (lv8 != 3)
-                            {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区[{rowdata[8]}]的工序层 2 数据位置/数据段 8 错误，不能继续读取。", "错误 - 分区进度数据");
-                                return;
-                            }
-                            if (linezonecode != Regex.Replace(rowdata[8], @"Z-\d{2}-", @"Z-00-", RegexOptions.IgnoreCase))
-                            {
-                                MessageBox.Show($"当前行[{rowdata[0]}]的分区编号[{linezonecode}]不统一，不能继续读取分析数据。", "错误 - 分区进度数据");
-                                return;
-                            }
-                            L2.HandleId = linehandleid;
-                            L2.ZoneLayer = 2;
-                            L2.ZoneCode = linezonecode;
-                            L2.ZoneStart = DateTime.Parse($"{rowdata[9].Substring(0, 2)}/{rowdata[9].Substring(2, 2)}/{rowdata[9].Substring(4, 2)}");
-                            L2.ZoneFinish = DateTime.Parse($"{rowdata[10].Substring(0, 2)}/{rowdata[10].Substring(2, 2)}/{rowdata[10].Substring(4, 2)}");
-                        }
-                    }
-                    else
-                    {
-                        //L2层缺失，预设L2层，起始为上一层后一天，工期1天
-                        L2.HandleId = linehandleid;
-                        L2.ZoneLayer = 2;
-                        L2.ZoneCode = linezonecode;
-                        L2.ZoneStart = L1.ZoneStart + TimeSpan.FromDays(1);
-                        L2.ZoneFinish = L1.ZoneFinish + TimeSpan.FromDays(1);
-                    }
-
-                    Global.ZoneLayerList.Add(L0);
-                    Global.ZoneLayerList.Add(L1);
-                    Global.ZoneLayerList.Add(L2);
-                }
-            }
-        }
-
-        #endregion
-
         #region 加载外部链接项目的构件数据
         public static void FnLinkedElementsDeserialize(string[] linkfiles)
         {
-            //Global.DocContent.CurtainPanelList.ForEach(p => p.INF_ExternalLinkId = 0);
-            //Global.DocContent.ScheduleElementList.ForEach(e => e.INF_ExternalLinkId = 0);
             Global.DocContent.FullCurtainPanelList.AddRange(Global.DocContent.CurtainPanelList);
             Global.DocContent.FullScheduleElementList.AddRange(Global.DocContent.ScheduleElementList);
 
@@ -902,8 +782,6 @@ namespace FacadeHelper
                         extdata.ScheduleElementList.ForEach(e => e.INF_ExternalLinkId = i + 1);
                         Global.DocContent.FullCurtainPanelList.AddRange(extdata.CurtainPanelList);
                         Global.DocContent.FullScheduleElementList.AddRange(extdata.ScheduleElementList);
-
-                        Global.DocContent.ExternalElementDataList.Add(extdata);
                     }
                 }
             }
@@ -911,9 +789,9 @@ namespace FacadeHelper
         #endregion
 
         #region 序列化外部链接项目的构件数据
-        public static void FnLinkedElementsSerialize()
+        public static void FnLinkedElementsSerialize(ref ListBox listinfo)
         {
-            Global.DocContent.ExternalElementDataList.ForEach(d =>
+            foreach(var d in Global.DocContent.ExternalElementDataList)
             {
                 if (d.ExternalId > 0)
                 {
@@ -921,21 +799,21 @@ namespace FacadeHelper
                     d.ScheduleElementList = Global.DocContent.FullScheduleElementList.FindAll(se => se.INF_ExternalLinkId == d.ExternalId);
                     d.ExternalFileName = Path.ChangeExtension(d.ExternalFileName, "sort");
                 }
-                else
-                {
-                    Global.DocContent.CurtainPanelList = Global.DocContent.FullCurtainPanelList.FindAll(p => p.INF_ExternalLinkId == 0);
-                    Global.DocContent.ScheduleElementList = Global.DocContent.FullScheduleElementList.FindAll(se => se.INF_ExternalLinkId == 0);
-                    ExternalElementData originaldata = new ExternalElementData()
-                    {
-                        ExternalId = 0,
-                        ExternalFileName = Path.ChangeExtension(Global.DataFile, "sort"),
-                        ZoneList = Global.DocContent.ZoneList.ToList(),
-                        CurtainPanelList = Global.DocContent.CurtainPanelList,
-                        ScheduleElementList = Global.DocContent.ScheduleElementList
-                    };
-                }
                 using (FileStream fs = new FileStream(d.ExternalFileName, FileMode.Create)) Serializer.Serialize(fs, d);
-            });
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - UPDATE: EXTDATA, {d.ExternalFileName}.");
+            }
+
+            ExternalElementData originaldata = new ExternalElementData()
+            {
+                ExternalId = 0,
+                ExternalFileName = Path.ChangeExtension(Global.DataFile, "sort"),
+                ZoneList = Global.DocContent.ZoneList.ToList(),
+                CurtainPanelList = Global.DocContent.CurtainPanelList,
+                ScheduleElementList = Global.DocContent.ScheduleElementList
+            };
+
+            using (FileStream fs = new FileStream(originaldata.ExternalFileName, FileMode.Create)) Serializer.Serialize(fs, originaldata);
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - UPDATE: EXTDATA(SELF), {originaldata.ExternalFileName}.");
 
         }
         #endregion
@@ -1052,8 +930,6 @@ namespace FacadeHelper
 
                 _pi.INF_Index = ++pindex;
                 _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
-
-                Global.DocContent.FullCurtainPanelList.Add(_pi);
             }
             #endregion
 
@@ -1121,8 +997,6 @@ namespace FacadeHelper
                     ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}-{eindexinzone:0000}";//构件编码
                     ele.INF_TaskStart = GetDeadTime(zlayer.ZoneStart, v_hours_per_element * (eindexinzone - 1));
                     ele.INF_TaskFinish = GetDeadTime(zlayer.ZoneStart, v_hours_per_element * eindexinzone);
-
-                    Global.DocContent.FullScheduleElementList.Add(ele);
 
                     txt_curr_ele.Content = $"Z/{ele.INF_ZoneCode}.E/{ele.INF_ElementId}, {ele.INF_Code}";
                     txt_curr_op.Content = "W/TASK";

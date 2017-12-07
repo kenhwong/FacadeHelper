@@ -1470,6 +1470,56 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="IconText30PathButton" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="#1296db"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="#999999"/>
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Grid.RowSpan="2" BorderThickness="0" Background="{x:Static SystemColors.ControlBrush}" Opacity="0" Margin="0"  />
+                        <Path x:Name="BookShape" Grid.Row="0" Data="{TemplateBinding Tag}" Stretch="Fill" StrokeThickness="0" Fill="{TemplateBinding Foreground}"
+                              Width="30" Height="30" HorizontalAlignment="Center" />
+                        <ContentPresenter Grid.Row="1" Name="contentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    HorizontalAlignment="Center"
+                                    RecognizesAccessKey="True"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#d2d2d2" />
+                            <Setter TargetName="BookShape" Property="Fill" Value="#d2d2d2" />
+                            <Setter Property="Effect" Value="{x:Null}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource CyanBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--#endregion-->
 
     <!--#region ToggleButton-->
@@ -1523,6 +1573,50 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="IconText30PathToggleButton" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource BookFocusVisualStyte}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="#1296db"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="#999999"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" Grid.RowSpan="2" BorderThickness="0" Background="{x:Static SystemColors.ControlBrush}" Opacity="0" Margin="0"  />
+                        <Path Grid.Row="0" x:Name="BookShape" Data="{TemplateBinding Tag}" Stretch="Fill" StrokeThickness="0" Fill="{TemplateBinding Foreground}" 
+                              Width="30" Height="30" HorizontalAlignment="Center" />
+                        <ContentPresenter Grid.Row="1" Name="contentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    HorizontalAlignment="Center"
+                                    RecognizesAccessKey="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="#d9d9d9" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="BookFocusVisualStyte" >
         <Setter Property="Control.Template">
             <Setter.Value>

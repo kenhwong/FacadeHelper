@@ -42,7 +42,7 @@ namespace FacadeHelper
 
         private string _currentProjectID;
         public string CurrentProjectID { get { return _currentProjectID; } set { _currentProjectID = value; OnPropertyChanged(nameof(CurrentProjectID)); } }
-        
+
         private int _currentZonePanelType = 51;
         public int CurrentZonePanelType { get { return _currentZonePanelType; } set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
         private int _currentZoneLevel = 1;
@@ -210,6 +210,7 @@ namespace FacadeHelper
                         bnElementResolve.SetResourceReference(ContentControl.TagProperty, "IconMassSort");
                         bnElementLink.Foreground = new SolidColorBrush(Colors.DarkGreen);
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LINK: FILE, {string.Join(",", ofd.SafeFileNames)}.");
+                        IsExteriorDataLinked = true;
                     }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -218,7 +219,7 @@ namespace FacadeHelper
                 (sender, e) =>
                 {
                     //Global.DocContent.ScheduleElementList.Clear();
-                    if(Global.DocContent.FullCurtainPanelList.Count == 0) Global.DocContent.FullCurtainPanelList.AddRange(Global.DocContent.CurtainPanelList);
+                    if (Global.DocContent.FullCurtainPanelList.Count == 0) Global.DocContent.FullCurtainPanelList.AddRange(Global.DocContent.CurtainPanelList);
                     if (Global.DocContent.FullScheduleElementList.Count == 0) Global.DocContent.FullScheduleElementList.AddRange(Global.DocContent.ScheduleElementList);
                     if (Global.DocContent.FullZoneList.Count == 0) foreach (var z in Global.DocContent.ZoneList) Global.DocContent.FullZoneList.Add(z);
 
@@ -255,29 +256,17 @@ namespace FacadeHelper
                         DefaultExt = "*.data",
                         Filter = "Data Files(*.data)|*.data|Data Backup Files(*.bak)|*.bak|All(*.*)|*.*"
                     };
-                    if (ofd.ShowDialog() == true)
-                        if (MessageBox.Show($"确认加载新的数据文件 {ofd.FileName}？\n\n现有数据将被新的数据覆盖，且不可恢复，但不会影响模型文件。选择确认继续，取消则不会有任何操作。", "加载新的数据文件...",
-                            MessageBoxButton.OKCancel,
-                            MessageBoxImage.Question,
-                            MessageBoxResult.OK) == MessageBoxResult.OK)
-                        {
-                            ZoneHelper.FnContentDeserialize(ofd.FileName);
-                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LOAD: FILE, {ofd.FileName}.");
-                        }
+                    ZoneHelper.FnContentDeserialize(ofd.FileName);
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LOAD: FILE, {ofd.FileName}.");
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSaveData = new CommandBinding(cmdSaveData,
                 (sender, e) =>
                 {
-                    if (MessageBox.Show($"确认更新数据的更改？\n\n更新的数据将保存至 {Global.DataFile}，现有数据将创建备份，不会影响模型文件。选择确认继续，取消则不会有任何操作。", "更新数据修改...",
-                        MessageBoxButton.OKCancel,
-                        MessageBoxImage.Question,
-                        MessageBoxResult.OK) == MessageBoxResult.OK)
-                    {
-                        ZoneHelper.FnContentSerializeWithBackup();
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: FILE, {Global.DataFile}.bak.");
-                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - UPDATE: FILE, {Global.DataFile}.");
-                    }
+                    ZoneHelper.FnContentSerializeWithBackup();
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: FILE, {Global.DataFile}.bak.");
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - UPDATE: FILE, {Global.DataFile}.");
+                    ZoneHelper.FnLinkedElementsSerialize(ref listInformation);
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSearch = new CommandBinding(cmdSearch,
@@ -684,32 +673,17 @@ namespace FacadeHelper
 
         #endregion
 
+        #region Command -- bnModelInit : 模型初始化
         private void cbModelInit_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             InitModelData();
         }
+        #endregion
 
+        #region Function 初始化模型数据
         private void InitModelData()
         {
             ParameterHelper.InitProjectParameters(ref doc);
-
-            //加載分區進度數據
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
-            {
-                InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
-                DefaultExt = "*.txt",
-                Filter = "Schedule Text Files(*.txt)|*.txt|All(*.*)|*.*"
-            };
-            if (ofd.ShowDialog() == true)
-                if (MessageBox.Show($"加载新的分区进度定义文件 {ofd.FileName}？\n\n现有的进度数据将被覆盖。选择确认继续。", "加载新的进度数据文件...",
-                    MessageBoxButton.OKCancel,
-                    MessageBoxImage.Question,
-                    MessageBoxResult.OK) == MessageBoxResult.OK)
-                {
-                    ZoneHelper.FnLoadZoneScheduleData(ofd.FileName);
-                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - L: {ofd.FileName}.");
-                }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - IN: LAYER, L/3, ZL/{Global.ZoneLayerList.Count:N0}");
 
             //统计 
             FilteredElementCollector panelcollector = new FilteredElementCollector(doc);
@@ -730,6 +704,8 @@ namespace FacadeHelper
             foreach (var _p in syspanels) nsysele += (_p as Autodesk.Revit.DB.Panel).GetSubComponentIds().Count;
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: TOTAL, P/{panels.Count():N0}, E/{nele:N0}, SYS-P/{syspanels.Count():N0}, SYS-E/{nsysele:N0}");
         }
+
+        #endregion        
         #endregion
 
         private void listInformation_SelectionChanged(object sender, SelectionChangedEventArgs e) { var lb = sender as ListBox; lb.ScrollIntoView(lb.Items[lb.Items.Count - 1]); }
