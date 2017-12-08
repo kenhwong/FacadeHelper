@@ -53,28 +53,16 @@
                             Content="导出计划" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                 </WrapPanel>
             </StackPanel>
-            <GroupBox Style="{DynamicResource CommandGroup}" Header="SWITCH" DockPanel.Dock="Right" Padding="0,5"  Margin="20,10">
-                <WrapPanel>
-                    <CheckBox x:Name="chkExtLink"
-                              Style="{DynamicResource IconPathToggleButton}"
-                              Tag="{StaticResource IconRectLink}" 
-                              DockPanel.Dock="Right" 
-                              ToolTip="外部链接数据" 
-                              IsChecked="{Binding Path=IsExteriorDataLinked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                              Width="30" 
-                              Height="30" 
-                              Margin="0,0,20,0" />
+            <StackPanel DockPanel.Dock="Right" Margin="20,10">
+                <WrapPanel DockPanel.Dock="Right">
                     <CheckBox x:Name="chkRTProgress"
-                              Style="{DynamicResource IconPathToggleButton}"
-                              Tag="{StaticResource IconRectReadlTime}" 
-                              DockPanel.Dock="Right" 
-                              ToolTip="过程进度监视"
-                              IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
-                              Width="30" 
-                              Height="30" 
-                              Margin="0,0,0,0" />
+                          Style="{DynamicResource IconText30PathToggleButton}"
+                          Tag="{StaticResource IconRectReadlTime}"
+                          Content="进度监视"
+                          IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                           Margin="10,0,0,0" Padding="0,5,0,0" />
                 </WrapPanel>
-            </GroupBox>
+            </StackPanel>
             <Grid DockPanel.Dock="Right" Visibility="{Binding ElementName=chkZoneData, Path=IsChecked, Converter={StaticResource B2VConverter}}">
                 <Grid.Effect>
                     <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
@@ -96,14 +84,40 @@
                     IsEnabled="{Binding Path=IsPIDInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <DockPanel Grid.Row="2" Grid.Column="0" LastChildFill="False" Margin="0,0,0,5">
                     <Label DockPanel.Dock="Left" Content="分区信息" Style="{DynamicResource CCyanLabel}" IsEnabled="{Binding Path=IsZoneLayerInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    <Label DockPanel.Dock="Right" Content="构件筛选" Style="{DynamicResource CCyanLabel}" IsEnabled="{Binding Path=IsElementClassInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />                    
+                    <Label DockPanel.Dock="Right" Content="构件筛选" Style="{DynamicResource CCyanLabel}" IsEnabled="{Binding Path=IsElementClassInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
-                
+
                 <Path Grid.Row="1" Grid.Column="0" Margin="5,0"
                                   Data="M0,0.5 L1,0.5"
                                   Stretch="Fill" Stroke="#FFC0C0C0" StrokeThickness="1"
                                   StrokeDashArray="4.0 2.0"/>
             </Grid>
+            <Grid DockPanel.Dock="Right">
+                <Grid.Effect>
+                    <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+                </Grid.Effect>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Label 
+                    Grid.Row="0" Grid.Column="0" 
+                    Margin="0,5,0,0" 
+                    FontFamily="Consolas" 
+                    Content="外部链接模型数据" IsEnabled="{Binding Path=IsExteriorDataLinked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Label Grid.Row="2" DockPanel.Dock="Left" 
+                       Content="{Binding Path=CountExteriorDataLinked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="链接模型总计：{0}"
+                       IsEnabled="{Binding Path=IsExteriorDataLinked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <Path Grid.Row="1" Grid.Column="0" Margin="5,0"
+                                  Data="M0,0.5 L1,0.5"
+                                  Stretch="Fill" Stroke="#FFC0C0C0" StrokeThickness="1"
+                                  StrokeDashArray="4.0 2.0"/>
+            </Grid>
+
         </DockPanel>
         <Popup x:Name="popQS" Width="420" Height="540" HorizontalOffset="0" VerticalOffset="10" 
                AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"

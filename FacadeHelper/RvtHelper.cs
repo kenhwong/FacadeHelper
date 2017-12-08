@@ -832,20 +832,9 @@ namespace FacadeHelper
             //if (hasrangezone && DateTime.TryParse(querystring, out DateTime querydatetime))
             //relistzone.AddRange(Global.DocContent.ZoneList.Where(z => z.ZoneLayerStart.Equals(querydatetime) || z.ZoneLayerFinish.Equals(querydatetime)));
 
-            if (hasrangezone) relistzone.AddRange(Global.DocContent.ZoneList.Where(z => Regex.IsMatch(z.ZoneCode, querystring, RegexOptions.IgnoreCase)));
-            if (hasrangepanel) relistpanel.AddRange(Global.DocContent.CurtainPanelList.Where(p => Regex.IsMatch($"{p.INF_ElementId} # {p.INF_Code}", querystring, RegexOptions.IgnoreCase)));
-            if (hasrangeelement) relistelement.AddRange(Global.DocContent.ScheduleElementList.Where(e => Regex.IsMatch($"{e.INF_ElementId} # {e.INF_Code}", querystring, RegexOptions.IgnoreCase)));
-        }
-        #endregion
-
-        #region 搜索构件
-        public static void FnSearch(UIDocument uidoc,
-            string querystring,
-            ref List<ZoneInfoBase> relistzone, ref List<CurtainPanelInfo> relistpanel, ref List<MullionInfo> relistmullion,
-            bool hasrangezone, bool hasrangepanel, bool hasrangeelement,
-            ref ListBox listinfo)
-        {
-
+            if (hasrangezone) relistzone.AddRange(Global.DocContent.FullZoneList.Where(z => Regex.IsMatch(z.ZoneCode, querystring, RegexOptions.IgnoreCase)));
+            if (hasrangepanel) relistpanel.AddRange(Global.DocContent.FullCurtainPanelList.Where(p => Regex.IsMatch($"{p.INF_ElementId} # {p.INF_Code}", querystring, RegexOptions.IgnoreCase)));
+            if (hasrangeelement) relistelement.AddRange(Global.DocContent.FullScheduleElementList.Where(e => Regex.IsMatch($"{e.INF_ElementId} # {e.INF_Code}", querystring, RegexOptions.IgnoreCase)));
         }
         #endregion
 

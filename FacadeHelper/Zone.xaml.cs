@@ -75,6 +75,8 @@ namespace FacadeHelper
         public bool IsElementClassInitialized { get { return _isElementClassInitialized; } set { _isElementClassInitialized = value; OnPropertyChanged(nameof(IsElementClassInitialized)); } }
         private bool _isExteriorDataLinked = false;
         public bool IsExteriorDataLinked { get { return _isExteriorDataLinked; } set { _isExteriorDataLinked = value; OnPropertyChanged(nameof(IsExteriorDataLinked)); } }
+        private int _countExteriorDataLinked = 0;
+        public int CountExteriorDataLinked { get { return _countExteriorDataLinked; } set { _countExteriorDataLinked = value; OnPropertyChanged(nameof(CountExteriorDataLinked)); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
