@@ -30,11 +30,14 @@ namespace FacadeHelper
             PushButtonData bndata_appconfig = new PushButtonData("cmdConfig", "全局设定", thisAssemblyPath, "FacadeHelper.Config_Command");
             PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
             PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
+            PushButtonData bndata_family_param = new PushButtonData("cmdFamilyParam", "型铝族参", thisAssemblyPath, "FacadeHelper.ICommand_Document_AddFamilyParameters");
             bndata_appconfig.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "config32.png")));
             bndata_process_elements.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "se32.png")));
             rpanel.AddItem(bndata_appconfig);
             rpanel.AddItem(bndata_zone);
+            rpanel.AddSeparator();
+            rpanel.AddItem(bndata_family_param);
             return Result.Succeeded;
         }
 
@@ -116,6 +119,36 @@ namespace FacadeHelper
 
 
                 trans.Commit();
+            }
+
+            return Result.Succeeded;
+        }
+    }
+
+    [Transaction(TransactionMode.Manual)]
+    public class ICommand_Document_AddFamilyParameters : IExternalCommand
+    {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            UIApplication uiapp = commandData.Application;
+
+            try
+            {
+                FamilyHelper ucpe = new FamilyHelper(commandData);
+                Window winaddin = new Window();
+                ucpe.ParentWin = winaddin;
+                winaddin.Content = ucpe;
+                winaddin.SizeToContent = SizeToContent.WidthAndHeight;
+                winaddin.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                //winaddin.WindowStyle = WindowStyle.None;
+                winaddin.Padding = new Thickness(0);
+                Global.winhelper = new System.Windows.Interop.WindowInteropHelper(winaddin);
+                winaddin.ShowDialog();
+            }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error", e.ToString());
+                return Result.Failed;
             }
 
             return Result.Succeeded;

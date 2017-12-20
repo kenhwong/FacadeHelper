@@ -96,6 +96,9 @@
     <Compile Include="FacadeConfig.xaml.cs">
       <DependentUpon>FacadeConfig.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FamilyHelper.xaml.cs">
+      <DependentUpon>FamilyHelper.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Manual.xaml.cs">
       <DependentUpon>Manual.xaml</DependentUpon>
     </Compile>
@@ -120,6 +123,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="FacadeConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FamilyHelper.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

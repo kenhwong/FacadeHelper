@@ -364,12 +364,12 @@
                           GotFocus="datagridElements_GotFocus">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding ZoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="工序" Width="60" Binding="{Binding ZoneType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="楼层" Width="60" Binding="{Binding ZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="系統" Width="60" Binding="{Binding ZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="朝向" Width="60" Binding="{Binding ZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="分区" Width="60" Binding="{Binding ZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="选择集" Width="60" Binding="{Binding FilterName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="工序" Width="35" Binding="{Binding ZoneType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="楼层" Width="35" Binding="{Binding ZoneLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="系統" Width="35" Binding="{Binding ZoneSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="朝向" Width="35" Binding="{Binding ZoneDirection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="分区" Width="35" Binding="{Binding ZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="选集" Width="60" Binding="{Binding FilterName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <DataGridTemplateColumn Header="开始" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -402,23 +402,23 @@
                           AutoGenerateColumns="False" AlternationCount="2" HeadersVisibility="All" CanUserAddRows="False" 
                           CanUserResizeRows="False" EnableRowVirtualization="True" SelectionMode="Single" Margin="5" GotFocus="datagridElements_GotFocus">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="PANELID" Width="70" Binding="{Binding INF_ElementId}" />
+                        <DataGridTextColumn Header="PANELID" Width="60" Binding="{Binding INF_ElementId}" />
                         <DataGridTextColumn Header="名称" Width="70" Binding="{Binding INF_Name}" />
-                        <DataGridTextColumn Header="外链" Width="50" Binding="{Binding INF_ExternalLinkId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="分项" Width="50" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="系统" Width="50" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="朝向" Width="50" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="楼层" Width="50" Binding="{Binding INF_Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="原点X" Width="70" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
-                        <DataGridTextColumn Header="原点Y" Width="70" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
-                        <DataGridTextColumn Header="原点Z" Width="70" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
-                        <DataGridTextColumn Header="宽度" Width="70" Binding="{Binding INF_Width_Metric, StringFormat={}{0:0.0}}" />
-                        <DataGridTextColumn Header="高度" Width="70" Binding="{Binding INF_Height_Metric, StringFormat={}{0:0.0}}" />
-                        <DataGridTextColumn Header="分区" Width="50" Binding="{Binding INF_ZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="外链" Width="35" Binding="{Binding INF_ExternalLinkId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="分项" Width="35" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="系统" Width="35" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="朝向" Width="35" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="楼层" Width="35" Binding="{Binding INF_Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="原点X" Width="60" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="原点Y" Width="60" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="原点Z" Width="60" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="宽度" Width="60" Binding="{Binding INF_Width_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="高度" Width="60" Binding="{Binding INF_Height_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="分区" Width="35" Binding="{Binding INF_ZoneIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding INF_ZoneCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <DataGridTextColumn Header="分区编码" Width="130" Binding="{Binding INF_Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="安装开始" Width="130" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
-                        <DataGridTextColumn Header="安装结束" Width="130" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                        <DataGridTextColumn Header="安装开始" Width="120" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                        <DataGridTextColumn Header="安装结束" Width="120" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
                     </DataGrid.Columns>
                 </DataGrid>
                 <DataGrid Grid.Row="1" x:Name="datagridScheduleElements" 
@@ -435,22 +435,22 @@
                           Margin="5" 
                           GotFocus="datagridElements_GotFocus">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ELEID" Width="70" Binding="{Binding INF_ElementId}" />
-                        <DataGridTextColumn Header="名称" Width="100" Binding="{Binding INF_Name}" />
-                        <DataGridTextColumn Header="外链" Width="50" Binding="{Binding INF_ExternalLinkId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="分项" Width="50" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="系統" Width="50" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="朝向" Width="50" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="ELEID" Width="60" Binding="{Binding INF_ElementId}" />
+                        <DataGridTextColumn Header="名称" Width="70" Binding="{Binding INF_Name}" />
+                        <DataGridTextColumn Header="外链" Width="35" Binding="{Binding INF_ExternalLinkId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="分项" Width="35" Binding="{Binding INF_Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="系統" Width="35" Binding="{Binding INF_System, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <DataGridTextColumn Header="朝向" Width="35" Binding="{Binding INF_Direction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <DataGridTextColumn Header="楼层" Width="50" Binding="{Binding INF_Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="原点X" Width="70" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
-                        <DataGridTextColumn Header="原点Y" Width="70" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
-                        <DataGridTextColumn Header="原点Z" Width="70" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="原点X" Width="60" Binding="{Binding INF_OriginX_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="原点Y" Width="60" Binding="{Binding INF_OriginY_Metric, StringFormat={}{0:0.0}}" />
+                        <DataGridTextColumn Header="原点Z" Width="60" Binding="{Binding INF_OriginZ_Metric, StringFormat={}{0:0.0}}" />
                         <DataGridTextColumn Header="嵌板" Width="100" Binding="{Binding INF_HostCurtainPanel, StringFormat={}{0:0.0}}" />
                         <DataGridTextColumn Header="分区" Width="50" Binding="{Binding INF_ZoneIndex}" />
                         <DataGridTextColumn Header="分区区号" Width="100" Binding="{Binding INF_ZoneCode}" />
                         <DataGridTextColumn Header="分区编码" Width="130" Binding="{Binding INF_Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="安裝开始" Width="130" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
-                        <DataGridTextColumn Header="安裝结束" Width="130" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                        <DataGridTextColumn Header="安裝开始" Width="120" Binding="{Binding INF_TaskStart, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
+                        <DataGridTextColumn Header="安裝结束" Width="120" Binding="{Binding INF_TaskFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:MM-dd-yy HH:mm:ss}}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
