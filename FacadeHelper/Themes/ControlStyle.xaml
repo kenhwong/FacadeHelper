@@ -436,7 +436,7 @@
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="5" Opacity="0.5" />
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="2" Opacity="0.5" />
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
@@ -462,6 +462,10 @@
                 <Setter Property="Foreground" Value="Red" />
             </DataTrigger>
         </Style.Triggers>
+    </Style>
+    <Style x:Key="MonitorScreenItem13" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource MonitorScreenItem}">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="2,-3" />
     </Style>
     <Style x:Key="WrapListBoxItem" TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
@@ -495,6 +499,8 @@
         <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
     </Style>
+    
+    
     <!--#endregion-->
 
     <!--#region GroupBox: CommandGroup-->
@@ -836,6 +842,44 @@
                             <TextBlock Name="TagPart" Text="{TemplateBinding Tag}" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
                         </Border>
                         <Border x:Name="G2" Grid.Column="1" BorderBrush="{TemplateBinding Foreground}" BorderThickness="1" Background="Transparent" Padding="10,2">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="BorderBrush" Value="#d0d0d0"/>
+                            <Setter Property="Foreground" Value="#d0d0d0"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+    <Style x:Key="TagLableMini" TargetType="{x:Type Label}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Label}">
+                    <Grid SnapsToDevicePixels="true" Margin="5" Height="15">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="G1" Grid.Column="0" BorderBrush="{TemplateBinding Foreground}" BorderThickness="1" Background="{TemplateBinding Foreground}" Padding="3,1" CornerRadius="3,0,0,3">
+                            <TextBlock Name="TagPart" Text="{TemplateBinding Tag}" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" />
+                        </Border>
+                        <Border x:Name="G2" Grid.Column="1" BorderBrush="{TemplateBinding Foreground}" BorderThickness="1" Background="Transparent" Padding="4,1" CornerRadius="0,3,3,0">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
                                               RecognizesAccessKey="True" />

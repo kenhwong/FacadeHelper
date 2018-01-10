@@ -59,6 +59,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -151,13 +152,18 @@
                     </ListBox.ItemsPanel>
                 </ListBox>
             </StackPanel>
-            <Label Grid.Column="0" Grid.Row="5" Tag="Z" Content="项目分区设置：" Margin="10,5" VerticalAlignment="Bottom" />
+            <Label Grid.Column="0" Grid.Row="5" Tag="Z" Content="共享参数设置：" Margin="10,5" VerticalAlignment="Bottom" />
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="5" Margin="10,5">
+                <TextBox x:Name="txtParamFile" IsReadOnly="True" Width="600" />
+                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconBrowse}" x:Name="bnBrowseSharedParamData" ToolTip="浏览分区数据文件..." Width="15" Height="15" VerticalAlignment="Bottom" Margin="10,0,10,2.8" />
+            </StackPanel>
+            <Label Grid.Column="0" Grid.Row="6" Tag="Z" Content="项目分区设置：" Margin="10,5" VerticalAlignment="Bottom" />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="6" Margin="10,5">
                 <TextBox x:Name="txtProjectZoneFile" IsReadOnly="True" Width="600" />
                 <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconBrowse}" x:Name="bnBrowseZoneData" ToolTip="浏览分区数据文件..." Width="15" Height="15" VerticalAlignment="Bottom" Margin="10,0,10,2.8" />
             </StackPanel>
-            <Label Grid.Column="0" Grid.Row="6" Tag="Z" Content="几何误差控制：" Margin="10,5" VerticalAlignment="Bottom" />
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="6" Margin="10,5">
+            <Label Grid.Column="0" Grid.Row="7" Tag="Z" Content="几何误差控制：" Margin="10,5" VerticalAlignment="Bottom" />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="7" Margin="10,5">
                 <TextBox 
                     x:Name="txtRVTPrecision" 
                     Text="{Binding ElementName=slideRVTPrecision, Path=Value, StringFormat={}{0:0.000}}" 

@@ -30,10 +30,11 @@ namespace FacadeHelper
             PushButtonData bndata_appconfig = new PushButtonData("cmdConfig", "全局设定", thisAssemblyPath, "FacadeHelper.Config_Command");
             PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
             PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
-            PushButtonData bndata_family_param = new PushButtonData("cmdFamilyParam", "型铝族参", thisAssemblyPath, "FacadeHelper.ICommand_Document_AddFamilyParameters");
+            PushButtonData bndata_family_param = new PushButtonData("cmdFamilyParam", "族参初始", thisAssemblyPath, "FacadeHelper.ICommand_Document_AddFamilyParameters");
             bndata_appconfig.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "config32.png")));
             bndata_process_elements.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "se32.png")));
+            bndata_family_param.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "sv32.png")));
             rpanel.AddItem(bndata_appconfig);
             rpanel.AddItem(bndata_zone);
             rpanel.AddSeparator();
@@ -131,6 +132,7 @@ namespace FacadeHelper
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiapp = commandData.Application;
+            commandData.Application.Application.SharedParametersFilename = Global.GetAppConfig("SharedParametersFile");
 
             try
             {

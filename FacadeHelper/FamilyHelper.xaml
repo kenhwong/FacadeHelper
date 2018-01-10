@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="FacadeHelper.FamilyHelper" x:Name="ProcPH"
+﻿<UserControl x:Class="FacadeHelper.FamilyHelper" x:Name="ProcFH"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:FacadeHelper"
-             mc:Ignorable="d" Height="300" Width="400">
+             mc:Ignorable="d" Height="800" Width="800">
     <UserControl.Resources>
         <ResourceDictionary>
             <local:IntToBoolConverter x:Key="I2BConverter" />
@@ -19,44 +19,95 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid Margin="10" UseLayoutRounding="True">
+    <Grid Margin="20,10" UseLayoutRounding="True">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10">
-            <RadioButton x:Name="tabParamAlum" Style="{StaticResource RadioTabStyle}" IsChecked="True" Tag="P" Content="铝型材族参数" GroupName="gconfigTabs" />
-            <RadioButton x:Name="tabParamSteel" Style="{StaticResource RadioTabStyle}" Tag="P" Content="钢型材族参数" GroupName="gconfigTabs" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Label Style="{DynamicResource TagLableMini}" Tag="def" Content="file" />
+            <Label Content="{Binding Path=CurrentSharedParamFile.Filename}" ContentStringFormat="{}{0}" Margin="10,5" VerticalAlignment="Bottom" />
         </StackPanel>
-        <Grid Grid.Row="2" Margin="-10,0,-10,-10" Background="{x:Static SystemColors.ControlBrush}">
-            <Grid.Effect>
-                <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
-            </Grid.Effect>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="120" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <Label Style="{DynamicResource TagLableMini}" Tag="family" Content="type" Margin="0,0,20,0" />
+            <RadioButton x:Name="tabParamAlum" IsChecked="True" Content="铝型材" GroupName="gconfigTabs" />
+            <RadioButton x:Name="tabParamSteel" Content="钢型材" GroupName="gconfigTabs" />
+        </StackPanel>
+        <StackPanel Grid.Row="3">
+            <Label Content="族共享参数选择" Margin="0,0,20,0" />
+            <Grid Height="450">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                    <ColumnDefinition Width="250" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="5">
+                    <Label Content="当前选择参数" Foreground="#FF80A080" />
+                    <ListBox Grid.Column="1" Margin="0,5" MaxHeight="400" MinHeight="50" SelectionMode="Multiple"
+                             Style="{DynamicResource MonitorScreen}" 
+                             ItemContainerStyle="{StaticResource MonitorScreenItem13}">
+                        <ListBox.Items>
+                            <ListBoxItem>
+                                <CheckBox Content="AAAAAAAAAAA" IsChecked="True" />
+                            </ListBoxItem>
+                            <ListBoxItem>
+                                <CheckBox Content="AAAAAAAAAAA" IsChecked="True" />
+                            </ListBoxItem>
+                            <ListBoxItem>
+                                <CheckBox Content="AAAAAAAAAAA" IsChecked="True" />
+                            </ListBoxItem>
+                            <ListBoxItem>
+                                <CheckBox Content="AAAAAAAAAAA" IsChecked="True" />
+                            </ListBoxItem>
+                        </ListBox.Items>
+                    </ListBox>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="5">
+                    <Label Content="待选参数分组" Foreground="#FF80A080" />
+                    <ListBox x:Name="Lst2" Grid.Column="1" Margin="0,5" MaxHeight="400" MinHeight="50"
+                             ItemsSource="{Binding Path=CurrentDefinitionGroups}" 
+                             Style="{DynamicResource MonitorScreen}"
+                             ItemContainerStyle="{StaticResource MonitorScreenItem13}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Path=Name}" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Margin="5" DataContext="{Binding Path=SelectedItem, ElementName=Lst2}">
+                    <Label Content="待选参数列表" Foreground="#FF80A080" />
+                    <ListBox x:Name="Lst3" Grid.Column="1" Margin="0,5" MaxHeight="400" MinHeight="50" SelectionMode="Multiple"
+                             ItemsSource="{Binding Path=Definitions}"                              
+                             Style="{DynamicResource MonitorScreen}" 
+                             ItemContainerStyle="{StaticResource MonitorScreenItem}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Path=Name}" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+            </Grid>
+            <ItemsControl Background="{x:Static SystemColors.WindowBrush}">
+            </ItemsControl>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="4">
             <Label Grid.Column="0" Grid.Row="1" Tag="Z" Content="参数：模图编号" Margin="10,5" VerticalAlignment="Bottom" />
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1" Margin="10,5">
-                <TextBox x:Name="txtMID" Width="200" />
-            </StackPanel>
+            <TextBox x:Name="txtMID" Width="200" />
             <Label Grid.Column="0" Grid.Row="2" Tag="Z" Content="参数：米重" Margin="10,5" VerticalAlignment="Bottom" />
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Margin="10,5">
-                <TextBox x:Name="txtWPM" Width="200" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" Margin="10,20" VerticalAlignment="Bottom">
-                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApply}" x:Name="bnApplyParam" Width="20" Height="20" Margin="10,0" />
-                <Label x:Name="lblApplied" Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" Visibility="Collapsed" />
-            </StackPanel>
-        </Grid>
+            <TextBox x:Name="txtWPM" Width="200" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Margin="10,20" VerticalAlignment="Bottom">
+            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApply}" x:Name="bnApplyParam" Width="20" Height="20" Margin="10,0" />
+            <Label x:Name="lblApplied" Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" Visibility="Collapsed" />
+        </StackPanel>
 
     </Grid>
 </UserControl>

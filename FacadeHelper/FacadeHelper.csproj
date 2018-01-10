@@ -231,6 +231,10 @@
   <ItemGroup>
     <Content Include="Resources\config32.png" />
     <Content Include="Resources\id32.png" />
+    <Content Include="Resources\sv16.png" />
+    <Content Include="Resources\sv32.png" />
+    <Content Include="Resources\sv48.png" />
+    <Content Include="Resources\sv64.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

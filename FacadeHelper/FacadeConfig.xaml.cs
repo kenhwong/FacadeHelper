@@ -50,6 +50,7 @@ namespace FacadeHelper
             }
             currpid = Global.GetAppConfig("CurrentProjectID");
             txtProjectID.Text = currpid;
+            txtParamFile.Text = Global.GetAppConfig("SharedParametersFile") ?? System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{currpid}.param");
             //txtProjectName.Text = Global.GetAppConfig("CurrentProjectName") ?? "未设置"; //针对COCC项目测试方便，该项值用预设
             txtRVTPrecision.Text = Global.GetAppConfig("RVTPrecision") ?? "0.03";
             zfile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), $"{currpid}.zone.xml");
@@ -188,6 +189,7 @@ namespace FacadeHelper
                 Global.UpdateAppConfig("CurrentProjectID", txtProjectID.Text);
                 Global.UpdateAppConfig("CurrentProjectName", txtProjectName.Text);
                 Global.UpdateAppConfig("RVTPrecision", txtRVTPrecision.Text);
+                Global.UpdateAppConfig("SharedParametersFile", txtParamFile.Text);
                 lblApplied.Visibility = Visibility.Visible;
                 isModified = false;
             }, (sender, e) => { if (isModified) { e.CanExecute = true; e.Handled = true; } });
