@@ -177,7 +177,7 @@
                              Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="10" Margin="10,20">
-                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApply}" x:Name="bnApplyConfigure" Width="20" Height="20" Margin="10,0" />
+                <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconApply}" Content="保存设置" x:Name="bnApplyConfigure" Height="20" Padding="5,0" Margin="10,0" />
                 <Label x:Name="lblApplied" Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" Visibility="Collapsed" />
             </StackPanel>
         </Grid>

@@ -23,6 +23,15 @@
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
     <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <Geometry x:Key="IconExplode">M768 796.444c-45.511 0-85.333-39.822-85.333-85.333s39.822-85.333 85.333-85.333 85.333 39.822 85.333 85.333-39.822 85.333-85.333 85.333z
+        M426.667 512c-45.511 0-85.334-39.822-85.334-85.333s39.823-85.334 85.334-85.334S512 381.156 512 426.667 472.178 512 426.667 512z 
+        m256-227.556c-34.134 0-56.89-22.755-56.89-56.888s22.756-56.89 56.89-56.89 56.889 22.756 56.889 56.89-22.756 56.888-56.89 56.888z 
+        m227.555 170.667c-34.133 0-56.889-22.755-56.889-56.889s22.756-56.889 56.89-56.889 56.888 22.756 56.888 56.89-22.755 56.888-56.889 56.888z
+        M227.556 341.333c-34.134 0-56.89-22.755-56.89-56.889s22.756-56.888 56.89-56.888 56.888 22.755 56.888 56.888-22.755 56.89-56.888 56.89z
+        M512 739.556c-34.133 0-56.889-22.756-56.889-56.89s22.756-56.888 56.889-56.888 56.889 22.755 56.889 56.889-22.756 56.889-56.889 56.889z
+        M682.667 512c-34.134 0-56.89-22.756-56.89-56.889s22.756-56.889 56.89-56.889 56.889 22.756 56.889 56.89S716.8 512 682.666 512z
+        M284.444 796.444c-34.133 0-56.888-22.755-56.888-56.888s22.755-56.89 56.888-56.89 56.89 22.756 56.89 56.89-22.756 56.888-56.89 56.888z
+        M56.89 938.667V56.889h56.889v853.333H967.11v56.89H56.89v-28.445z</Geometry>
     <Geometry x:Key="IconWrite">M678.140413 828.647777 289.596166 828.647777c-53.759391 0-97.482195-43.742247-97.482195-97.500615L192.113971 342.620311c0-53.759391 43.722804-97.501638 
         97.482195-97.501638l194.281845 0c11.493775 0 20.807908 9.314133 20.807908 20.807908 0 11.494799-9.314133 20.807908-20.807908 20.807908L289.596166 286.73449
         c-30.806633 0-55.866379 25.077142-55.866379 55.884798l0 388.525827c0 30.80561 25.059745 55.883775 55.866379 55.883775l388.544247 0c30.80561 0 55.884798-25.078165 55.884798-55.883775
@@ -1515,6 +1524,54 @@
                               Width="30" Height="30" HorizontalAlignment="Center" />
                         <ContentPresenter Grid.Row="1" Name="contentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    HorizontalAlignment="Center"
+                                    RecognizesAccessKey="True"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#d2d2d2" />
+                            <Setter TargetName="BookShape" Property="Fill" Value="#d2d2d2" />
+                            <Setter Property="Effect" Value="{x:Null}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Foreground" Value="{StaticResource CyanBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="IconText20HPathButton" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="SnapsToDevicePixels" Value="true" />
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="#1296db"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Foreground" Value="#999999"/>
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource AFocusVisualStyte}" />
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0" Background="{x:Static SystemColors.ControlBrush}" Opacity="0" Margin="0"  />
+                        <Path x:Name="BookShape" Grid.Column="0" Data="{TemplateBinding Tag}" Stretch="Fill" StrokeThickness="0" Fill="{TemplateBinding Foreground}"
+                              Width="20" Height="20" HorizontalAlignment="Center" />
+                        <ContentPresenter Grid.Column="1" Name="contentPresenter" Margin="{TemplateBinding Padding}" Content="{TemplateBinding Content}"
+                                    VerticalAlignment="Center"
                                     HorizontalAlignment="Center"
                                     RecognizesAccessKey="True"/>
                     </Grid>

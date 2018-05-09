@@ -154,10 +154,13 @@ namespace FacadeHelper
         #region 初始化 Command
 
         private RoutedCommand cmdModelInit = new RoutedCommand();
+        private RoutedCommand cmdT24Fix = new RoutedCommand();
         private RoutedCommand cmdOnElementClassify = new RoutedCommand();
         private RoutedCommand cmdElementClassify = new RoutedCommand();
         private RoutedCommand cmdElementLink = new RoutedCommand();
         private RoutedCommand cmdElementResolve = new RoutedCommand();
+        private RoutedCommand cmdElementExplode = new RoutedCommand();
+        private RoutedCommand cmdElementDeepResolve = new RoutedCommand();
 
         private RoutedCommand cmdNavZone = new RoutedCommand();
 
@@ -174,6 +177,63 @@ namespace FacadeHelper
         private void InitializeCommand()
         {
             CommandBinding cbModelInit = new CommandBinding(cmdModelInit, cbModelInit_Executed, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbT24Fix = new CommandBinding(cmdT24Fix, (sender, e) =>
+            {
+                using (StreamWriter file = new StreamWriter(@"d:\11.csv", true))
+                    Global.DocContent.ScheduleElementList.ForEach(se => file.WriteLine($"{se.INF_ElementId},{se.INF_Name},{se.INF_Type},{se.INF_TaskLayer},{se.INF_TaskSubLayer},{se.INF_Code}"));
+                using (StreamWriter file = new StreamWriter(@"d:\12.csv", true))
+                    Global.DocContent.FullScheduleElementList.ForEach(se => file.WriteLine($"{se.INF_ElementId},{se.INF_Name},{se.INF_Type},{se.INF_TaskLayer},{se.INF_TaskSubLayer},{se.INF_Code}"));
+
+
+                Global.DocContent.CurtainPanelList.ForEach(p =>
+                {
+                    Autodesk.Revit.DB.Panel _cp = (doc.GetElement(new ElementId(p.INF_ElementId))) as Autodesk.Revit.DB.Panel;
+                    var p_subs = _cp.GetSubComponentIds();
+                    foreach (ElementId eid in p_subs)
+                    {
+                        ScheduleElementInfo _sei = new ScheduleElementInfo();
+                        Element __element = (doc.GetElement(eid));
+                        _sei.INF_ElementId = eid.IntegerValue;
+                        _sei.INF_Name = __element.Name;
+                        _sei.INF_ZoneCode = p.INF_ZoneCode;
+                        _sei.INF_ZoneIndex = p.INF_ZoneIndex;
+                        _sei.INF_HostZoneInfo = p.INF_HostZoneInfo;
+                        _sei.INF_Level = p.INF_Level;
+                        _sei.INF_Direction = p.INF_Direction;
+                        _sei.INF_System = p.INF_System;
+                        _sei.INF_HostCurtainPanel = p;
+
+                        XYZ _xyzOrigin = ((FamilyInstance)__element).GetTotalTransform().Origin;
+                        _sei.INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.X);
+                        _sei.INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y);
+                        _sei.INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z);
+
+                        #region 确定分项参数 + 工序层级
+                        Parameter _parameter;
+                        _parameter = __element.get_Parameter("分项");
+                        if (int.Parse(_parameter.AsString()) == 24)
+                        {
+                            _sei.INF_Type = 24;
+                            _sei.INF_TaskLayer = 1;
+                            _sei.INF_TaskSubLayer = 26;
+                            _sei.INF_IsScheduled = true;
+                            Global.DocContent.ScheduleElementList.Add(_sei);
+                            listInformation.SelectedIndex = listInformation.Items.Add($"{_sei.INF_ElementId}, {_sei.INF_Name}, {_sei.INF_Type}, {_sei.INF_TaskLayer}");
+                        }
+                        #endregion
+                    }
+                });
+                listInformation.SelectedIndex = listInformation.Items.Add($"{Global.DocContent.ScheduleElementList.Where(se => se.INF_Type == 24).Count()}");
+                Global.DocContent.FullScheduleElementList.Clear();
+                Global.DocContent.FullScheduleElementList.AddRange(Global.DocContent.ScheduleElementList);
+                using (StreamWriter file = new StreamWriter(@"d:\21.csv", true))
+                    Global.DocContent.ScheduleElementList.ForEach(se => file.WriteLine($"{se.INF_ElementId},{se.INF_Name},{se.INF_Type},{se.INF_TaskLayer},{se.INF_TaskSubLayer},{se.INF_Code}"));
+                using (StreamWriter file = new StreamWriter(@"d:\22.csv", true))
+                    Global.DocContent.FullScheduleElementList.ForEach(se => file.WriteLine($"{se.INF_ElementId},{se.INF_Name},{se.INF_Type},{se.INF_TaskLayer},{se.INF_TaskSubLayer},{se.INF_Code}"));
+
+            },
+            (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
             CommandBinding cbOnElementClassify = new CommandBinding(cmdOnElementClassify, (sender, e) =>
             {
                 if (bnOnElementClassify.IsChecked == true) return;
@@ -239,6 +299,254 @@ namespace FacadeHelper
                     }
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
+            CommandBinding cbElementExplode = new CommandBinding(cmdElementExplode,
+                (sender, e) =>
+                {
+                    if (MessageBox.Show(
+                        "组合构件分解后的深层子构件将进入总构件清单参与排序和编码，该过程不可逆，是否继续？",
+                        "组合构件分解",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question,
+                        MessageBoxResult.No) == MessageBoxResult.No) return;
+                    int[] assemlabels = new int[] { 21, 22, 24 };
+                    var _ele_asm = Global.DocContent.ScheduleElementList.Where(ele => assemlabels.Contains(ele.INF_Type)).ToList();
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LIST: E/{_ele_asm.Count}/DEEP.");
+                    bool _haserror = false;
+
+                    _ele_asm.ForEach(ae =>
+                    {
+                        var _ae = doc.GetElement(new ElementId(ae.INF_ElementId));
+                        var _deepids = ((FamilyInstance)_ae).GetSubComponentIds();
+                        if (_deepids != null && _deepids.Count > 0)
+                        {
+                            ae.INF_HasDeepElements = true;
+                            foreach (ElementId sid in _deepids)
+                            {
+                                txtCurrentProcessElement.Content = $"E/{ae.INF_ElementId}";
+                                txtCurrentProcessOperation.Content = "RESOLVE-DEEP/E";
+                                System.Windows.Forms.Application.DoEvents();
+
+                                Element __element = (doc.GetElement(sid));
+                                XYZ _xyzOrigin = ((FamilyInstance)__element).GetTotalTransform().Origin;
+                                ScheduleElementInfo _sei = new ScheduleElementInfo()
+                                {
+                                    INF_ElementId = sid.IntegerValue,
+                                    INF_Name = __element.Name,
+                                    INF_ZoneCode = ae.INF_ZoneCode,
+                                    INF_ZoneIndex = ae.INF_ZoneIndex,
+                                    INF_HostZoneInfo = ae.INF_HostZoneInfo,
+                                    INF_Level = ae.INF_Level,
+                                    INF_Direction = ae.INF_Direction,
+                                    INF_System = ae.INF_System,
+                                    INF_HostCurtainPanel = ae.INF_HostCurtainPanel,
+                                    INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.X),
+                                    INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y),
+                                    INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z)
+                                };
+
+                                #region 确定分项参数 + 工序层级
+                                Parameter _parameter;
+                                _parameter = __element.get_Parameter("分项");
+                                if (_parameter != null)
+                                {
+                                    if ((_parameter = __element.get_Parameter("分项")).HasValue)
+                                    {
+                                        if (int.TryParse(_parameter.AsString(), out int _type))
+                                        {
+                                            ElementClass __sec;
+                                            if ((__sec = Global.ElementClassList.Find(ec => ec.EClassIndex == _type && ec.IsScheduled)) != null)
+                                            {
+                                                _sei.INF_Type = _type;
+                                                _sei.INF_TaskLayer = __sec.ETaskLayer;
+                                                _sei.INF_TaskSubLayer = __sec.ETaskSubLayer;
+                                                _sei.INF_IsScheduled = true;
+                                            }
+                                            else
+                                            {
+                                                _sei.INF_Type = -11;
+                                                continue;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _sei.INF_Type = -1;
+                                            _haserror = true;
+                                            _sei.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
+                                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                                            uidoc.Selection.Elements.Add(__element);
+                                            continue;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _sei.INF_Type = -2;
+                                        _haserror = true;
+                                        _sei.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
+                                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                                        uidoc.Selection.Elements.Add(__element);
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    _sei.INF_Type = -3;
+                                    _haserror = true;
+                                    _sei.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
+                                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
+                                    uidoc.Selection.Elements.Add(__element);
+                                    continue;
+                                }
+                                #endregion
+
+                                DeepElementInfo _dei = new DeepElementInfo()
+                                {
+                                    INF_ElementId = sid.IntegerValue,
+                                    INF_Name = __element.Name,
+                                    INF_ZoneCode = ae.INF_ZoneCode,
+                                    INF_ZoneIndex = ae.INF_ZoneIndex,
+                                    INF_HostZoneInfo = ae.INF_HostZoneInfo,
+                                    INF_Level = ae.INF_Level,
+                                    INF_Direction = ae.INF_Direction,
+                                    INF_System = ae.INF_System,
+                                    INF_HostCurtainPanel = ae.INF_HostCurtainPanel,
+                                    INF_Type = _sei.INF_Type,
+                                    INF_TaskLayer = _sei.INF_TaskLayer,
+                                    INF_TaskSubLayer = _sei.INF_TaskSubLayer,
+                                    INF_IsScheduled = _sei.INF_IsScheduled,
+                                    INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.X),
+                                    INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y),
+                                    INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z),
+                                    INF_HostScheduleElement = ae
+                                };
+
+                                Global.DocContent.ScheduleElementList.Add(_sei);
+                                ae.INF_DeepElements.Add(_dei);
+                            }
+                        }
+                    });
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
+            CommandBinding cbElementDeepResolve = new CommandBinding(cmdElementDeepResolve,
+                (sender, e) =>
+                {
+                    Global.DocContent.DeepElementList.Clear();
+                    int[] assemlabels = new int[] { 21, 22, 24 };
+                    var _ele_asm = Global.DocContent.ScheduleElementList.Where(ele => assemlabels.Contains(ele.INF_Type)).ToList();
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LIST: E/{_ele_asm.Count}/DEEP.");
+                    bool _haserror = false;
+
+                    _ele_asm.ForEach(ae =>
+                    {
+                        var _ae = doc.GetElement(new ElementId(ae.INF_ElementId));
+                        var _deepids = ((FamilyInstance)_ae).GetSubComponentIds();
+                        if (_deepids != null && _deepids.Count > 0)
+                        {
+                            ae.INF_HasDeepElements = true;
+                            foreach (ElementId sid in _deepids)
+                            {
+                                txtCurrentProcessElement.Content = $"E/{ae.INF_ElementId}";
+                                txtCurrentProcessOperation.Content = "RESOLVE-DEEP/E";
+                                System.Windows.Forms.Application.DoEvents();
+
+                                Element __element = (doc.GetElement(sid));
+                                XYZ _xyzOrigin = ((FamilyInstance)__element).GetTotalTransform().Origin;
+                                DeepElementInfo _sei = new DeepElementInfo()
+                                {
+                                    INF_ElementId = sid.IntegerValue,
+                                    INF_Name = __element.Name,
+                                    INF_ZoneCode = ae.INF_ZoneCode,
+                                    INF_ZoneIndex = ae.INF_ZoneIndex,
+                                    INF_HostZoneInfo = ae.INF_HostZoneInfo,
+                                    INF_Level = ae.INF_Level,
+                                    INF_Direction = ae.INF_Direction,
+                                    INF_System = ae.INF_System,
+                                    INF_HostCurtainPanel = ae.INF_HostCurtainPanel,
+                                    INF_OriginX_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.X),
+                                    INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y),
+                                    INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z),
+                                    INF_HostScheduleElement = ae
+                                };
+
+                                #region 确定分项参数 + 工序层级
+                                Parameter _parameter;
+                                _parameter = __element.get_Parameter("分项");
+                                if (_parameter != null)
+                                {
+                                    if ((_parameter = __element.get_Parameter("分项")).HasValue)
+                                    {
+                                        if (int.TryParse(_parameter.AsString(), out int _type))
+                                        {
+                                            ElementClass __sec;
+                                            if ((__sec = Global.ElementClassList.Find(ec => ec.EClassIndex == _type && ec.IsScheduled)) != null)
+                                            {
+                                                _sei.INF_Type = _type;
+                                                _sei.INF_TaskLayer = __sec.ETaskLayer;
+                                                _sei.INF_TaskSubLayer = __sec.ETaskSubLayer;
+                                                _sei.INF_IsScheduled = true;
+                                            }
+                                            else
+                                            {
+                                                _sei.INF_Type = -11;
+                                                continue;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _sei.INF_Type = -1;
+                                            _haserror = true;
+                                            _sei.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
+                                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                                            uidoc.Selection.Elements.Add(__element);
+                                            continue;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _sei.INF_Type = -2;
+                                        _haserror = true;
+                                        _sei.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
+                                        listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
+                                        uidoc.Selection.Elements.Add(__element);
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    _sei.INF_Type = -3;
+                                    _haserror = true;
+                                    _sei.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
+                                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
+                                    uidoc.Selection.Elements.Add(__element);
+                                    continue;
+                                }
+                                #endregion
+
+                                Global.DocContent.DeepElementList.Add(_sei);
+                                ae.INF_DeepElements.Add(_sei);
+                            }
+                        }
+                    });
+
+                    #region 確定嵌板內明細構件數據
+                    var groupsDeepElements = Global.DocContent.DeepElementList.ToLookup(se => se.INF_HostScheduleElement.INF_Code);
+                    int eidx = 0;
+                    foreach (var grp in groupsDeepElements)
+                        foreach (var ele in grp)
+                        {
+                            ele.INF_Index = ++eidx;
+                            ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}{ele.INF_ZoneIndex:0}-X{eidx:000}";//X构件编码
+                            txtCurrentProcessElement.Content = $"E/{ele.INF_HostScheduleElement.INF_Code}.DEEP-E/{ele.INF_ElementId}, {ele.INF_Code}";
+                            txtCurrentProcessOperation.Content = "W/TASK";
+                            System.Windows.Forms.Application.DoEvents();
+
+                        }
+                    #endregion
+
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
 
             CommandBinding cbNavZone = new CommandBinding(cmdNavZone,
                 (sender, e) =>
@@ -358,7 +666,7 @@ namespace FacadeHelper
                                     txtCurrentProcessElement.Content = $"Z/{p.INF_ZoneCode}.P/{p.INF_ElementId}, {p.INF_Code}";
                                     txtCurrentProcessOperation.Content = "W/PARAM";
                                     progbarCurrentProcess.Value++;
-                                    progbarGlobalProcess.Value += 50d / Global.DocContent.CurtainPanelList.Count;
+                                    progbarGlobalProcess.Value += 35d / Global.DocContent.CurtainPanelList.Count;
                                     txtGlobalProcessElement.Content = $"Z/{p.INF_ZoneCode}";
                                     txtGlobalProcessOperation.Content = $"W/PARAM/P";
                                     System.Windows.Forms.Application.DoEvents();
@@ -373,7 +681,7 @@ namespace FacadeHelper
                             trans.Start();
                             //progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
                             //progbarElement.Value = 0;
-                            progbarGlobalProcess.Value = 50;
+                            progbarGlobalProcess.Value = 35;
                             progbarCurrentProcess.Maximum = Global.DocContent.ScheduleElementList.Count;
                             progbarCurrentProcess.Value = 0;
 
@@ -393,7 +701,7 @@ namespace FacadeHelper
                                     txtCurrentProcessElement.Content = $"P/{ele.INF_HostCurtainPanel.INF_Code}.E/{ele.INF_ElementId}, {ele.INF_Code}";
                                     txtCurrentProcessOperation.Content = "W/PARAM";
                                     progbarCurrentProcess.Value++;
-                                    progbarGlobalProcess.Value += 50d / Global.DocContent.ScheduleElementList.Count;
+                                    progbarGlobalProcess.Value += 35d / Global.DocContent.ScheduleElementList.Count;
                                     txtGlobalProcessElement.Content = $"P/{ele.INF_ZoneCode}]";
                                     txtGlobalProcessOperation.Content = $"W/PARAM/E";
                                     System.Windows.Forms.Application.DoEvents();
@@ -401,6 +709,51 @@ namespace FacadeHelper
                             });
                             trans.Commit();
                         }
+
+                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_DeepElements"))
+                        {
+                            trans.Start();
+                            //progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
+                            //progbarElement.Value = 0;
+                            progbarGlobalProcess.Value = 70;
+                            progbarCurrentProcess.Maximum = Global.DocContent.DeepElementList.Count;
+                            progbarCurrentProcess.Value = 0;
+
+                            #region 设置项目参数：组件编码
+                            if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "组件编码"))
+                            {
+                                CategorySet _catset = new CategorySet();
+                                _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                                ParameterHelper.RawCreateProjectParameter(doc.Application, "组件编码", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
+                            }
+                            #endregion
+
+                            Global.DocContent.DeepElementList.ForEach(ele =>
+                            {
+                                Element _element = doc.GetElement(new ElementId(ele.INF_ElementId));
+                                _element.get_Parameter("立面朝向").Set(ele.INF_Direction);
+                                _element.get_Parameter("立面系统").Set(ele.INF_System);
+                                _element.get_Parameter("立面楼层").Set(ele.INF_Level);
+                                _element.get_Parameter("构件分项").Set(ele.INF_Type);
+                                _element.get_Parameter("分区序号").Set(ele.INF_ZoneIndex);
+                                _element.get_Parameter("分区区号").Set(ele.INF_ZoneCode);
+                                _element.get_Parameter("分区编码").Set(ele.INF_Code);
+                                _element.get_Parameter("组件编码").Set(ele.INF_HostScheduleElement.INF_Code);
+
+                                if (IsRealTimeProgress)
+                                {
+                                    txtCurrentProcessElement.Content = $"E/{ele.INF_HostScheduleElement.INF_Code}.DEEP-E/{ele.INF_ElementId}, {ele.INF_Code}";
+                                    txtCurrentProcessOperation.Content = "W/PARAM";
+                                    progbarCurrentProcess.Value++;
+                                    progbarGlobalProcess.Value += 30d / Global.DocContent.DeepElementList.Count;
+                                    txtGlobalProcessElement.Content = $"P/{ele.INF_ZoneCode}]";
+                                    txtGlobalProcessOperation.Content = $"W/PARAM/E";
+                                    System.Windows.Forms.Application.DoEvents();
+                                }
+                            });
+                            trans.Commit();
+                        }
+
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, E/{Global.DocContent.ScheduleElementList.Count}, Param#{Global.DocContent.ScheduleElementList.Count * 7}");
                     }
                     //catch (Exception ex)
@@ -434,10 +787,13 @@ namespace FacadeHelper
             CommandBinding cbPopupClose = new CommandBinding(cmdPopupClose, (sender, e) => { bnQuickStart.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
             bnModelInit.Command = cmdModelInit;
+            bnT24Fix.Command = cmdT24Fix;
             bnOnElementClassify.Command = cmdOnElementClassify;
             bnElementClassify.Command = cmdElementClassify;
+            bnElementExplode.Command = cmdElementExplode;
             bnElementLink.Command = cmdElementLink;
             bnElementResolve.Command = cmdElementResolve;
+            bnElementDeepResolve.Command = cmdElementDeepResolve;
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
             bnApplyParameters.Command = cmdApplyParameters;
@@ -448,10 +804,13 @@ namespace FacadeHelper
             ProcZone.CommandBindings.AddRange(new CommandBinding[]
             {
                 cbModelInit,
+                cbT24Fix,
                 cbOnElementClassify,
                 cbElementClassify,
+                cbElementExplode,
                 cbElementLink,
                 cbElementResolve,
+                cbElementDeepResolve,
                 cbNavZone,
                 cbLoadData,
                 cbSaveData,

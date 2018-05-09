@@ -41,8 +41,12 @@
                                   Content="分区划定" DockPanel.Dock="Left" Width="50" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconLink}" x:Name="bnElementLink" 
                             Content="外链数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconExplode}" x:Name="bnElementExplode" 
+                            Content="组件分解" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementResolve" 
                             Content="构件分析" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementDeepResolve" 
+                            Content="深层编码" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconLoadData}" x:Name="bnLoadData" 
                             Content="加载数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" 
@@ -149,6 +153,7 @@
                     <Border BorderBrush="#C0C0C0" DockPanel.Dock="Top" BorderThickness="0,0,0,1">
                         <DockPanel Height="30" Margin="0,0,0,10" LastChildFill="False">
                             <Label Content="操作手册" DockPanel.Dock="Left" />
+                            <Button x:Name="bnT24Fix" Margin="0" DockPanel.Dock="Right">类型24修复</Button>
                             <Button x:Name="bnPopupClose" Margin="0" DockPanel.Dock="Right">关闭手册</Button>
                         </DockPanel>
                     </Border>
@@ -265,8 +270,8 @@
                         </DockPanel>
                         <DockPanel DockPanel.Dock="Top" Margin="0,5">
                             <WrapPanel HorizontalAlignment="Right">
-                                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnECCancel" ToolTip="取消归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="0" />
-                                <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnElementClassify" ToolTip="构件归类" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0,10,0" />
+                                <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconCancel}" x:Name="bnECCancel" Content="取消归类" DockPanel.Dock="Left" Height="30" Padding="5,0" Margin="0" />
+                                <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconClassify}" x:Name="bnElementClassify" Content="构件归类" DockPanel.Dock="Left" Height="30" Padding="5,0" Margin="20,0,10,0" />
                             </WrapPanel>
                         </DockPanel>
                     </DockPanel>

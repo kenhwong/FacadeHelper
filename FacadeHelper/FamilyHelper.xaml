@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:FacadeHelper"
-             mc:Ignorable="d" Height="800" Width="800">
+             mc:Ignorable="d" Height="600" Width="800">
     <UserControl.Resources>
         <ResourceDictionary>
             <local:IntToBoolConverter x:Key="I2BConverter" />
@@ -40,7 +40,7 @@
         </StackPanel>
         <StackPanel Grid.Row="3">
             <Label Content="族共享参数选择" Margin="0,0,20,0" />
-            <Grid Height="450">
+            <Grid Height="300">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="250" />
                     <ColumnDefinition Width="250" />
@@ -105,7 +105,7 @@
             <TextBox x:Name="txtWPM" Width="200" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="5" Margin="10,20" VerticalAlignment="Bottom">
-            <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconApply}" x:Name="bnApplyParam" Width="20" Height="20" Margin="10,0" />
+            <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconApply}" Content="写入参数值" x:Name="bnApplyParam" Height="30" Padding="5,0" Margin="10,0" />
             <Label x:Name="lblApplied" Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" Visibility="Collapsed" />
         </StackPanel>
 

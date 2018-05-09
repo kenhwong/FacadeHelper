@@ -247,6 +247,8 @@ namespace FacadeHelper
         public string INF_TaskDuration { get { return _inf_TaskDuration; } set { _inf_TaskDuration = value; OnPropertyChanged(nameof(INF_TaskDuration)); } }
         public uint INF_TaskID_PreProcess { get { return _inf_TaskID_PreProcess; } set { _inf_TaskID_PreProcess = value; OnPropertyChanged(nameof(INF_TaskID_PreProcess)); } }
 
+        public override string ToString() => INF_Code.ToString();
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -481,13 +481,22 @@ namespace FacadeHelper
                     ParameterHelper.RawCreateProjectParameter(doc.Application, "构件子项", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
-                #region 设置项目参数：加工图号
-                if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "加工图号"))
+                #region 设置项目参数：加工编号
+                if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "加工编号"))
                 {
                     CategorySet _catset = new CategorySet();
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
                     _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
-                    ParameterHelper.RawCreateProjectParameter(doc.Application, "加工图号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
+                    ParameterHelper.RawCreateProjectParameter(doc.Application, "加工编号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
+                }
+                #endregion
+                #region 设置项目参数：材料单号
+                if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "材料单号"))
+                {
+                    CategorySet _catset = new CategorySet();
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallMullions));
+                    ParameterHelper.RawCreateProjectParameter(doc.Application, "材料单号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                 }
                 #endregion
 
@@ -604,6 +613,7 @@ namespace FacadeHelper
                 new ElementClass { EClassIndex = 21, EClassName = "窗扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 27 },
                 new ElementClass { EClassIndex = 22, EClassName = "門扇", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 28 },
                 new ElementClass { EClassIndex = 23, EClassName = "大五金", IsScheduled = false },
+                new ElementClass { EClassIndex = 24, EClassName = "百页组", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 26 },
                 new ElementClass { EClassIndex = 51, EClassName = "石材嵌板", IsScheduled = false },
                 new ElementClass { EClassIndex = 52, EClassName = "玻璃嵌板", IsScheduled = false },
                 new ElementClass { EClassIndex = 53, EClassName = "鋁板嵌板", IsScheduled = false },
@@ -918,7 +928,7 @@ namespace FacadeHelper
                 Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
 
                 _pi.INF_Index = ++pindex;
-                _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}-{pindex:0000}";
+                _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}{_pi.INF_ZoneIndex:0}-{pindex:0000}";
             }
             #endregion
 
@@ -983,7 +993,7 @@ namespace FacadeHelper
                 foreach (var ele in _sesinzone[layergroup.Key])
                 {
                     ele.INF_Index = ++eindexinzone;
-                    ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}-{eindexinzone:0000}";//构件编码
+                    ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}{ele.INF_ZoneIndex:0}-{eindexinzone:0000}";//构件编码
                     ele.INF_TaskStart = GetDeadTime(zlayer.ZoneStart, v_hours_per_element * (eindexinzone - 1));
                     ele.INF_TaskFinish = GetDeadTime(zlayer.ZoneStart, v_hours_per_element * eindexinzone);
 
