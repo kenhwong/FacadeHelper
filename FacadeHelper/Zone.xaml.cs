@@ -868,7 +868,7 @@ namespace FacadeHelper
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
             var panels = panelcollector
-                .WherePasses(cwpanel_InstancesFilter)
+                .WherePasses(cwpanel_InstancesFilter) //
                 .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板")
                 .ToList();
 
