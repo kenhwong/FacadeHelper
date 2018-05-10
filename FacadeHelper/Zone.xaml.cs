@@ -158,6 +158,7 @@ namespace FacadeHelper
         private RoutedCommand cmdOnElementClassify = new RoutedCommand();
         private RoutedCommand cmdElementClassify = new RoutedCommand();
         private RoutedCommand cmdElementLink = new RoutedCommand();
+        private RoutedCommand cmdElementUnLink = new RoutedCommand();
         private RoutedCommand cmdElementResolve = new RoutedCommand();
         private RoutedCommand cmdElementExplode = new RoutedCommand();
         private RoutedCommand cmdElementDeepResolve = new RoutedCommand();
@@ -274,6 +275,17 @@ namespace FacadeHelper
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LINK: FILE, {string.Join(",", ofd.SafeFileNames)}.");
                         IsExteriorDataLinked = true;
                     }
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
+            CommandBinding cbElementUnLink = new CommandBinding(cmdElementUnLink,
+                (sender, e) =>
+                {
+                    Global.DocContent.ExternalElementDataList.Clear();
+                    Global.DocContent.FullCurtainPanelList.Clear();
+                    Global.DocContent.FullScheduleElementList.Clear();
+                    Global.DocContent.FullZoneList.Clear();
+                    IsExteriorDataLinked = false;
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -639,6 +651,36 @@ namespace FacadeHelper
             CommandBinding cbApplyParameters = new CommandBinding(cmdApplyParameters,
                 (sender, e) =>
                 {
+                    if (MessageBox.Show($"是否采用当前数据写入模型参数？\n如不采用将读取外部数据文件(ExternalElementData序列化数据)覆盖当前数据。", 
+                        "参数数据源...", 
+                        MessageBoxButton.YesNo, 
+                        MessageBoxImage.Question, 
+                        MessageBoxResult.Yes) == MessageBoxResult.No)
+                    {
+                        Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
+                        {
+                            InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
+                            DefaultExt = "*.sort",
+                            Filter = "Sorted Elements Collection Files(*.sort)|*.sort|Element Collection Files(*.elist)|*.elist|All(*.*)|*.*"
+                        };
+                        if (ofd.ShowDialog() == true)
+                        {
+                            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - READ: DATA, {ofd.FileName}");
+                            using (Stream stream = new FileStream(ofd.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                            {
+                                var extdata = Serializer.Deserialize<ExternalElementData>(stream);
+                                extdata.ExternalId = 0;
+                                extdata.ExternalFileName = ofd.FileName;
+                                Global.DocContent.CurtainPanelList.Clear();
+                                Global.DocContent.ScheduleElementList.Clear();
+                                Global.DocContent.CurtainPanelList.AddRange(extdata.CurtainPanelList);
+                                Global.DocContent.ScheduleElementList.AddRange(extdata.ScheduleElementList);
+                                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - UPDATE: LIST/P");
+                                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - UPDATE: LIST/E");
+                            }
+                        }
+                    }
+
                     #region 參數寫入
                     //try
                     {
@@ -653,13 +695,16 @@ namespace FacadeHelper
                             Global.DocContent.CurtainPanelList.ForEach(p =>
                             {
                                 Element _element = doc.GetElement(new ElementId(p.INF_ElementId));
-                                _element.get_Parameter("立面朝向").Set(p.INF_Direction);
-                                _element.get_Parameter("立面系统").Set(p.INF_System);
-                                _element.get_Parameter("立面楼层").Set(p.INF_Level);
-                                _element.get_Parameter("构件分项").Set(p.INF_Type);
-                                _element.get_Parameter("分区序号").Set(p.INF_ZoneIndex);
-                                _element.get_Parameter("分区区号").Set(p.INF_ZoneCode);
-                                _element.get_Parameter("分区编码").Set(p.INF_Code);
+                                if (_element != null)
+                                {
+                                    _element.get_Parameter("立面朝向").Set(p.INF_Direction);
+                                    _element.get_Parameter("立面系统").Set(p.INF_System);
+                                    _element.get_Parameter("立面楼层").Set(p.INF_Level);
+                                    _element.get_Parameter("构件分项").Set(p.INF_Type);
+                                    _element.get_Parameter("分区序号").Set(p.INF_ZoneIndex);
+                                    _element.get_Parameter("分区区号").Set(p.INF_ZoneCode);
+                                    _element.get_Parameter("分区编码").Set(p.INF_Code);
+                                }
 
                                 if (IsRealTimeProgress)
                                 {
@@ -688,13 +733,16 @@ namespace FacadeHelper
                             Global.DocContent.ScheduleElementList.ForEach(ele =>
                             {
                                 Element _element = doc.GetElement(new ElementId(ele.INF_ElementId));
-                                _element.get_Parameter("立面朝向").Set(ele.INF_Direction);
-                                _element.get_Parameter("立面系统").Set(ele.INF_System);
-                                _element.get_Parameter("立面楼层").Set(ele.INF_Level);
-                                _element.get_Parameter("构件分项").Set(ele.INF_Type);
-                                _element.get_Parameter("分区序号").Set(ele.INF_ZoneIndex);
-                                _element.get_Parameter("分区区号").Set(ele.INF_ZoneCode);
-                                _element.get_Parameter("分区编码").Set(ele.INF_Code);
+                                if (_element != null)
+                                {
+                                    _element.get_Parameter("立面朝向").Set(ele.INF_Direction);
+                                    _element.get_Parameter("立面系统").Set(ele.INF_System);
+                                    _element.get_Parameter("立面楼层").Set(ele.INF_Level);
+                                    _element.get_Parameter("构件分项").Set(ele.INF_Type);
+                                    _element.get_Parameter("分区序号").Set(ele.INF_ZoneIndex);
+                                    _element.get_Parameter("分区区号").Set(ele.INF_ZoneCode);
+                                    _element.get_Parameter("分区编码").Set(ele.INF_Code);
+                                }
 
                                 if (IsRealTimeProgress)
                                 {
@@ -792,6 +840,7 @@ namespace FacadeHelper
             bnElementClassify.Command = cmdElementClassify;
             bnElementExplode.Command = cmdElementExplode;
             bnElementLink.Command = cmdElementLink;
+            bnElementUnLink.Command = cmdElementUnLink;
             bnElementResolve.Command = cmdElementResolve;
             bnElementDeepResolve.Command = cmdElementDeepResolve;
             bnLoadData.Command = cmdLoadData;
@@ -809,6 +858,7 @@ namespace FacadeHelper
                 cbElementClassify,
                 cbElementExplode,
                 cbElementLink,
+                cbElementUnLink,
                 cbElementResolve,
                 cbElementDeepResolve,
                 cbNavZone,

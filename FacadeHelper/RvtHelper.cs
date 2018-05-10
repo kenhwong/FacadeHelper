@@ -598,8 +598,8 @@ namespace FacadeHelper
                 new ElementClass { EClassIndex = 4, EClassName = "石材", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 24 },
                 new ElementClass { EClassIndex = 5, EClassName = "鋼橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 12 },
                 new ElementClass { EClassIndex = 6, EClassName = "鋼立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 11 },
-                new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 24 },
-                new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 23 },
+                new ElementClass { EClassIndex = 7, EClassName = "鋁橫樑", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 14 },
+                new ElementClass { EClassIndex = 8, EClassName = "鋁立柱", IsScheduled = true, ETaskLayer = 0, ETaskSubLayer = 13 },
                 new ElementClass { EClassIndex = 9, EClassName = "緊固件", IsScheduled = false },
                 new ElementClass { EClassIndex = 10, EClassName = "鐵板", IsScheduled = true, ETaskLayer = 1, ETaskSubLayer = 21 },
                 new ElementClass { EClassIndex = 11, EClassName = "保溫棉", IsScheduled = false },
@@ -774,8 +774,8 @@ namespace FacadeHelper
         #region 加载外部链接项目的构件数据
         public static void FnLinkedElementsDeserialize(string[] linkfiles)
         {
-            Global.DocContent.FullCurtainPanelList.AddRange(Global.DocContent.CurtainPanelList);
-            Global.DocContent.FullScheduleElementList.AddRange(Global.DocContent.ScheduleElementList);
+            if (Global.DocContent.FullCurtainPanelList.Count == 0) Global.DocContent.FullCurtainPanelList.AddRange(Global.DocContent.CurtainPanelList);
+            if (Global.DocContent.FullScheduleElementList.Count == 0) Global.DocContent.FullScheduleElementList.AddRange(Global.DocContent.ScheduleElementList);
 
             for (int i = 0; i < linkfiles.Length; i++)
             {
@@ -801,7 +801,7 @@ namespace FacadeHelper
         #region 序列化外部链接项目的构件数据
         public static void FnLinkedElementsSerialize(ref ListBox listinfo)
         {
-            foreach(var d in Global.DocContent.ExternalElementDataList)
+            foreach (var d in Global.DocContent.ExternalElementDataList)
             {
                 if (d.ExternalId > 0)
                 {
@@ -935,6 +935,7 @@ namespace FacadeHelper
             var _layersinzone = Global.ZoneLayerList.Where(zs => zs.ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase));
 
             var layersgroupsScheduleElement = Global.DocContent.FullScheduleElementList
+                .Where(ele => ele.INF_TaskLayer >= 0)
                 .Where(ele => ele.INF_ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase))
                 .ToLookup(se => se.INF_TaskLayer);
             foreach (var layergroup in layersgroupsScheduleElement)
@@ -948,8 +949,12 @@ namespace FacadeHelper
                         _sesinzone[layergroup.Key] = layergroup.OrderBy(ele => ele.INF_TaskSubLayer)
                             .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
                             .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e4 => Math.Round(e4.INF_OriginX_Metric / Constants.RVTPrecision));
+                            /** 外链构件无法实时确定位置，用保存的原点数据代替左下角位置
                             .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
                             .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
+                            **/
                         break;
                     case "N":
                         listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, X-, Z+...");
@@ -957,8 +962,8 @@ namespace FacadeHelper
                         _sesinzone[layergroup.Key] = layergroup.OrderByDescending(m1 => m1.INF_TaskSubLayer)
                             .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
                             .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
-                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                            .ThenByDescending(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e4 => Math.Round(e4.INF_OriginX_Metric / Constants.RVTPrecision));
                         break;
                     case "E":
                         listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, Y+, Z+...");
@@ -966,8 +971,8 @@ namespace FacadeHelper
                         _sesinzone[layergroup.Key] = layergroup.OrderByDescending(m1 => m1.INF_TaskSubLayer)
                             .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
                             .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
-                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                            .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Y / Constants.RVTPrecision));
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e4 => Math.Round(e4.INF_OriginY_Metric / Constants.RVTPrecision));
                         break;
                     case "W":
                         listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, Y-, Z+...");
@@ -975,8 +980,8 @@ namespace FacadeHelper
                         _sesinzone[layergroup.Key] = layergroup.OrderByDescending(m1 => m1.INF_TaskSubLayer)
                             .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
                             .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
-                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                            .ThenByDescending(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Y / Constants.RVTPrecision));
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e4 => Math.Round(e4.INF_OriginY_Metric / Constants.RVTPrecision));
                         break;
                     default:
                         break;

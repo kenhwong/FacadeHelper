@@ -41,6 +41,8 @@
                                   Content="分区划定" DockPanel.Dock="Left" Width="50" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconLink}" x:Name="bnElementLink" 
                             Content="外链数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconUnLink}" x:Name="bnElementUnLink" 
+                            Content="清除外链" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconExplode}" x:Name="bnElementExplode" 
                             Content="组件分解" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconSort}" x:Name="bnElementResolve" 
