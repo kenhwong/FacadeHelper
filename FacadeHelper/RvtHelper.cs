@@ -858,6 +858,162 @@ namespace FacadeHelper
         /// <param name="txt_curr_op">状态文字控件引用-当前操作</param>
         /// <param name="progbar_curr">当前状态进度条控件引用</param>
         /// <param name="listinfo">输出状态信息控件引用</param>
+        public static void FnResolveZone_MixSort(UIDocument uidoc, ZoneInfoBase zone, ref Label txt_curr_ele, ref Label txt_curr_op, ref ProgressBar progbar_curr, ref ListBox listinfo)
+        {
+            var doc = uidoc.Document;
+            uidoc.Selection.Elements.Clear();
+
+            IOrderedEnumerable<CurtainPanelInfo> _panelsinzone = null;
+            IOrderedEnumerable<ScheduleElementInfo>[] _sesinzone = new IOrderedEnumerable<ScheduleElementInfo>[3];
+
+            List<ScheduleElementInfo> p_ScheduleElementList = new List<ScheduleElementInfo>();
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: Z/{zone.ZoneCode}.");
+            System.Windows.Forms.Application.DoEvents();
+
+            #region CurtainPanelList 排序
+            switch (zone.ZoneDirection)
+            {
+                case "S":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}/P, X+, Z+...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p => p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenBy(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+                    break;
+                case "N":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}/P, X-, Z+...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p => p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenByDescending(p2 => Math.Round(p2.INF_OriginX_Metric / Constants.RVTPrecision));
+                    break;
+                case "E":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}/P, Y+, Z+...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p => p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenBy(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+                    break;
+                case "W":
+                    listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}/P, Y-, Z+...");
+                    System.Windows.Forms.Application.DoEvents();
+                    _panelsinzone = Global.DocContent.FullCurtainPanelList
+                        .Where(p => p.INF_HostZoneInfo.ZoneCode == zone.ZoneCode)
+                        .OrderBy(p => p.INF_ExternalLinkId)
+                        .ThenBy(p1 => Math.Round(p1.INF_OriginZ_Metric / Constants.RVTPrecision))
+                        .ThenByDescending(p2 => Math.Round(p2.INF_OriginY_Metric / Constants.RVTPrecision));
+                    break;
+                default: break;
+            }
+            #endregion
+
+            progbar_curr.Maximum = _panelsinzone.Count();
+            progbar_curr.Value = 0;
+
+            listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CODE: Z/{zone.ZoneCode}/P.");
+            #region 確定分區內嵌板數據及排序
+            int pindex = 0;
+            foreach (CurtainPanelInfo _pi in _panelsinzone)
+            {
+                txt_curr_ele.Content = $"Z/{zone.ZoneCode}.P/{_pi.INF_ElementId}, {_pi.INF_Code}";
+                txt_curr_op.Content = "RESOLVE/P";
+                progbar_curr.Value++;
+                System.Windows.Forms.Application.DoEvents();
+                Autodesk.Revit.DB.Panel _p = doc.GetElement(new ElementId(_pi.INF_ElementId)) as Autodesk.Revit.DB.Panel;
+
+                _pi.INF_Index = ++pindex;
+                _pi.INF_Code = $"CW-{_pi.INF_Type:00}-{_pi.INF_Level:00}-{_pi.INF_Direction}{_pi.INF_System}{_pi.INF_ZoneIndex:0}-{pindex:0000}";
+            }
+            #endregion
+
+            var _layersinzone = Global.ZoneLayerList.Where(zs => zs.ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase));
+
+            var layersgroupsScheduleElement = Global.DocContent.FullScheduleElementList
+                .Where(ele => ele.INF_TaskLayer >= 0)
+                .Where(ele => ele.INF_ZoneCode.Equals(zone.ZoneCode, StringComparison.CurrentCultureIgnoreCase))
+                .ToLookup(se => se.INF_TaskLayer);
+            foreach (var layergroup in layersgroupsScheduleElement)
+            {
+                #region 明细构件 排序
+                switch (zone.ZoneDirection)
+                {
+                    case "S":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, X+, Z+...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[layergroup.Key] = layergroup.OrderBy(ele => ele.INF_TaskSubLayer)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e4 => Math.Round(e4.INF_OriginX_Metric / Constants.RVTPrecision));
+                        /** 外链构件无法实时确定位置，用保存的原点数据代替左下角位置
+                        .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
+                        .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
+                        **/
+                        break;
+                    case "N":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, X-, Z+...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[layergroup.Key] = layergroup.OrderByDescending(m1 => m1.INF_TaskSubLayer)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e4 => Math.Round(e4.INF_OriginX_Metric / Constants.RVTPrecision));
+                        break;
+                    case "E":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, Y+, Z+...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[layergroup.Key] = layergroup.OrderByDescending(m1 => m1.INF_TaskSubLayer)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenBy(e4 => Math.Round(e4.INF_OriginY_Metric / Constants.RVTPrecision));
+                        break;
+                    case "W":
+                        listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, Y-, Z+...");
+                        System.Windows.Forms.Application.DoEvents();
+                        _sesinzone[layergroup.Key] = layergroup.OrderByDescending(m1 => m1.INF_TaskSubLayer)
+                            .ThenBy(e1 => Math.Round(e1.INF_HostCurtainPanel.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginY_Metric / Constants.RVTPrecision))
+                            .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
+                            .ThenByDescending(e4 => Math.Round(e4.INF_OriginY_Metric / Constants.RVTPrecision));
+                        break;
+                    default:
+                        break;
+                }
+                #endregion
+
+                listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - CODE: Z/{zone.ZoneCode}@{layergroup.Key}, E/{_sesinzone[layergroup.Key].Count()}...");
+                #region 確定嵌板內明細構件數據
+                int eindexinzone = 0;
+                var zlayer = _layersinzone.FirstOrDefault(l => l.ZoneLayer == layergroup.Key);
+                zlayer.ZoneDays = (zlayer.ZoneFinish - zlayer.ZoneStart).Days + 1;
+                zlayer.ZoneHours = zlayer.ZoneDays * Global.OptionHoursPerDay;
+                double v_hours_per_element = 1.0 * zlayer.ZoneHours / _panelsinzone.Count();
+                foreach (var ele in _sesinzone[layergroup.Key])
+                {
+                    ele.INF_Index = ++eindexinzone;
+                    ele.INF_Code = $"CW-{ele.INF_Type:00}-{ele.INF_Level:00}-{ele.INF_Direction}{ele.INF_System}{ele.INF_ZoneIndex:0}-{eindexinzone:0000}";//构件编码
+                    ele.INF_TaskStart = GetDeadTime(zlayer.ZoneStart, v_hours_per_element * (eindexinzone - 1));
+                    ele.INF_TaskFinish = GetDeadTime(zlayer.ZoneStart, v_hours_per_element * eindexinzone);
+
+                    txt_curr_ele.Content = $"Z/{ele.INF_ZoneCode}.E/{ele.INF_ElementId}, {ele.INF_Code}";
+                    txt_curr_op.Content = "W/TASK";
+                    progbar_curr.Value++;
+                    System.Windows.Forms.Application.DoEvents();
+
+                }
+                #endregion
+            }
+
+
+        }
+
         public static void FnResolveZone(UIDocument uidoc, ZoneInfoBase zone, ref Label txt_curr_ele, ref Label txt_curr_op, ref ProgressBar progbar_curr, ref ListBox listinfo)
         {
             var doc = uidoc.Document;
@@ -951,10 +1107,10 @@ namespace FacadeHelper
                             .ThenBy(e2 => Math.Round(e2.INF_HostCurtainPanel.INF_OriginX_Metric / Constants.RVTPrecision))
                             .ThenBy(e3 => Math.Round(e3.INF_OriginZ_Metric / Constants.RVTPrecision))
                             .ThenBy(e4 => Math.Round(e4.INF_OriginX_Metric / Constants.RVTPrecision));
-                            /** 外链构件无法实时确定位置，用保存的原点数据代替左下角位置
-                            .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
-                            .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
-                            **/
+                        /** 外链构件无法实时确定位置，用保存的原点数据代替左下角位置
+                        .ThenBy(e3 => Math.Round(doc.GetElement(new ElementId(e3.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.Z / Constants.RVTPrecision))
+                        .ThenBy(e4 => Math.Round(doc.GetElement(new ElementId(e4.INF_ElementId)).get_BoundingBox(doc.ActiveView).Min.X / Constants.RVTPrecision));
+                        **/
                         break;
                     case "N":
                         listinfo.SelectedIndex = listinfo.Items.Add($"{DateTime.Now:HH:mm:ss} - SORT: Z/{zone.ZoneCode}@{layergroup.Key}, X-, Z+...");
@@ -984,7 +1140,7 @@ namespace FacadeHelper
                             .ThenByDescending(e4 => Math.Round(e4.INF_OriginY_Metric / Constants.RVTPrecision));
                         break;
                     default:
-                        break; 
+                        break;
                 }
                 #endregion
 
@@ -1013,6 +1169,7 @@ namespace FacadeHelper
 
 
         }
+
 
         #endregion
         public static void FnContentSerialize()
