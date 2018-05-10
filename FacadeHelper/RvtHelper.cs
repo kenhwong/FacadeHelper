@@ -984,7 +984,7 @@ namespace FacadeHelper
                             .ThenByDescending(e4 => Math.Round(e4.INF_OriginY_Metric / Constants.RVTPrecision));
                         break;
                     default:
-                        break;
+                        break; 
                 }
                 #endregion
 
