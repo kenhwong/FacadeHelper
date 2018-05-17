@@ -69,6 +69,8 @@ namespace FacadeHelper
         public bool IsRealTimeProgress { get { return _isRealTimeProgress; } set { _isRealTimeProgress = value; OnPropertyChanged(nameof(IsRealTimeProgress)); } }
         private bool _isPIDInitialized = false;
         public bool IsPIDInitialized { get { return _isPIDInitialized; } set { _isPIDInitialized = value; OnPropertyChanged(nameof(IsPIDInitialized)); } }
+        private bool _isElementIndexRangeInitialized = false;
+        public bool IsElementIndexRangeInitialized { get { return _isElementIndexRangeInitialized; } set { _isElementIndexRangeInitialized = value; OnPropertyChanged(nameof(IsElementIndexRangeInitialized)); } }
         private bool _isZoneLayerInitialized = false;
         public bool IsZoneLayerInitialized { get { return _isZoneLayerInitialized; } set { _isZoneLayerInitialized = value; OnPropertyChanged(nameof(IsZoneLayerInitialized)); } }
         private bool _isElementClassInitialized = false;
@@ -104,6 +106,19 @@ namespace FacadeHelper
                 IsPIDInitialized = true;
             }
 
+            #region 检测 ElementIndexRange 是否加载
+            var eirlist = ZoneHelper.FnElementIndexRangeDeserialize();
+            if (eirlist is null)
+            {
+                Global.ElementIndexRangeList = new List<ElementIndexRange>();
+                IsElementIndexRangeInitialized = false;
+            }
+            else
+            {
+                Global.ElementIndexRangeList = eirlist;
+                IsElementIndexRangeInitialized = true;
+            }
+            #endregion
 
             #region 检测 ElementClass 是否加载
             var eclist = ZoneHelper.FnFilterClassDeserialize();
@@ -918,8 +933,12 @@ namespace FacadeHelper
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
             var panels = panelcollector
-                .WherePasses(cwpanel_InstancesFilter) //
-                .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板")
+                .WherePasses(cwpanel_InstancesFilter)
+                .Where(x => 
+                (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" &&
+                (x as FamilyInstance).Symbol.Family.Name != "空嵌板" &&
+                (x as FamilyInstance).Symbol.Family.Name != "空系统嵌板" &&
+                (x as FamilyInstance).Symbol.Name != "NULL")
                 .ToList();
 
             if (panels.Count == 0)
@@ -995,7 +1014,6 @@ namespace FacadeHelper
                                 _haserror = true;
                                 _sei.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
                                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
-                                uidoc.Selection.Elements.Add(__element);
                                 continue;
                             }
                         }
@@ -1005,7 +1023,6 @@ namespace FacadeHelper
                             _haserror = true;
                             _sei.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
                             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
-                            uidoc.Selection.Elements.Add(__element);
                             continue;
                         }
                     }
@@ -1015,7 +1032,6 @@ namespace FacadeHelper
                         _haserror = true;
                         _sei.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
-                        uidoc.Selection.Elements.Add(__element);
                         continue;
                     }
                     #endregion
@@ -1030,37 +1046,20 @@ namespace FacadeHelper
 
             });
 
-            #region 参数错误构件保存选择集
-            if (!uidoc.Selection.Elements.IsEmpty)
-            {
-                using (Transaction trans = new Transaction(doc, "CreateZoneErrorElementGroup"))
-                {
-                    trans.Start();
-                    var sfe = SelectionFilterElement.Create(doc, $"ERROR-{CurrentZoneInfo.ZoneCode}");
-                    sfe.AddSet(uidoc.Selection.GetElementIds());
-                    trans.Commit();
-                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: Z/[{CurrentZoneInfo.ZoneCode}, ERR#{CurrentZoneInfo.ZoneCode}.");
-                }
-            }
-
-            if (_haserror)
-            {
-                if (MessageBox.Show($"有部分构件存在参数错误，是否继续处理数据？", "构件参数错误...", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No)
-                {
-                    return;
-                }
-            }
+            #region 构件参数错误中断操作确认
+          if (_haserror){if (MessageBox.Show(
+              $"有部分构件存在参数错误，是否继续处理数据？", 
+              "构件参数错误...", 
+              MessageBoxButton.YesNo, 
+              MessageBoxImage.Question, 
+              MessageBoxResult.No) == MessageBoxResult.No) return; }
             #endregion
-
 
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
 
             datagridPanels.ItemsSource = null;
             datagridPanels.ItemsSource = SelectedCurtainPanelList;
             tabPanel.Content = $"嵌板 / {SelectedCurtainPanelList.Count}";
-
-            uidoc.Selection.Elements.Clear();
-            foreach (var _ele in panels) uidoc.Selection.Elements.Add(_ele);
 
             using (Transaction trans = new Transaction(doc, "CreatePanelGroup"))
             {
@@ -1070,7 +1069,7 @@ namespace FacadeHelper
                 SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == CurrentZoneInfo.ZoneCode);
                 if (selectset != null) selectset.Clear();
                 else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
-                selectset.AddSet(uidoc.Selection.GetElementIds());
+                panels.ForEach(p => selectset.AddSingle(p.Id));
                 doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
                 trans.Commit();
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: SECECTSET, SSET/{CurrentZoneInfo.FilterName}, P/{selectset.GetElementIds().Count}");

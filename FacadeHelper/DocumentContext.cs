@@ -90,7 +90,7 @@ namespace FacadeHelper
         public List<CurtainPanelInfo> FullCurtainPanelList { get; set; } = new List<CurtainPanelInfo>();
         public List<ScheduleElementInfo> FullScheduleElementList { get; set; } = new List<ScheduleElementInfo>();
         public ObservableCollection<ZoneInfoBase> FullZoneList { get; set; } = new ObservableCollection<ZoneInfoBase>();
-        
+
         [NonSerializableMember] public List<ParameterHelper.RawProjectParameterInfo> ParameterInfoList { get; set; } = new List<ParameterHelper.RawProjectParameterInfo>();
 
         public ZoneInfoBase CurrentZoneInfo = new ZoneInfoBase();
@@ -142,11 +142,11 @@ namespace FacadeHelper
     [SerializableType]
     public class ElementClass : INotifyPropertyChanged
     {
-        private int _eClassIndex { get; set; }
-        private string _eClassName { get; set; } = "Unset";
-        private bool _isScheduled { get; set; } = false;
-        private int _eTaskLayer { get; set; } = -1;
-        private int _eTaskSubLayer { get; set; } = -1;
+        private int _eClassIndex;
+        private string _eClassName = "Unset";
+        private bool _isScheduled = false;
+        private int _eTaskLayer = -1;
+        private int _eTaskSubLayer = -1;
 
         [XmlAttribute] public int EClassIndex { get { return _eClassIndex; } set { _eClassIndex = value; OnPropertyChanged(nameof(EClassIndex)); } }
         [XmlAttribute] public string EClassName { get { return _eClassName; } set { _eClassName = value; OnPropertyChanged(nameof(EClassName)); } }
@@ -166,6 +166,27 @@ namespace FacadeHelper
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    [Serializable, XmlRoot(Namespace = "", IsNullable = false)]
+    [SerializableType]
+    public class ElementIndexRange : INotifyPropertyChanged
+    {
+        private string _zoneCode = "";
+        private int _elementType = 0;
+        private int _indexMax = 0;
+
+        [XmlAttribute] public string ZoneCode { get { return _zoneCode; } set { _zoneCode = value; OnPropertyChanged(nameof(ZoneCode)); } }
+        [XmlAttribute] public int ElementType { get { return _elementType; } set { _elementType = value; OnPropertyChanged(nameof(ElementType)); } }
+        [XmlAttribute] public int IndexMax { get { return _indexMax; } set { _indexMax = value; OnPropertyChanged(nameof(IndexMax)); } }
+
+        public ElementIndexRange() { ZoneCode = "Unset"; ElementType = 0; IndexMax = 0; }
+        public ElementIndexRange(string zonecode) : this() { ZoneCode = zonecode; }
+        public ElementIndexRange(string zonecode, int etype) : this() { ZoneCode = zonecode; ElementType = etype; }
+        public ElementIndexRange(string zonecode, int etype, int max) : this() { ZoneCode = zonecode; ElementType = etype; IndexMax = max; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     public class Global
     {
         public static DocumentContent DocContent;
@@ -175,6 +196,7 @@ namespace FacadeHelper
         public static int OptionHoursPerDay = 8;
         public static int OptionDaysPerWeek = 7;
 
+        public static List<ElementIndexRange> ElementIndexRangeList = new List<ElementIndexRange>();
         public static List<ElementClass> ElementClassList = new List<ElementClass>();
         public static List<ZoneLayerInfo> ZoneLayerList = new List<ZoneLayerInfo>();
         public static int[][] TaskLevelClass;
@@ -209,6 +231,26 @@ namespace FacadeHelper
                 }
             }
             return null;
+        }
+
+        public static ElementIndexRange GetElementIndexRange(string zonecode, int etype)
+        {
+            ElementIndexRange eir = new ElementIndexRange(zonecode, etype);
+            if (Global.ElementIndexRangeList?.Count == 0)
+            {
+                Global.ElementIndexRangeList.Add(eir);
+                return eir;
+            }
+            else
+            {
+                return Global.ElementIndexRangeList.FirstOrDefault(r => r.ZoneCode.Equals(zonecode, StringComparison.CurrentCultureIgnoreCase) && r.ElementType == etype) ?? eir;
+            }
+        }
+
+        public static void UpdateElementIndexRange(string zonecode, int etype, int max)
+        {
+            Global.ElementIndexRangeList.RemoveAll(r => r.ZoneCode.Equals(zonecode, StringComparison.CurrentCultureIgnoreCase) && r.ElementType == etype);
+            Global.ElementIndexRangeList.Add(new ElementIndexRange(zonecode, etype, max));
         }
     }
 

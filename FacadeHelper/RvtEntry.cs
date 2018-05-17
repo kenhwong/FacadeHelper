@@ -31,14 +31,17 @@ namespace FacadeHelper
             PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
             PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
             PushButtonData bndata_family_param = new PushButtonData("cmdFamilyParam", "族参初始", thisAssemblyPath, "FacadeHelper.ICommand_Document_AddFamilyParameters");
+            PushButtonData bndata_selectfilter = new PushButtonData("cmdSelectFilter", "选择过滤", thisAssemblyPath, "FacadeHelper.ICommand_Document_SelectFilter");
             bndata_appconfig.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "config32.png")));
             bndata_process_elements.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
             bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "se32.png")));
             bndata_family_param.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "sv32.png")));
+            bndata_selectfilter.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "filter32.png")));
             rpanel.AddItem(bndata_appconfig);
             rpanel.AddItem(bndata_zone);
             rpanel.AddSeparator();
             rpanel.AddItem(bndata_family_param);
+            rpanel.AddItem(bndata_selectfilter);
             return Result.Succeeded;
         }
 
@@ -125,6 +128,38 @@ namespace FacadeHelper
             return Result.Succeeded;
         }
     }
+
+    [Transaction(TransactionMode.Manual)]
+    public class ICommand_Document_SelectFilter : IExternalCommand
+    {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            UIApplication uiapp = commandData.Application;
+            commandData.Application.Application.SharedParametersFilename = Global.GetAppConfig("SharedParametersFile");
+
+            try
+            {
+                SelectFilter ucpe = new SelectFilter(commandData);
+                Window winaddin = new Window();
+                ucpe.ParentWin = winaddin;
+                winaddin.Content = ucpe;
+                winaddin.SizeToContent = SizeToContent.WidthAndHeight;
+                winaddin.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                //winaddin.WindowStyle = WindowStyle.None;
+                winaddin.Padding = new Thickness(0);
+                Global.winhelper = new System.Windows.Interop.WindowInteropHelper(winaddin);
+                winaddin.ShowDialog();
+            }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error", e.ToString());
+                return Result.Failed;
+            }
+
+            return Result.Succeeded;
+        }
+    }
+
 
     [Transaction(TransactionMode.Manual)]
     public class ICommand_Document_AddFamilyParameters : IExternalCommand

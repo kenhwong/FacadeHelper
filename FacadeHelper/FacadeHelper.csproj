@@ -110,6 +110,9 @@
     <Compile Include="RvtEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RvtHelper.cs" />
+    <Compile Include="SelectFilter.xaml.cs">
+      <DependentUpon>SelectFilter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Themes\DataGridStyle.xaml.cs">
       <DependentUpon>DataGridStyle.xaml</DependentUpon>
     </Compile>
@@ -131,6 +134,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Manual.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SelectFilter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
