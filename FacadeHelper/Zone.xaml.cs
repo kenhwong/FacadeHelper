@@ -666,10 +666,10 @@ namespace FacadeHelper
             CommandBinding cbApplyParameters = new CommandBinding(cmdApplyParameters,
                 (sender, e) =>
                 {
-                    if (MessageBox.Show($"是否采用当前数据写入模型参数？\n如不采用将读取外部数据文件(ExternalElementData序列化数据)覆盖当前数据。", 
-                        "参数数据源...", 
-                        MessageBoxButton.YesNo, 
-                        MessageBoxImage.Question, 
+                    if (MessageBox.Show($"是否采用当前数据写入模型参数？\n如不采用将读取外部数据文件(ExternalElementData序列化数据)覆盖当前数据。",
+                        "参数数据源...",
+                        MessageBoxButton.YesNo,
+                        MessageBoxImage.Question,
                         MessageBoxResult.Yes) == MessageBoxResult.No)
                     {
                         Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
@@ -932,29 +932,34 @@ namespace FacadeHelper
                 new LogicalAndFilter(
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
-            var panels = panelcollector
-                .WherePasses(cwpanel_InstancesFilter)
-                .Where(x => 
+            LogicalAndFilter win_InstancesFilter =
+                new LogicalAndFilter(
+                    new ElementClassFilter(typeof(FamilyInstance)),
+                    new ElementCategoryFilter(BuiltInCategory.OST_Windows));
+            var panels = new FilteredElementCollector(doc, ids).WherePasses(cwpanel_InstancesFilter)
+                .Where(x =>
                 (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" &&
                 (x as FamilyInstance).Symbol.Family.Name != "空嵌板" &&
                 (x as FamilyInstance).Symbol.Family.Name != "空系统嵌板" &&
                 (x as FamilyInstance).Symbol.Name != "NULL")
                 .ToList();
+            var wins = new FilteredElementCollector(doc, ids).WherePasses(win_InstancesFilter).ToList();
 
-            if (panels.Count == 0)
+            if (panels.Count == 0 && wins.Count == 0)
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NONE SELECTED, P/VALID.");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NONE SELECTED, P&W/VALID.");
                 return;
             }
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: P/{panels.Count()}.");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: P/{panels.Count()}, W/{wins.Count()}.");
             SelectedCurtainPanelList.Clear();
+            var pw = panels.Union(wins).ToList();
 
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LIST: P/{panels.Count()}/E.");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LIST: P/{panels.Count()}/E, W/{wins.Count()}/E.");
             bool _haserror = false;
-            panels.ForEach(_ele =>
+            pw.ForEach(_ele =>
             {
-                var _p = _ele as Autodesk.Revit.DB.Panel;
-                CurtainPanelInfo _gp = new CurtainPanelInfo(_p, Global.DocContent.CurrentZoneInfo.ZoneCode)
+                bool ispanel = ((BuiltInCategory)_ele.Category.Id.IntegerValue == BuiltInCategory.OST_Windows) ? false : true;
+                CurtainPanelInfo _gp = new CurtainPanelInfo(_ele, Global.DocContent.CurrentZoneInfo.ZoneCode, ispanel)
                 {
                     INF_Type = CurrentZonePanelType,
                     INF_HostZoneInfo = Global.DocContent.CurrentZoneInfo
@@ -965,7 +970,7 @@ namespace FacadeHelper
                 progbarCurrentProcess.Maximum = panels.Count();
                 progbarCurrentProcess.Value = 0;
 
-                var p_subs = _p.GetSubComponentIds();
+                var p_subs = ((FamilyInstance)_ele).GetSubComponentIds();
                 foreach (ElementId eid in p_subs)
                 {
                     txtCurrentProcessElement.Content = $"P/{_gp.INF_ElementId}/E{eid}";
@@ -1047,12 +1052,10 @@ namespace FacadeHelper
             });
 
             #region 构件参数错误中断操作确认
-          if (_haserror){if (MessageBox.Show(
-              $"有部分构件存在参数错误，是否继续处理数据？", 
-              "构件参数错误...", 
-              MessageBoxButton.YesNo, 
-              MessageBoxImage.Question, 
-              MessageBoxResult.No) == MessageBoxResult.No) return; }
+            if (_haserror)
+            {
+                if (MessageBox.Show($"有部分构件存在参数错误，是否继续处理数据？", "构件参数错误...", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) == MessageBoxResult.No) return;
+            }
             #endregion
 
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
@@ -1096,23 +1099,23 @@ namespace FacadeHelper
             ParameterHelper.InitProjectParameters(ref doc);
 
             //统计 
-            FilteredElementCollector panelcollector = new FilteredElementCollector(doc);
             LogicalAndFilter cwpanel_InstancesFilter =
-                new LogicalAndFilter(
-                    new ElementClassFilter(typeof(FamilyInstance)),
-                    new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
-            var panels = panelcollector
-                .WherePasses(cwpanel_InstancesFilter)
+                new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
+            LogicalAndFilter win_InstancesFilter =
+                new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_Windows));
+            var panels = new FilteredElementCollector(doc).WherePasses(cwpanel_InstancesFilter)
                 .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板");
-            var syspanels = panelcollector
-                .WherePasses(cwpanel_InstancesFilter)
-                .Where(x => (x as FamilyInstance).Symbol.Family.Name == "系统嵌板");
+            var wins = new FilteredElementCollector(doc).WherePasses(win_InstancesFilter).ToElements();
+            var syspanels = new FilteredElementCollector(doc).WherePasses(cwpanel_InstancesFilter).Where(x => (x as FamilyInstance).Symbol.Family.Name == "系统嵌板");
 
             int nele = 0;
+            int nwele = 0;
             int nsysele = 0;
-            foreach (var _p in panels) nele += (_p as Autodesk.Revit.DB.Panel).GetSubComponentIds().Count;
-            foreach (var _p in syspanels) nsysele += (_p as Autodesk.Revit.DB.Panel).GetSubComponentIds().Count;
+            foreach (var _p in panels) nele += (_p as FamilyInstance).GetSubComponentIds().Count;
+            foreach (var _w in wins) nwele += (_w as FamilyInstance).GetSubComponentIds().Count;
+            foreach (var _p in syspanels) nsysele += (_p as FamilyInstance).GetSubComponentIds().Count;
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: TOTAL, P/{panels.Count():N0}, E/{nele:N0}, SYS-P/{syspanels.Count():N0}, SYS-E/{nsysele:N0}");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - CALC: TOTAL, W/{wins.Count():N0}, E/{nwele:N0}");
         }
 
         #endregion        
