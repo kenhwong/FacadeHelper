@@ -182,6 +182,7 @@ namespace FacadeHelper
 
         private RoutedCommand cmdLoadData = new RoutedCommand();
         private RoutedCommand cmdSaveData = new RoutedCommand();
+        private RoutedCommand cmdResetData = new RoutedCommand();
         private RoutedCommand cmdApplyParameters = new RoutedCommand();
         private RoutedCommand cmdExportElementSchedule = new RoutedCommand();
 
@@ -606,6 +607,18 @@ namespace FacadeHelper
                     ZoneHelper.FnLinkedElementsSerialize(ref listInformation);
                 },
                 (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbResetData = new CommandBinding(cmdResetData,
+                (sender, e) =>
+                {
+                    if (MessageBox.Show($"重置当前数据后将不能恢复，确定继续操作？",
+                        "重置数据...",
+                        MessageBoxButton.OKCancel,
+                        MessageBoxImage.Exclamation,
+                        MessageBoxResult.OK) == MessageBoxResult.OK)
+                        Global.DocContent = new DocumentContent();
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - RESET: ALL DATA.");
+                },
+                (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbSearch = new CommandBinding(cmdSearch,
                 (sender, e) =>
                 {
@@ -860,6 +873,7 @@ namespace FacadeHelper
             bnElementDeepResolve.Command = cmdElementDeepResolve;
             bnLoadData.Command = cmdLoadData;
             bnSaveData.Command = cmdSaveData;
+            bnResetData.Command = cmdResetData;
             bnApplyParameters.Command = cmdApplyParameters;
             bnExportElementSchedule.Command = cmdExportElementSchedule;
             bnSearch.Command = cmdSearch;
@@ -879,6 +893,7 @@ namespace FacadeHelper
                 cbNavZone,
                 cbLoadData,
                 cbSaveData,
+                cbResetData,
                 cbApplyParameters,
                 cbSearch,
                 cbPopupClose
@@ -927,7 +942,7 @@ namespace FacadeHelper
                 return;
             }
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: ELE/{ids.Count}.");
-            FilteredElementCollector panelcollector = new FilteredElementCollector(doc, ids);
+            //FilteredElementCollector panelcollector = new FilteredElementCollector(doc, ids);
             LogicalAndFilter cwpanel_InstancesFilter =
                 new LogicalAndFilter(
                     new ElementClassFilter(typeof(FamilyInstance)),

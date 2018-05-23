@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:FacadeHelper"
-             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1500">
+             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1500" Background="WhiteSmoke">
     <UserControl.Resources>
         <ResourceDictionary>
             <local:Global x:Key="GlobalData" xmlns:local="clr-namespace:FacadeHelper" />
@@ -53,6 +53,8 @@
                             Content="加载数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconSaveData}" x:Name="bnSaveData" 
                             Content="保存数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                    <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconReset}" x:Name="bnResetData" 
+                            Content="重置数据" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconApplyParamData}" x:Name="bnApplyParameters" 
                             Content="参数写入" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" 
