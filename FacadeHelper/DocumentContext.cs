@@ -187,6 +187,24 @@ namespace FacadeHelper
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    [Serializable, XmlRoot(Namespace = "", IsNullable = false)]
+    [SerializableType]
+    public class ElementFabricationInfo : INotifyPropertyChanged
+    {
+        int _elementType;
+        [XmlAttribute] string FabrCode;
+        [XmlAttribute] int FabrQuantity;
+        [XmlAttribute] string IdentCode;
+
+        [XmlAttribute] int ElementType;
+        [XmlAttribute] string FabrCode;
+        [XmlAttribute] int FabrQuantity;
+        [XmlAttribute] string IdentCode;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
     public class Global
     {
         public static DocumentContent DocContent;

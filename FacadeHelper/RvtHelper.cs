@@ -1238,6 +1238,13 @@ namespace FacadeHelper
             {
                 Serializer.Serialize(fs, Global.DocContent);
             }
+
+            var pwfile = $"{Global.DataFile}.pw.xml";
+            if (File.Exists(pwfile)) File.Delete(pwfile);
+            XMLDeserializerHelper.Serialization<List<CurtainPanelInfo>>(Global.DocContent.CurtainPanelList, pwfile);
+            var elefile = $"{Global.DataFile}.ele.xml";
+            if (File.Exists(pwfile)) File.Delete(elefile);
+            XMLDeserializerHelper.Serialization<List<ScheduleElementInfo>>(Global.DocContent.ScheduleElementList, elefile);
         }
 
         public static void AddRangeEx<T>(this List<T> SourceList, IEnumerable<T> SubList) where T : ElementInfoBase

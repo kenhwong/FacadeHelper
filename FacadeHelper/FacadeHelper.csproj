@@ -110,6 +110,9 @@
     <Compile Include="RvtEntry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RvtHelper.cs" />
+    <Compile Include="FacadeCodeMapping.xaml.cs">
+      <DependentUpon>FacadeCodeMapping.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SelectFilter.xaml.cs">
       <DependentUpon>SelectFilter.xaml</DependentUpon>
     </Compile>
@@ -136,6 +139,10 @@
     <Page Include="Manual.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="FacadeCodeMapping.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="SelectFilter.xaml">
       <SubType>Designer</SubType>
@@ -236,6 +243,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\code128.png" />
+    <Content Include="Resources\code16.png" />
+    <Content Include="Resources\code32.png" />
+    <Content Include="Resources\code48.png" />
+    <Content Include="Resources\code64.png" />
     <Content Include="Resources\config32.png" />
     <Content Include="Resources\id32.png" />
     <Content Include="Resources\sv16.png" />
