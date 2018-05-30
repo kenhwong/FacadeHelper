@@ -73,7 +73,10 @@
                     <ColumnDefinition Width="200" />
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Margin="5">
-                    <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconRefresh}" Content="筛选构件" x:Name="bnParamsRefresh" Height="27" Padding="5,0" Margin="10,0" />
+                    <WrapPanel>
+                        <Label Content="构件编号列表：" Foreground="#FF80A080" />
+                        <Label Content="未选择" Foreground="#FF80A080" />
+                    </WrapPanel>
                     <ListBox x:Name="Lst1" Grid.Column="1" Margin="0,5" MaxHeight="300" MinHeight="200" SelectionMode="Multiple"
                              ItemsSource="{Binding Path=ParamListSource}"
                              Style="{DynamicResource MonitorScreen}" 
@@ -139,7 +142,7 @@
             </ItemsControl>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="6" Margin="10,20" VerticalAlignment="Stretch">
-            <ListBox x:Name="listInformation" Width="740" MinHeight="80" Margin="0,5" SelectionChanged="listInformation_SelectionChanged"
+            <ListBox x:Name="listInformation" Width="740" MinHeight="80" MaxHeight="200" Margin="0,5" SelectionChanged="listInformation_SelectionChanged"
                              Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
         </StackPanel>
     </Grid>

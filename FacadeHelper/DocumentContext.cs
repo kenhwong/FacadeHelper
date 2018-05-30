@@ -191,15 +191,17 @@ namespace FacadeHelper
     [SerializableType]
     public class ElementFabricationInfo : INotifyPropertyChanged
     {
-        int _elementType;
-        [XmlAttribute] string FabrCode;
-        [XmlAttribute] int FabrQuantity;
-        [XmlAttribute] string IdentCode;
+        private int _elementType = 0;
+        private string _elementCode = string.Empty;
+        private string _fabrCode = string.Empty;
+        private int _fabrQuantity = 0;
+        private string _identCode = string.Empty;
 
-        [XmlAttribute] int ElementType;
-        [XmlAttribute] string FabrCode;
-        [XmlAttribute] int FabrQuantity;
-        [XmlAttribute] string IdentCode;
+        [XmlAttribute] public int ElementType { get { return _elementType; } set { _elementType = value; OnPropertyChanged(nameof(ElementType)); } }
+        [XmlAttribute] public string ElementCode { get { return _elementCode; } set { _elementCode = value; OnPropertyChanged(nameof(ElementCode)); } }
+        [XmlAttribute] public string FabrCode { get { return _fabrCode; } set { _fabrCode = value; OnPropertyChanged(nameof(FabrCode)); } }
+        [XmlAttribute] public int FabrQuantity { get { return _fabrQuantity; } set { _fabrQuantity = value; OnPropertyChanged(nameof(FabrQuantity)); } }
+        [XmlAttribute] public string IdentCode { get { return _identCode; } set { _identCode = value; OnPropertyChanged(nameof(IdentCode)); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

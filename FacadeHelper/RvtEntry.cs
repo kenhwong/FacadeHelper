@@ -174,7 +174,7 @@ namespace FacadeHelper
 
             try
             {
-                SelectFilter ucpe = new SelectFilter(commandData);
+                FacadeCodeMapping ucpe = new FacadeCodeMapping(commandData);
                 Window winaddin = new Window();
                 ucpe.ParentWin = winaddin;
                 winaddin.Content = ucpe;
