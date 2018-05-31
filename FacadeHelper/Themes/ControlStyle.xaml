@@ -540,6 +540,13 @@
                     <Setter Property="Foreground" Value="DarkGreen" />
                 </Trigger.Setters>
             </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Trigger.Setters>
+                    <Setter Property="Foreground" Value="DarkGreen" />
+                    <Setter TargetName="Border" Property="Background" Value="DarkGreen" />
+                    
+                </Trigger.Setters>
+            </Trigger>
             <DataTrigger Binding="{Binding Path=Tag, Converter={StaticResource PrefixConverter}, ConverterParameter=ERR }" Value="True">
                 <Setter Property="Foreground" Value="Red" />
             </DataTrigger>
