@@ -21,8 +21,36 @@
     <Geometry x:Key="ExpanderCheckedArrow">M 1,4.5  L 4.5,1  L 8,4.5</Geometry>
     <Geometry x:Key="TabItemRoundedCorner">M6.5,2.6C4.767,0.973 2.509,0 0,0 0,0 0,19 0,19L23,19z</Geometry>
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
-    <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
+    <Geometry x:Key="IconComboBoxArrow">M768 301.056l-512 0c-25.941333 0-45.056-19.114667-45.056-45.056s19.114667-45.056 45.056-45.056l512 0
+        c25.941333 0 45.056 19.114667 45.056 45.056S793.258667 301.056 768 301.056z
+        M768 557.056l-512 0c-25.941333 0-45.056-19.114667-45.056-45.056s19.114667-45.056 45.056-45.056l512 0
+        c25.941333 0 45.056 19.114667 45.056 45.056S793.258667 557.056 768 557.056z
+        M768 813.056l-512 0c-25.941333 0-45.056-19.114667-45.056-45.056s19.114667-45.056 45.056-45.056l512 0
+        c25.941333 0 45.056 19.114667 45.056 45.056S793.258667 813.056 768 813.056z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <Geometry x:Key="IconHLink">M881.6 288c-27.2 0-52.8-8-73.6-20.8L710.4 368c-6.4 6.4-14.4 9.6-22.4 9.6-8 0-16-3.2-22.4-9.6-12.8-12.8-12.8-32-1.6-44.8l96-100.8
+        C745.6 200 737.6 172.8 737.6 144c0-80 64-144 144-144s144 64 144 144-65.6 144-144 144z 
+        m0-224c-44.8 0-80 35.2-80 80s35.2 80 80 80 80-35.2 80-80-36.8-80-80-80zM659.2 686.4l73.6 52.8
+        c14.4 9.6 17.6 30.4 8 44.8-6.4 8-16 12.8-25.6 12.8-6.4 0-12.8-1.6-19.2-6.4
+        L619.2 736c-38.4 40-92.8 64-153.6 64-123.2 0-224-100.8-224-224 0-14.4 1.6-27.2 3.2-40l-75.2-27.2C152 529.6 126.4 544 96 544
+        c-52.8 0-96-43.2-96-96s43.2-96 96-96 96 43.2 96 96v1.6l73.6 27.2c36.8-73.6 112-123.2 200-123.2 123.2 0 224 100.8 224 224 0 38.4-11.2 76.8-30.4 108.8z
+        M97.6 414.4c-17.6 0-32 14.4-32 32s14.4 32 32 32 32-14.4 32-32-14.4-32-32-32z m368 1.6c-88 0-160 72-160 160s72 160 160 160 160-72 160-160-72-160-160-160z 
+        m432 352c70.4 0 128 57.6 128 128s-57.6 128-128 128-128-57.6-128-128 57.6-128 128-128z 
+        m0 192c35.2 0 64-28.8 64-64s-28.8-64-64-64-64 28.8-64 64 28.8 64 64 64z</Geometry>
+    <Geometry x:Key="IconSelect">M953.1 613.3L442.3 412.6c-18.6-7.3-28.5 1.9-21.9 20.6
+        l180.2 511.4c6.6 18.6 19.3 19.4 28.3 1.7 0 0 50.1-98.9 94.1-161.3
+        l122.5 130.4
+        c11.7 12.4 31.6 13.1 44.2 1.5
+        l30.2-27.8
+        c12.6-11.6 13.3-31.3 1.7-43.7
+        L799.1 715.1
+        c62.9-37.3 154.1-74.7 154.1-74.7 18.6-7.6 18.5-19.8-0.1-27.1z
+        M512 968
+        H160
+        c-52.9 0-96-43.1-96-96V160c0-52.9 43.1-96 96-96
+        h704c52.9 0 96 43.1 96 96v352
+        h-64V160c0-17.6-14.4-32-32-32
+        H160c-17.6 0-32 14.4-32 32v712c0 17.6 14.4 32 32 32h352v64z</Geometry>
     <Geometry x:Key="IconCode">M932.562986 932.562475 864.730065 932.562475 864.730065 959.695438 959.69595 959.695438 959.69595 864.729553 932.562986 864.729553Z
         M300.361347 932.562475l141.093459 0 0 27.132964-141.093459 0 0-27.132964Z
         M582.545194 932.562475l141.092435 0 0 27.132964-141.092435 0 0-27.132964Z
@@ -531,22 +559,23 @@
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.Setters>
+                                <Setter Property="Foreground" Value="DarkGreen" />
+                            </Trigger.Setters>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Trigger.Setters>
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter TargetName="Border" Property="Background" Value="DarkGreen" />
+                            </Trigger.Setters>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Trigger.Setters>
-                    <Setter Property="Foreground" Value="DarkGreen" />
-                </Trigger.Setters>
-            </Trigger>
-            <Trigger Property="IsSelected" Value="True">
-                <Trigger.Setters>
-                    <Setter Property="Foreground" Value="DarkGreen" />
-                    <Setter TargetName="Border" Property="Background" Value="DarkGreen" />
-                    
-                </Trigger.Setters>
-            </Trigger>
             <DataTrigger Binding="{Binding Path=Tag, Converter={StaticResource PrefixConverter}, ConverterParameter=ERR }" Value="True">
                 <Setter Property="Foreground" Value="Red" />
             </DataTrigger>
@@ -1285,6 +1314,149 @@
 
     <!--#endregion-->
 
+    <!--#region ComboBox-->
+    <Style TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border Name="Border" Padding="2,1" Margin="1" BorderThickness="1" CornerRadius="0" Background="Transparent" BorderBrush="Transparent" >
+                        <TextBlock TextAlignment="Left">
+                            <ContentPresenter />
+                        </TextBlock>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="true">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#FF80C080"/>
+                            <Setter TargetName="Border" Property="Background" Value="#5F80C080"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="15" />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="Border" Grid.Column="0" Background="Transparent" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0,0,1" />
+                        <Path x:Name="Arrow" Grid.Column="1" Fill="{TemplateBinding BorderBrush}" StrokeThickness="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                              Width="12" Height="12" Stretch="Fill"
+                              Data="{StaticResource IconComboBoxArrow}"/>
+                        <Border Grid.Column="1" Background="{x:Static SystemColors.ControlBrush}" Opacity="0" BorderThickness="0" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+        <Border x:Name="PART_ContentHost" Focusable="True" />
+    </ControlTemplate>
+
+    <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="BorderBrush" Value="#FF808080" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid Margin="0">
+                        <ToggleButton
+                            Name="ToggleButton"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Style="{StaticResource ComboBoxToggleButton}"
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                            ClickMode="Press">
+                        </ToggleButton>
+                        <ContentPresenter
+                            Name="ContentSite"
+                            IsHitTestVisible="False"
+                            Content="{TemplateBinding SelectionBoxItem}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            Margin="10,0,20,0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left" />
+                        <TextBox
+                            x:Name="PART_EditableTextBox"
+                            Template="{StaticResource ComboBoxTextBox}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Margin="0"
+                            Focusable="True"
+                            Visibility="Hidden"
+                            IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                        <Popup
+                            Name="Popup"
+                            Placement="Bottom"
+                            IsOpen="{TemplateBinding IsDropDownOpen}"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            PopupAnimation="Slide" 
+                            VerticalOffset="2">
+                            <Grid Name="DropDown" MinWidth="{TemplateBinding FrameworkElement.ActualWidth}" MaxHeight="{TemplateBinding ComboBox.MaxDropDownHeight}">
+                                <Border x:Name="DropDownBorder" Background="{x:Static SystemColors.ControlBrush}" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}" />
+                                <ScrollViewer Margin="5">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                        </Trigger>
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                        <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                            <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                            <Setter TargetName="DropDownBorder" Property="Margin" Value="0,1,0,0"/>
+                        </Trigger>
+                        <Trigger Property="IsEditable" Value="true">
+                            <Setter Property="IsTabStop" Value="false"/>
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility"    Value="Visible"/>
+                            <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+        </Style.Triggers>
+    </Style>
+    <!--#endregion-->
+
     <!--#region CheckBox & RadioButton-->
     <Style x:Key="CheckBaseStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -1438,25 +1610,27 @@
                                 </Border>
                             </Grid>
                         </BulletDecorator.Bullet>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckMark" Duration="0:0:0.2" To="0.5" />
-                                        <ColorAnimation Storyboard.TargetProperty="(TextElement.Foreground).Color"  Storyboard.TargetName="BulletText" Duration="0:0:0.2" 
-                                                        From="#C0C0C0" To="#3babe3" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Unchecked" >
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckMark" Duration="0:0:0.2" To="0" />
-                                        <ColorAnimation Storyboard.TargetProperty="(TextElement.Foreground).Color"  Storyboard.TargetName="BulletText" Duration="0:0:0.2" 
-                                                        From="#3babe3" To="#C0C0C0" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                     </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0.5" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#3babe3" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#c0c0c0" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"  Value="True">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0.5" />
+                            <Setter Property="Fill" TargetName="CheckMark" Value="#106010" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#106010" />
+                        </Trigger>
+                        <Trigger Property="IsPressed"  Value="True">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0.5" />
+                            <Setter Property="Fill" TargetName="CheckMark" Value="#30c030" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#30c030" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

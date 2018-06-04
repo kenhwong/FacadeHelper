@@ -27,9 +27,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Label Style="{DynamicResource TagLable}" Tag="编码" Content="分区" Margin="0,0,20,0" />
+            <Label Content="选择分区：" Margin="0,0,10,0" Height="35" VerticalContentAlignment="Center" />
+            <ComboBox x:Name="ZoneList" Width="500" Height="20" ItemsSource="{Binding Path=ZoneListSource}" IsEditable="True" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5,0,0">
                 <Label Style="{DynamicResource TagLable}" Tag="编码" Content="分项" Margin="0,0,20,0" Height="35" VerticalAlignment="Top" />
                 <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Top" Margin="0" Orientation="Vertical" Visibility="Visible">
@@ -55,12 +61,12 @@
                 </StackPanel>
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="2">
+        <StackPanel Orientation="Horizontal" Grid.Row="3">
             <Label Style="{DynamicResource TagLable}" Tag="编码" Content="料单" Margin="0,0,20,0" />
             <Label Content="无" Margin="0,0,10,0" Height="35" VerticalContentAlignment="Center" />
             <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconBrowse}" Content="读取料单数据（XML格式）" x:Name="bnLoadMatList" Height="27" Padding="5,0" Margin="10,0" />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="-20,10" Background="{x:Static SystemColors.ControlBrush}" SnapsToDevicePixels="True">
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Margin="-20,10" Background="{x:Static SystemColors.ControlBrush}" SnapsToDevicePixels="True">
             <StackPanel.Effect>
                 <DropShadowEffect Color="#FFbcbcbc" ShadowDepth="1" BlurRadius="8" Direction="270"  Opacity="50" />
             </StackPanel.Effect>
@@ -74,10 +80,10 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0" Margin="5">
                     <WrapPanel>
-                        <Button x:Name="bnRefreshList1" Style="{DynamicResource IconText20HPathButton}" Content="  构件编号列表：" Tag="{DynamicResource IconRefresh}" Foreground="#FF80A080" />
+                        <Button x:Name="bnRefreshList1" Style="{DynamicResource IconText20HPathButton}" Content="  构件编号列表：" Tag="{StaticResource IconRefresh}" />
                         <Label Content="未选择" Foreground="#FF80A080" />
                     </WrapPanel>
-                    <ListBox x:Name="Lst1" Grid.Column="1" Margin="0,5" MaxHeight="300" MinHeight="200" SelectionMode="Multiple"
+                    <ListBox x:Name="Lst1" Grid.Column="1" Margin="0,5" Height="250" SelectionMode="Extended"
                              ItemsSource="{Binding Path=CurrentElementInfoList}"
                              Style="{DynamicResource MonitorScreen}" 
                              ItemContainerStyle="{StaticResource MonitorScreenItem13}">
@@ -90,12 +96,13 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </StackPanel>
-                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0" VerticalAlignment="Center">
-                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconLink}" Content="过滤所选构件" x:Name="bnApplyMapping" Width="30" Height="30" Padding="5,0" Margin="10,0" />
+                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,50,0,0" VerticalAlignment="Top">
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconHLink}" Content="编号关联" x:Name="bnApplyMapping" Width="30" Height="30" Padding="5,0" Margin="10" />
+                    <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSelect}" Content="选定构件" x:Name="bnApplySelection" Width="30" Height="30" Padding="5,0" Margin="10" />
                 </StackPanel>
                 <StackPanel Grid.Column="2" Margin="5">
                     <Label Content="加工编号列表" Foreground="#FF80A080" />
-                    <ListBox x:Name="Lst2" Grid.Column="1" Margin="0,5" MaxHeight="300" MinHeight="200"
+                    <ListBox x:Name="Lst2" Grid.Column="1" Margin="0,5" Height="250"
                              ItemsSource="{Binding Path=ParamListFiltered}" 
                              Style="{DynamicResource MonitorScreen}"
                              ItemContainerStyle="{StaticResource MonitorScreenItem13}">
@@ -117,7 +124,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="4" Margin="5">
                     <Label Content="加工料单列表" Foreground="#FF80A080" />
-                    <ListBox x:Name="Lst3" Grid.Column="1" Margin="0,5" MaxHeight="300" MinHeight="200"
+                    <ListBox x:Name="Lst3" Grid.Column="1" Margin="0,5" Height="250"
                              ItemsSource="{Binding Path=ParamListFiltered}" 
                              Style="{DynamicResource MonitorScreen}"
                              ItemContainerStyle="{StaticResource MonitorScreenItem13}">
@@ -141,8 +148,16 @@
             <ItemsControl Background="{x:Static SystemColors.WindowBrush}">
             </ItemsControl>
         </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="5">
+            <Label Style="{DynamicResource TagLable}" Tag="参数" Content="编辑" Margin="0,0,20,0" />
+            <Label Content="参数：" Margin="0,0,10,0" Height="35" VerticalContentAlignment="Center" />
+            <ComboBox x:Name="ParamNameList" Width="150" Height="20" ItemsSource="{Binding Path=ParamListSource}" />
+            <Label Content="参数值：" Margin="20,0,10,0" Height="35" VerticalContentAlignment="Center" />
+            <ComboBox x:Name="ParamValueList" Width="250" Height="20" IsEditable="True"  />
+            <Button x:Name="bnApplyParam" Style="{DynamicResource IconText20HPathButton}" Tag="{DynamicResource IconApplyParamData}" Content="  应用" Margin="20,0" Height="20" VerticalAlignment="Center" />
+        </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="6" Margin="10,20" VerticalAlignment="Stretch">
-            <ListBox x:Name="listInformation" Width="740" Height="200" Margin="0,5" SelectionChanged="listInformation_SelectionChanged"
+            <ListBox x:Name="listInformation" Width="740" Height="100" Margin="0,5" SelectionChanged="listInformation_SelectionChanged"
                              Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
         </StackPanel>
     </Grid>
