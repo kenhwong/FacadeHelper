@@ -112,7 +112,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="3">
             <Label Style="{DynamicResource TagLable}" Tag="编码" Content="料单" Margin="0,0,20,0" />
             <Label Content="无" Margin="0,0,10,0" Height="35" VerticalContentAlignment="Center" />
-            <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconBrowse}" Content="读取料单数据（XML格式）" x:Name="bnLoadMatList" Height="27" Padding="5,0" Margin="10,0" />
+            <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconAdd}" Content="读取料单数据（CSV格式）" x:Name="bnLoadOrder" Height="27" Padding="5,0" Margin="10,0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="4" Margin="-20,10" Background="{x:Static SystemColors.ControlBrush}" SnapsToDevicePixels="True">
             <StackPanel.Effect>

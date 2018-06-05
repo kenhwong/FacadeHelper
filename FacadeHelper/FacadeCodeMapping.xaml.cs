@@ -1,10 +1,12 @@
-﻿using Autodesk.Revit.DB;
+﻿using AqlaSerializer;
+using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -82,7 +84,7 @@ namespace FacadeHelper
                 if (_parameter_zone?.HasValue == true)
                 {
                     string _zone = _parameter_zone?.AsString();
-                    if(!ZoneListSource.Contains(_zone)) ZoneListSource.Add(_zone);
+                    if (!ZoneListSource.Contains(_zone)) ZoneListSource.Add(_zone);
                 }
             }
 
@@ -162,6 +164,8 @@ namespace FacadeHelper
         private RoutedCommand cmdZPopApply = new RoutedCommand();
         private RoutedCommand cmdZPopClose = new RoutedCommand();
         private RoutedCommand cmdZPopClear = new RoutedCommand();
+
+        private RoutedCommand cmdLoadOrder = new RoutedCommand();
 
         private void InitializeCommand()
         {
@@ -249,6 +253,33 @@ namespace FacadeHelper
 
                 bnAddZone.IsChecked = false;
             }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
+            CommandBinding cbLoadOrder = new CommandBinding(cmdLoadOrder, (sender, e) =>
+            {
+                Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
+                {
+                    InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
+                    DefaultExt = "*.csv",
+                    Filter = "订单交换文件(*.csv)|*.csv|All(*.*)|*.*"
+                };
+                if (ofd.ShowDialog() == true)
+                {
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - READ: DATA, {ofd.FileName}");
+                    using (StreamReader reader = new StreamReader(ofd.FileName))
+                    {
+
+                        string dataline;
+                        reader.ReadLine();
+                        string linezonecode = string.Empty;
+                        while ((dataline = reader.ReadLine()) != null)
+                        {
+                            string[] rowdata = dataline.Split('\t');
+                            CurrentFabricationList.Add(new ElementFabricationInfo() { ElementCode=rowdata[0], FabrQuantity=int.Parse(rowdata[1]), OrderCode=rowdata[2] });
+                        }
+                    }
+                }
+            }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
             CommandBinding cbZPopClear = new CommandBinding(cmdZPopClear, (sender, e) => { LstZone.SelectedIndex = -1; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbZPopClose = new CommandBinding(cmdZPopClose, (sender, e) => { bnAddZone.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -258,6 +289,7 @@ namespace FacadeHelper
             bnZPopApply.Command = cmdZPopApply;
             bnZPopClose.Command = cmdZPopClose;
             bnZPopClear.Command = cmdZPopClear;
+            bnLoadOrder.Command = cmdLoadOrder;
 
             ProcFCM.CommandBindings.AddRange(new CommandBinding[]
             {
@@ -266,7 +298,8 @@ namespace FacadeHelper
                 cbApplyParam,
                 cbZPopApply,
                 cbZPopClear,
-                cbZPopClose
+                cbZPopClose,
+                cbLoadOrder
             });
         }
 

@@ -195,13 +195,13 @@ namespace FacadeHelper
         private string _elementCode = string.Empty;
         private string _fabrCode = string.Empty;
         private int _fabrQuantity = 0;
-        private string _identCode = string.Empty;
+        private string _orderCode = string.Empty;
 
         [XmlAttribute] public int ElementType { get { return _elementType; } set { _elementType = value; OnPropertyChanged(nameof(ElementType)); } }
         [XmlAttribute] public string ElementCode { get { return _elementCode; } set { _elementCode = value; OnPropertyChanged(nameof(ElementCode)); } }
         [XmlAttribute] public string FabrCode { get { return _fabrCode; } set { _fabrCode = value; OnPropertyChanged(nameof(FabrCode)); } }
         [XmlAttribute] public int FabrQuantity { get { return _fabrQuantity; } set { _fabrQuantity = value; OnPropertyChanged(nameof(FabrQuantity)); } }
-        [XmlAttribute] public string IdentCode { get { return _identCode; } set { _identCode = value; OnPropertyChanged(nameof(IdentCode)); } }
+        [XmlAttribute] public string OrderCode { get { return _orderCode; } set { _orderCode = value; OnPropertyChanged(nameof(OrderCode)); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
