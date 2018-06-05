@@ -31,12 +31,60 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
-            <Label Style="{DynamicResource TagLable}" Tag="编码" Content="分区" Margin="0,0,20,0" />
-            <Label Content="选择分区：" Margin="0,0,10,0" Height="35" VerticalContentAlignment="Center" />
-            <ComboBox x:Name="ZoneList" Width="500" Height="20" ItemsSource="{Binding Path=ZoneListSource}" IsEditable="True" />
+            <Label Style="{DynamicResource TagLable}" Tag="编码" Content="分区" Margin="0,0,20,0" Height="35"  VerticalAlignment="Top" />
+                <Label Content="选择分区：" Margin="0" Height="35" VerticalContentAlignment="Center" />
+                <Label x:Name="txtSelectedZoneList" Content="所有分区" Margin="0" MaxWidth="450" Height="35" VerticalContentAlignment="Center" Foreground="{StaticResource CyanBrush}" />
+                <ToggleButton x:Name="bnAddZone" Style="{DynamicResource IconPath20ToggleButton}" Tag="{DynamicResource IconAdd}" Margin="20,0" Width="20" Height="20" VerticalAlignment="Center" />
+            <Popup x:Name="popAZ" Width="220" Height="340" HorizontalOffset="0" VerticalOffset="10" 
+               AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
+               StaysOpen="True" IsOpen="{Binding ElementName=bnAddZone, Path=IsChecked}" 
+               PlacementTarget="{Binding ElementName=bnAddZone}" Placement="Bottom" Visibility="Collapsed">
+                <Canvas Name="Main" Margin="10">
+                    <Canvas.RenderTransform>
+                        <RotateTransform x:Name="TrFQSPop" />
+                    </Canvas.RenderTransform>
+                    <Path Stroke="#808080" StrokeThickness="0" Name="BalloonPath" Height="320" Stretch="None"  Width="200" >
+                        <Path.Effect>
+                            <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.7" />
+                        </Path.Effect>
+                        <Path.Fill >
+                            <SolidColorBrush Color="#f0f0f0"></SolidColorBrush>
+                        </Path.Fill>
+                        <Path.Data>
+                            <CombinedGeometry GeometryCombineMode="Union">
+                                <CombinedGeometry.Geometry1>
+                                    <RectangleGeometry Rect="0,20,200,300"/>
+                                </CombinedGeometry.Geometry1>
+                                <CombinedGeometry.Geometry2>
+                                    <PathGeometry Figures="M0,20 L0,0 20,20Z" />
+                                </CombinedGeometry.Geometry2>
+                            </CombinedGeometry>
+                        </Path.Data>
+                    </Path>
+                    <DockPanel Margin="20,40,20,20" Height="260" Width="160" LastChildFill="False">
+                        <WrapPanel Height="20" Margin="0,0,0,0" DockPanel.Dock="Top" HorizontalAlignment="Right">
+                            <Button x:Name="bnZPopApply" Tag="{DynamicResource IconCircleConfirm}" Margin="10,0" Width="20" Height="20" Style="{DynamicResource IconPathButton}" />
+                            <Button x:Name="bnZPopClear" Tag="{DynamicResource IconCircleClear}" Margin="10,0" Width="20" Height="20" Style="{DynamicResource IconPathButton}" />
+                            <Button x:Name="bnZPopClose" Tag="{DynamicResource IconCircleReturn}" Margin="10,0,0,0" Width="20" Height="20" Style="{DynamicResource IconPathButton}" />
+                        </WrapPanel>
+                        <ListBox x:Name="LstZone" Margin="0,5" SelectionMode="Extended" Width="160" VerticalAlignment="Stretch"
+                             ItemsSource="{Binding Path=ZoneListSource}"
+                             Style="{DynamicResource MonitorScreen}" 
+                             ItemContainerStyle="{StaticResource MonitorScreenItem13}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="2">
+                                        <TextBlock Text="{Binding}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </Canvas>
+            </Popup>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2">
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,5,0,0">
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                 <Label Style="{DynamicResource TagLable}" Tag="编码" Content="分项" Margin="0,0,20,0" Height="35" VerticalAlignment="Top" />
                 <StackPanel x:Name="subbuttongroup_SelectPanels" DockPanel.Dock="Top" Margin="0" Orientation="Vertical" Visibility="Visible">
                     <StackPanel Margin="0" Orientation="Horizontal" Visibility="Visible">

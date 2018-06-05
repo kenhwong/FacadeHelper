@@ -31,8 +31,6 @@ namespace FacadeHelper
 
         private int _currentSelectedType = 1;
         public int CurrentSelectedType { get { return _currentSelectedType; } set { _currentSelectedType = value; OnPropertyChanged(nameof(CurrentSelectedType)); } }
-        private ObservableCollection<string> _currentSelectedZones = new ObservableCollection<string>();
-        public ObservableCollection<string> CurrentSelectedZones { get { return _currentSelectedZones; } set { _currentSelectedZones = value; OnPropertyChanged(nameof(CurrentSelectedZones)); } }
 
         private UIApplication uiapp;
         private UIDocument uidoc;
@@ -51,8 +49,11 @@ namespace FacadeHelper
 
         private ObservableCollection<string> _paramListSource = new ObservableCollection<string>();
         public ObservableCollection<string> ParamListSource { get { return _paramListSource; } set { _paramListSource = value; OnPropertyChanged(nameof(ParamListSource)); } }
-        private ObservableCollection<string> _zoneListSource = new ObservableCollection<string>();
-        public ObservableCollection<string> ZoneListSource { get { return _zoneListSource; } set { _zoneListSource = value; OnPropertyChanged(nameof(ZoneListSource)); } }
+        private ObservableCollection<string> _currentZoneList = new ObservableCollection<string>();
+        public ObservableCollection<string> CurrentZoneList { get { return _currentZoneList; } set { _currentZoneList = value; OnPropertyChanged(nameof(CurrentZoneList)); } }
+
+        private List<string> _zoneListSource = new List<string>();
+        public List<string> ZoneListSource { get { return _zoneListSource; } set { _zoneListSource = value; OnPropertyChanged(nameof(ZoneListSource)); } }
 
 
         public FacadeCodeMapping(ExternalCommandData commandData)
@@ -66,7 +67,27 @@ namespace FacadeHelper
             doc = uidoc.Document;
             sids = uidoc.Selection.Elements.Cast<Element>().Select(e => e.Id).ToList<ElementId>();
 
+            /**
+            if (Global.ZoneLayerList.Count == 0) Global.ZoneLayerList = ZoneHelper.FnZoneDataDeserialize();
+            ZoneListSource = Global.ZoneLayerList.Select(zl => zl.ZoneCode).Distinct().ToList();
+            **/
 
+            //分区统计2
+            var pwlist = new FilteredElementCollector(doc).WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels)))
+                .Union(new FilteredElementCollector(doc).WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_Windows))));
+            Parameter _parameter_zone;
+            foreach (var pw in pwlist)
+            {
+                _parameter_zone = pw.get_Parameter("分区区号");
+                if (_parameter_zone?.HasValue == true)
+                {
+                    string _zone = _parameter_zone?.AsString();
+                    if(!ZoneListSource.Contains(_zone)) ZoneListSource.Add(_zone);
+                }
+            }
+
+
+            if (CurrentZoneList.Count == 0) ZoneListSource.ForEach(z => CurrentZoneList.Add(z));
 
             InitializeCommand();
 
@@ -107,7 +128,7 @@ namespace FacadeHelper
                 if (_parameter_type?.HasValue == true && _parameter_zone?.HasValue == true && int.TryParse(_parameter_type?.AsString(), out int _type))
                 {
                     string _zone = _parameter_zone?.AsString();
-                    if (_type == CurrentSelectedType && CurrentSelectedZones.Contains(_zone.ToUpper()))
+                    if (_type == CurrentSelectedType && CurrentZoneList.Contains(_zone.ToUpper()))
                     {
                         uidoc.Selection.Elements.Add(ele);
                         CurrentElementList.Add(ele);
@@ -138,6 +159,10 @@ namespace FacadeHelper
         private RoutedCommand cmdRefreshList1 = new RoutedCommand();
         private RoutedCommand cmdApplySelection = new RoutedCommand();
         private RoutedCommand cmdApplyParam = new RoutedCommand();
+        private RoutedCommand cmdZPopApply = new RoutedCommand();
+        private RoutedCommand cmdZPopClose = new RoutedCommand();
+        private RoutedCommand cmdZPopClear = new RoutedCommand();
+
         private void InitializeCommand()
         {
             CommandBinding cbRefreshList1 = new CommandBinding(cmdRefreshList1, (sender, e) => FuncProcessPreSelection(), (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -205,15 +230,43 @@ namespace FacadeHelper
                 }
             });
 
+            CommandBinding cbZPopApply = new CommandBinding(cmdZPopApply, (sender, e) =>
+            {
+                CurrentZoneList.Clear();
+                if (LstZone.SelectedIndex != -1) foreach (var z in LstZone.SelectedItems) CurrentZoneList.Add((string)z);
+
+                if (LstZone.SelectedItems.Count == ZoneListSource.Count)
+                    txtSelectedZoneList.Content = "所有分区";
+                else if (LstZone.SelectedItems.Count == 0)
+                {
+                    LstZone.SelectAll();
+                    ZoneListSource.ForEach(z => CurrentZoneList.Add(z));
+                    txtSelectedZoneList.Content = "所有分区";
+                }
+                else
+                    txtSelectedZoneList.Content = string.Join(", ", CurrentZoneList.ToArray());
+
+
+                bnAddZone.IsChecked = false;
+            }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbZPopClear = new CommandBinding(cmdZPopClear, (sender, e) => { LstZone.SelectedIndex = -1; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbZPopClose = new CommandBinding(cmdZPopClose, (sender, e) => { bnAddZone.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
             bnRefreshList1.Command = cmdRefreshList1;
             bnApplySelection.Command = cmdApplySelection;
             bnApplyParam.Command = cmdApplyParam;
+            bnZPopApply.Command = cmdZPopApply;
+            bnZPopClose.Command = cmdZPopClose;
+            bnZPopClear.Command = cmdZPopClear;
 
             ProcFCM.CommandBindings.AddRange(new CommandBinding[]
             {
                 cbRefreshList1,
                 cbApplySelection,
-                cbApplyParam
+                cbApplyParam,
+                cbZPopApply,
+                cbZPopClear,
+                cbZPopClose
             });
         }
 
