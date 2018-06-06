@@ -32,9 +32,9 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="1">
             <Label Style="{DynamicResource TagLable}" Tag="编码" Content="分区" Margin="0,0,20,0" Height="35"  VerticalAlignment="Top" />
-                <Label Content="选择分区：" Margin="0" Height="35" VerticalContentAlignment="Center" />
-                <Label x:Name="txtSelectedZoneList" Content="所有分区" Margin="0" MaxWidth="450" Height="35" VerticalContentAlignment="Center" Foreground="{StaticResource CyanBrush}" />
-                <ToggleButton x:Name="bnAddZone" Style="{DynamicResource IconPath20ToggleButton}" Tag="{DynamicResource IconAdd}" Margin="20,0" Width="20" Height="20" VerticalAlignment="Center" />
+            <Label Content="选择分区：" Margin="0" Height="35" VerticalContentAlignment="Center" />
+            <Label x:Name="txtSelectedZoneList" Content="所有分区" Margin="0" MaxWidth="450" Height="35" VerticalContentAlignment="Center" Foreground="{StaticResource CyanBrush}" />
+            <ToggleButton x:Name="bnAddZone" Style="{DynamicResource IconPath20ToggleButton}" Tag="{DynamicResource IconAdd}" Margin="20,0" Width="20" Height="20" VerticalAlignment="Center" />
             <Popup x:Name="popAZ" Width="220" Height="340" HorizontalOffset="0" VerticalOffset="10" 
                AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
                StaysOpen="True" IsOpen="{Binding ElementName=bnAddZone, Path=IsChecked}" 
@@ -151,21 +151,12 @@
                 <StackPanel Grid.Column="2" Margin="5">
                     <Label Content="加工编号列表" Foreground="#FF80A080" />
                     <ListBox x:Name="Lst2" Grid.Column="1" Margin="0,5" Height="250"
-                             ItemsSource="{Binding Path=ParamListFiltered}" 
+                             ItemsSource="{Binding Path=CurrentFabricationList_ElementCode}"
                              Style="{DynamicResource MonitorScreen}"
                              ItemContainerStyle="{StaticResource MonitorScreenItem13}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <WrapPanel>
-                                    <Label Content="{Binding}" />
-                                    <Label Content="[等于]" Foreground="DimGray" />
-                                    <TextBox x:Name="txtValue" MinWidth="200" Text="=" Style="{DynamicResource LabelTextBoxStyle}" />
-                                </WrapPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel />
+                                <StackPanel Orientation="Horizontal" Margin="2" />
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                     </ListBox>
@@ -173,16 +164,14 @@
                 <StackPanel Grid.Column="4" Margin="5">
                     <Label Content="加工料单列表" Foreground="#FF80A080" />
                     <ListBox x:Name="Lst3" Grid.Column="1" Margin="0,5" Height="250"
-                             ItemsSource="{Binding Path=ParamListFiltered}" 
+                             ItemsSource="{Binding Path=CurrentFabricationList_OrderCode}" 
                              Style="{DynamicResource MonitorScreen}"
                              ItemContainerStyle="{StaticResource MonitorScreenItem13}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <WrapPanel>
-                                    <Label Content="{Binding}" />
-                                    <Label Content="[等于]" Foreground="DimGray" />
-                                    <TextBox x:Name="txtValue" MinWidth="200" Text="=" Style="{DynamicResource LabelTextBoxStyle}" />
-                                </WrapPanel>
+                                <StackPanel Orientation="Horizontal" Margin="2">
+                                    <TextBlock Text="{Binding}" />
+                                </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                         <ListBox.ItemsPanel>

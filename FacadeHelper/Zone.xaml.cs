@@ -19,6 +19,8 @@ using System.IO;
 using AqlaSerializer;
 using System.Globalization;
 using System.ComponentModel;
+using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace FacadeHelper
 {

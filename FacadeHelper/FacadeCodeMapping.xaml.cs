@@ -41,11 +41,9 @@ namespace FacadeHelper
         private ICollection<ElementId> sids;
 
         private List<Element> _currentElementList = new List<Element>();
-        private List<ElementFabricationInfo> _currentFabricationList = new List<ElementFabricationInfo>();
         private ObservableCollection<ScheduleElementInfo> _currentElementInfoList = new ObservableCollection<ScheduleElementInfo>();
         private ObservableCollection<ScheduleElementInfo> _appliedElementInfoList = new ObservableCollection<ScheduleElementInfo>();
         public List<Element> CurrentElementList { get { return _currentElementList; } set { _currentElementList = value; OnPropertyChanged(nameof(CurrentElementList)); } }
-        public List<ElementFabricationInfo> CurrentFabricationList { get { return _currentFabricationList; } set { _currentFabricationList = value; OnPropertyChanged(nameof(CurrentFabricationList)); } }
         public ObservableCollection<ScheduleElementInfo> CurrentElementInfoList { get { return _currentElementInfoList; } set { _currentElementInfoList = value; OnPropertyChanged(nameof(CurrentElementInfoList)); } }
         public ObservableCollection<ScheduleElementInfo> AppliedElementInfoList { get { return _appliedElementInfoList; } set { _appliedElementInfoList = value; OnPropertyChanged(nameof(AppliedElementInfoList)); } }
 
@@ -57,6 +55,22 @@ namespace FacadeHelper
         private List<string> _zoneListSource = new List<string>();
         public List<string> ZoneListSource { get { return _zoneListSource; } set { _zoneListSource = value; OnPropertyChanged(nameof(ZoneListSource)); } }
 
+        private ObservableCollection<ElementFabricationInfo> _currentFabricationList = new ObservableCollection<ElementFabricationInfo>();
+        public ObservableCollection<ElementFabricationInfo> CurrentFabricationList
+        {
+            get { return _currentFabricationList; }
+            set
+            {
+                _currentFabricationList = value;                
+                OnPropertyChanged(nameof(CurrentFabricationList));
+                OnPropertyChanged(nameof(CurrentFabricationList_ElementCode));
+                OnPropertyChanged(nameof(CurrentFabricationList_OrderCode));
+            }
+        }
+        public ICollectionView CurrentFabricationList_ViewElementCode { get { return CollectionViewSource.GetDefaultView(CurrentFabricationList); } }
+        public ICollectionView CurrentFabricationList_ViewOrderCode { get { return CollectionViewSource.GetDefaultView(CurrentFabricationList); } }
+        public ObservableCollection<string> CurrentFabricationList_ElementCode { get { return new ObservableCollection<string>(CurrentFabricationList.Select(f => f.ElementCode).Distinct()); } }
+        public ObservableCollection<string> CurrentFabricationList_OrderCode { get { return new ObservableCollection<string>(CurrentFabricationList.Select(f => f.OrderCode).Distinct()); } }
 
         public FacadeCodeMapping(ExternalCommandData commandData)
         {
@@ -273,7 +287,7 @@ namespace FacadeHelper
                         string linezonecode = string.Empty;
                         while ((dataline = reader.ReadLine()) != null)
                         {
-                            string[] rowdata = dataline.Split('\t');
+                            string[] rowdata = dataline.Split(',');
                             CurrentFabricationList.Add(new ElementFabricationInfo() { ElementCode=rowdata[0], FabrQuantity=int.Parse(rowdata[1]), OrderCode=rowdata[2] });
                         }
                     }
