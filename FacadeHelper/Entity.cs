@@ -36,7 +36,7 @@ namespace FacadeHelper
             INF_DeepElements = new List<DeepElementInfo>();
             INF_GeneralElements = new List<GeneralElementInfo>();
         }
-        public CurtainPanelInfo(Panel p) : this()
+        public CurtainPanelInfo(Element p, bool ispanel) : this()
         {
             #region CurtainPanelInfo 初始化
             INF_ElementId = p.Id.IntegerValue;
@@ -53,9 +53,19 @@ namespace FacadeHelper
                 if (INF_Name.Contains("立柱")) INF_Type = 61;
             }
 
-            INF_Width_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.CURTAIN_WALL_PANELS_WIDTH).AsDouble());
-            INF_Height_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.CURTAIN_WALL_PANELS_HEIGHT).AsDouble());
-            XYZ _xyzOrigin = p.GetTransform().Origin;
+            XYZ _xyzOrigin = new XYZ();
+            if (ispanel)
+            {
+                INF_Width_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.CURTAIN_WALL_PANELS_WIDTH).AsDouble());
+                INF_Height_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.CURTAIN_WALL_PANELS_HEIGHT).AsDouble());
+                _xyzOrigin = ((Panel)p).GetTransform().Origin;
+            }
+            else
+            {
+                INF_Width_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.WINDOW_WIDTH).AsDouble());
+                INF_Height_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, p.get_Parameter(BuiltInParameter.WINDOW_HEIGHT).AsDouble());
+                _xyzOrigin = (p.Location as LocationPoint).Point;
+            }
             INF_OriginX_US = _xyzOrigin.X;
             INF_OriginY_US = _xyzOrigin.Y;
             INF_OriginZ_US = _xyzOrigin.Z;
@@ -63,17 +73,9 @@ namespace FacadeHelper
             INF_OriginY_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Y);
             INF_OriginZ_Metric = Unit.CovertFromAPI(DisplayUnitType.DUT_MILLIMETERS, _xyzOrigin.Z);
 
-            /**
-            if ((_param = p.get_Parameter("分区区号")).HasValue)
-            {
-                INF_ZoneCode = _param.AsString();
-                ResolveZoneCode();
-            }
-            else INF_ErrorInfo += $"[参数未设置：分区区号]";
-            **/
             #endregion
         }
-        public CurtainPanelInfo(Panel p, string zonecode) : this(p)
+        public CurtainPanelInfo(Element p, string zonecode, bool ispanel) : this(p, ispanel)
         {
             if (Regex.IsMatch(zonecode, @"Z-00-\d{2}-[a-z|A-Z]{2}-\d{2}"))
             {

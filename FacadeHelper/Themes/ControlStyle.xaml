@@ -21,8 +21,144 @@
     <Geometry x:Key="ExpanderCheckedArrow">M 1,4.5  L 4.5,1  L 8,4.5</Geometry>
     <Geometry x:Key="TabItemRoundedCorner">M6.5,2.6C4.767,0.973 2.509,0 0,0 0,0 0,19 0,19L23,19z</Geometry>
     <Geometry x:Key="RepeatButton">M3.5445026,0 L7.0890052,7.0890053 L3.0459049E-09,7.0890053 z</Geometry>
-    <Geometry x:Key="ComboBoxArrow">M-0,6 L-0,8 8,8 8,-0 6,-0 6,6 z</Geometry>
+    <Geometry x:Key="IconComboBoxArrow">M768 301.056l-512 0c-25.941333 0-45.056-19.114667-45.056-45.056s19.114667-45.056 45.056-45.056l512 0
+        c25.941333 0 45.056 19.114667 45.056 45.056S793.258667 301.056 768 301.056z
+        M768 557.056l-512 0c-25.941333 0-45.056-19.114667-45.056-45.056s19.114667-45.056 45.056-45.056l512 0
+        c25.941333 0 45.056 19.114667 45.056 45.056S793.258667 557.056 768 557.056z
+        M768 813.056l-512 0c-25.941333 0-45.056-19.114667-45.056-45.056s19.114667-45.056 45.056-45.056l512 0
+        c25.941333 0 45.056 19.114667 45.056 45.056S793.258667 813.056 768 813.056z</Geometry>
     <Geometry x:Key="ExpanderToggleButtonArrow">M5,-0 L9,5 1,5 z</Geometry>
+    <Geometry x:Key="IconCircleAdd">M675.328 117.717333A425.429333 425.429333 0 0 0 512 85.333333C276.352 85.333333 85.333333 276.352 85.333333 512
+        s191.018667 426.666667 426.666667 426.666667 426.666667-191.018667 426.666667-426.666667c0-56.746667-11.093333-112-32.384-163.328
+        a21.333333 21.333333 0 0 0-39.402667 16.341333A382.762667 382.762667 0 0 1 896 512c0 212.074667-171.925333 384-384 384
+        S128 724.074667 128 512 299.925333 128 512 128c51.114667 0 100.8 9.984 146.986667 29.12a21.333333 21.333333 0 0 0 16.341333-39.402667z
+        M490.666667 490.666667h-149.482667A21.269333 21.269333 0 0 0 320 512c0 11.861333 9.493333 21.333333 21.184 21.333333
+        H490.666667v149.482667c0 11.690667 9.557333 21.184 21.333333 21.184 11.861333 0 21.333333-9.493333 21.333333-21.184V533.333333
+        h149.482667A21.269333 21.269333 0 0 0 704 512c0-11.861333-9.493333-21.333333-21.184-21.333333
+        H533.333333v-149.482667A21.269333 21.269333 0 0 0 512 320c-11.861333 0-21.333333 9.493333-21.333333 21.184V490.666667z</Geometry>
+    <Geometry x:Key="IconCircleRemove">M675.328 117.717333A425.429333 425.429333 0 0 0 512 85.333333
+        C276.352 85.333333 85.333333 276.352 85.333333 512s191.018667 426.666667 426.666667 426.666667 426.666667-191.018667 426.666667-426.666667
+        c0-56.746667-11.093333-112-32.384-163.328a21.333333 21.333333 0 0 0-39.402667 16.341333A382.762667 382.762667 0 0 1 896 512
+        c0 212.074667-171.925333 384-384 384S128 724.074667 128 512 299.925333 128 512 128
+        c51.114667 0 100.8 9.984 146.986667 29.12a21.333333 21.333333 0 0 0 16.341333-39.402667z
+        M320 512c0-11.776 9.493333-21.333333 21.184-21.333333h341.632
+        c11.690667 0 21.184 9.472 21.184 21.333333 0 11.776-9.493333 21.333333-21.184 21.333333H341.184A21.205333 21.205333 0 0 1 320 512z</Geometry>
+    <Geometry x:Key="IconCircleClear">M675.328 117.717333A425.429333 425.429333 0 0 0 512 85.333333
+        C276.352 85.333333 85.333333 276.352 85.333333 512s191.018667 426.666667 426.666667 426.666667 426.666667-191.018667 426.666667-426.666667
+        c0-56.746667-11.093333-112-32.384-163.328a21.333333 21.333333 0 0 0-39.402667 16.341333A382.762667 382.762667 0 0 1 896 512
+        c0 212.074667-171.925333 384-384 384S128 724.074667 128 512 299.925333 128 512 128
+        c51.114667 0 100.8 9.984 146.986667 29.12a21.333333 21.333333 0 0 0 16.341333-39.402667z
+        M512 481.834667l-105.685333-105.706667a21.269333 21.269333 0 0 0-30.08 0.106667 21.205333 21.205333 0 0 0-0.106667 30.08
+        L481.834667 512l-105.706667 105.685333a21.269333 21.269333 0 0 0 0.106667 30.08 21.205333 21.205333 0 0 0 30.08 0.106667
+        L512 542.165333l105.685333 105.706667a21.269333 21.269333 0 0 0 30.08-0.106667 21.205333 21.205333 0 0 0 0.106667-30.08
+        L542.165333 512l105.706667-105.685333a21.269333 21.269333 0 0 0-0.106667-30.08 21.205333 21.205333 0 0 0-30.08-0.106667
+        L512 481.834667z</Geometry>
+    <Geometry x:Key="IconCircleConfirm">M675.328 117.717333A425.429333 425.429333 0 0 0 512 85.333333
+        C276.352 85.333333 85.333333 276.352 85.333333 512s191.018667 426.666667 426.666667 426.666667 426.666667-191.018667 426.666667-426.666667
+        c0-56.746667-11.093333-112-32.384-163.328a21.333333 21.333333 0 0 0-39.402667 16.341333A382.762667 382.762667 0 0 1 896 512
+        c0 212.074667-171.925333 384-384 384S128 724.074667 128 512 299.925333 128 512 128
+        c51.114667 0 100.8 9.984 146.986667 29.12a21.333333 21.333333 0 0 0 16.341333-39.402667z 
+        m-213.333333 468.608l-105.664-105.642666a21.248 21.248 0 0 0-30.122667 0.042666c-8.32 8.32-8.213333 21.973333-0.064 30.101334
+        l120.810667 120.832a21.248 21.248 0 0 0 30.122666-0.085334
+        l211.157334-211.157333a21.290667 21.290667 0 0 0 0-30.186667 21.397333 21.397333 0 0 0-30.250667 0.106667l-196.010667 195.989333z</Geometry>
+    <Geometry x:Key="IconCircleReturn">M675.328 117.717333A425.429333 425.429333 0 0 0 512 85.333333
+        C276.352 85.333333 85.333333 276.352 85.333333 512s191.018667 426.666667 426.666667 426.666667 426.666667-191.018667 426.666667-426.666667
+        c0-56.746667-11.093333-112-32.384-163.328a21.333333 21.333333 0 0 0-39.402667 16.341333A382.762667 382.762667 0 0 1 896 512
+        c0 212.074667-171.925333 384-384 384S128 724.074667 128 512 299.925333 128 512 128
+        c51.114667 0 100.8 9.984 146.986667 29.12a21.333333 21.333333 0 0 0 16.341333-39.402667z 
+        m-324.693333 373.013334l174.464-174.485334a21.141333 21.141333 0 0 0-0.192-29.973333 21.141333 21.141333 0 0 0-29.973334-0.192
+        l-208.256 208.256a20.821333 20.821333 0 0 0-6.122666 14.976
+        c0.042667 5.418667 2.133333 10.837333 6.314666 14.997333l211.178667 211.2
+        a21.141333 21.141333 0 0 0 29.973333 0.213334 21.141333 21.141333 0 0 0-0.213333-29.973334l-172.629333-172.629333 374.997333 2.602667
+        a20.693333 20.693333 0 0 0 21.034667-21.034667 21.482667 21.482667 0 0 0-21.333334-21.333333l-379.242666-2.624z</Geometry>
+
+    <Geometry x:Key="IconAdd">M575.95463 448.103731L575.95463 256.33455 448.098612 256.33455
+        l0 191.769181-191.976003 0 0 127.844755 191.976003 0 0 192.130608 127.856018 0L575.95463 575.94951l192.23709 0
+        L768.19172 448.103731 575.95463 448.103731zM447.927625 0
+        L64.125104 0 0.136175 0 0.136175 63.988929 0.136175 447.95015 64.125104 447.95015 64.125104 63.988929 447.927625 63.988929Z
+        M576.06316 0L959.866705 0 1023.855634 0 1023.855634 63.988929 1023.855634 447.95015 959.866705 447.95015 959.866705 63.988929 576.06316 63.988929Z
+        M447.927625 1024.006143
+        L64.125104 1024.006143 0.136175 1024.006143 0.136175 960.018238 0.136175 576.055993 64.125104 576.055993 64.125104 960.018238 447.927625 960.018238Z
+        M576.06316 1024.006143
+        L959.866705 1024.006143 1023.855634 1024.006143 1023.855634 960.018238 1023.855634 576.055993 959.866705 576.055993 959.866705 960.018238 
+        576.06316 960.018238Z</Geometry>
+    <Geometry x:Key="IconHLink">M881.6 288c-27.2 0-52.8-8-73.6-20.8L710.4 368c-6.4 6.4-14.4 9.6-22.4 9.6-8 0-16-3.2-22.4-9.6-12.8-12.8-12.8-32-1.6-44.8l96-100.8
+        C745.6 200 737.6 172.8 737.6 144c0-80 64-144 144-144s144 64 144 144-65.6 144-144 144z 
+        m0-224c-44.8 0-80 35.2-80 80s35.2 80 80 80 80-35.2 80-80-36.8-80-80-80zM659.2 686.4l73.6 52.8
+        c14.4 9.6 17.6 30.4 8 44.8-6.4 8-16 12.8-25.6 12.8-6.4 0-12.8-1.6-19.2-6.4
+        L619.2 736c-38.4 40-92.8 64-153.6 64-123.2 0-224-100.8-224-224 0-14.4 1.6-27.2 3.2-40l-75.2-27.2C152 529.6 126.4 544 96 544
+        c-52.8 0-96-43.2-96-96s43.2-96 96-96 96 43.2 96 96v1.6l73.6 27.2c36.8-73.6 112-123.2 200-123.2 123.2 0 224 100.8 224 224 0 38.4-11.2 76.8-30.4 108.8z
+        M97.6 414.4c-17.6 0-32 14.4-32 32s14.4 32 32 32 32-14.4 32-32-14.4-32-32-32z m368 1.6c-88 0-160 72-160 160s72 160 160 160 160-72 160-160-72-160-160-160z 
+        m432 352c70.4 0 128 57.6 128 128s-57.6 128-128 128-128-57.6-128-128 57.6-128 128-128z 
+        m0 192c35.2 0 64-28.8 64-64s-28.8-64-64-64-64 28.8-64 64 28.8 64 64 64z</Geometry>
+    <Geometry x:Key="IconSelect">M953.1 613.3L442.3 412.6c-18.6-7.3-28.5 1.9-21.9 20.6
+        l180.2 511.4c6.6 18.6 19.3 19.4 28.3 1.7 0 0 50.1-98.9 94.1-161.3
+        l122.5 130.4
+        c11.7 12.4 31.6 13.1 44.2 1.5
+        l30.2-27.8
+        c12.6-11.6 13.3-31.3 1.7-43.7
+        L799.1 715.1
+        c62.9-37.3 154.1-74.7 154.1-74.7 18.6-7.6 18.5-19.8-0.1-27.1z
+        M512 968
+        H160
+        c-52.9 0-96-43.1-96-96V160c0-52.9 43.1-96 96-96
+        h704c52.9 0 96 43.1 96 96v352
+        h-64V160c0-17.6-14.4-32-32-32
+        H160c-17.6 0-32 14.4-32 32v712c0 17.6 14.4 32 32 32h352v64z</Geometry>
+    <Geometry x:Key="IconCode">M932.562986 932.562475 864.730065 932.562475 864.730065 959.695438 959.69595 959.695438 959.69595 864.729553 932.562986 864.729553Z
+        M300.361347 932.562475l141.093459 0 0 27.132964-141.093459 0 0-27.132964Z
+        M582.545194 932.562475l141.092435 0 0 27.132964-141.092435 0 0-27.132964Z
+        M91.43599 864.729553 64.303027 864.729553 64.303027 959.695438 159.269935 959.695438 159.269935 932.562475 91.43599 932.562475Z
+        M64.303027 582.545706l27.133987 0 0 141.092435-27.133987 0 0-141.092435Z
+        M64.303027 300.361859l27.133987 0 0 141.092435-27.133987 0 0-141.092435Z
+        M91.43599 91.436502 159.269935 91.436502 159.269935 64.303538 64.303027 64.303538 64.303027 159.269423 91.43599 159.269423Z
+        M300.361347 64.303538l141.092435 0 0 27.132964-141.092435 0 0-27.132964Z
+        M582.545194 64.303538l141.092435 0 0 27.132964-141.092435 0 0-27.132964Z
+        M864.730065 64.303538 864.730065 91.436502 932.562986 91.436502 932.562986 159.269423 959.69595 159.269423 959.69595 64.303538Z
+        M932.562986 582.545706l27.132964 0 0 141.092435-27.132964 0 0-141.092435Z
+        M932.562986 300.361859l27.132964 0 0 141.091412-27.132964 0 0-141.091412Z
+        M155.600359 493.703285l337.466941 0L493.0673 156.222017 155.600359 156.222017 155.600359 493.703285z
+        M270.634302 244.410546l70.365604-20.432355 0 180.445722 44.186362 0 0 21.582551L271.784498 426.006464l0-21.582551 44.313252 0 0-150.180418-45.463448 13.153578L270.634302 244.410546z
+        M155.600359 867.777983l337.466941 0L493.0673 530.296715 155.600359 530.296715 155.600359 867.777983z
+        M261.183046 783.193539l57.467853-57.338916c15.835663-15.835663 26.435069-28.371164 31.798217-37.608549 5.363148-9.236362 8.04421-18.793018 8.04421-28.670993 
+        0-11.236925-3.149736-19.857257-9.449209-25.859971-6.30152-6.001691-15.410991-9.003048-27.328415-9.003048-17.623379 0-34.438347 7.492648-50.443879 22.475897l0-25.413809
+        c15.579837-12.003382 33.713846-18.006096 54.402027-18.006096 17.793248 0 31.840172 4.810562 42.142819 14.430664 10.299577 9.621125 15.452947 22.562878 15.452947 38.822191 
+        0 12.259208-3.301186 24.285103-9.897418 36.07666-6.598278 11.791557-19.091824 26.798343-37.480636 45.01524l-45.080731 44.058448 
+        0 0.51063 90.670046 0 0 22.221094L261.183046 804.90298 261.183046 783.193539z
+        M868.399641 156.222017 530.9327 156.222017l0 337.481268 337.466941 0L868.399641 156.222017z
+        M737.716276 412.980799c-12.81384 10.898211-29.863145 16.346293-51.144844 16.346293-18.73162 0-33.841759-3.490497-45.335535-10.471492l0-25.923416
+        c13.537318 10.471492 28.816303 15.70775 45.845141 15.70775 13.621229 0 24.411993-3.340071 32.374338-10.024308 7.959276-6.682189 11.939937-15.643282 11.939937-26.882254 
+        0-25.029046-17.922185-37.545104-53.763484-37.545104l-16.474206 0 0-20.688181 15.70775 0c31.755238 0 47.634904-11.748578 47.634904-35.245735 
+        0-21.710464-12.132318-32.564673-36.395932-32.564673-13.878079 0-26.945699 4.682649-39.20593 14.047947L648.898415 236.110509
+        c12.94073-7.490601 28.05087-11.237949 45.335535-11.237949 16.856923 0 30.393217 4.406356 40.609906 13.218046 10.216689 8.81169 15.326057 20.240997 15.326057 34.287921 
+        0 25.882484-13.19758 42.526559-39.58967 49.932226l0 0.511653c14.303774 1.531889 25.604144 6.576789 33.906228 15.132652 8.300037 8.555863 12.450567 19.219737 12.450567 31.989575
+        C756.93499 387.738905 750.529093 402.084635 737.716276 412.980799z
+        M709.940676 645.783982l-58.871829 87.986937 66.406432 0 0-82.879616c0-5.874801 0.169869-12.641925 0.51063-20.305465l-0.51063 0
+        C716.282105 633.82358 713.771935 638.886899 709.940676 645.783982z
+        M868.399641 530.296715 530.9327 530.296715l0 337.481268 337.466941 0L868.399641 530.296715zM767.024789 753.565754l-25.285896 0 0 51.338249-24.263613 0
+        L717.47528 753.565754l-92.202958 0 0-16.217357 87.47733-130.259716 28.988218 0 0 126.683261 25.285896 0L767.023766 753.565754z</Geometry>
+    <Geometry x:Key="IconReset">M152.277333 885.226667c0 68.074667 54.762667 123.306667 122.410667 123.306666H752.64c67.733333 0 122.432-55.210667 122.432-123.306666V262.464
+        h57.813333a64 64 0 0 0 63.936-64.149333V161.536a64.128 64.128 0 0 0-64.192-64.149333H635.669333v-24.96C635.669333 32.554667 603.52 0 563.84 0
+        h-102.250667a21.333333 21.333333 0 1 0 0 42.666667h102.250667c16 0 29.184 13.354667 29.184 29.738666v46.293334a21.333333 21.333333 0 0 0 21.333333 21.333333
+        h318.293334c11.882667 0 21.504 9.6 21.504 21.504v36.778667a21.333333 21.333333 0 0 1-21.248 21.482666h-79.168a21.333333 21.333333 0 0 0-21.333334 21.333334v644.096
+        c0 44.629333-35.690667 80.64-79.765333 80.64H274.688c-44.010667 0-79.744-36.053333-79.744-80.64V241.130667a21.333333 21.333333 0 0 0-21.333333-21.333334H106.666667
+        C94.890667 219.797333 85.333333 210.218667 85.333333 198.314667V161.536c0-11.925333 9.536-21.482667 21.333334-21.482667h269.013333a21.333333 21.333333 0 0 0 0-42.666666
+        H106.666667c-35.413333 0-64 28.714667-64 64.149333v36.778667a64.064 64.064 0 0 0 64.021333 64.149333h45.589333v622.762667z
+        M346.496 311.872V822.186667a21.333333 21.333333 0 1 0 42.666667 0V311.872a21.333333 21.333333 0 0 0-42.666667 0z
+        M498.389333 311.872V822.186667a21.333333 21.333333 0 1 0 42.666667 0V311.872a21.333333 21.333333 0 0 0-42.666667 0z
+        M650.304 311.872V822.186667a21.333333 21.333333 0 1 0 42.666667 0V311.872a21.333333 21.333333 0 0 0-42.666667 0z</Geometry>
+    <Geometry x:Key="IconRefresh">M894.481158 505.727133c0 49.589418-9.711176 97.705276-28.867468 143.007041-18.501376 43.74634-44.98454 83.031065-78.712713 116.759237-33.728172 
+        33.728172-73.012897 60.211337-116.759237 78.712713-45.311998 19.156292-93.417623 28.877701-143.007041 28.877701s-97.695043-9.721409-142.996808-28.877701
+        c-43.756573-18.501376-83.031065-44.98454-116.76947-78.712713-33.728172-33.728172-60.211337-73.012897-78.712713-116.759237-19.156292-45.301765-28.867468-93.417623-28.867468-143.007041 
+        0-49.579185 9.711176-97.695043 28.867468-142.996808 18.501376-43.74634 44.98454-83.031065 78.712713-116.759237 33.738405-33.728172 73.012897-60.211337 116.76947-78.712713 
+        45.301765-19.166525 93.40739-28.877701 142.996808-28.877701 52.925397 0 104.008842 11.010775 151.827941 32.745798 46.192042 20.977777 86.909395 50.79692 121.016191 88.608084 
+        4.389984 4.860704 8.646937 9.854439 12.781094 14.97097l0-136.263453c0-11.307533 9.168824-20.466124 20.466124-20.466124 11.307533 0 20.466124 9.15859 20.466124 20.466124l0 
+        183.64253c0 5.433756-2.148943 10.632151-5.986341 14.46955-3.847631 3.837398-9.046027 5.996574-14.479783 5.996574l-183.64253-0.020466c-11.307533 0-20.466124-9.168824-20.466124-20.466124 
+        0-11.307533 9.168824-20.466124 20.466124-20.466124l132.293025 0.020466
+        c-3.960195-4.952802-8.063653-9.782807-12.289907-14.479783-30.320563-33.605376-66.514903-60.098773-107.549481-78.753645-42.467207-19.289322-87.850837-29.072129-134.902456-29.072129-87.195921 
+        0-169.172981 33.9533-230.816946 95.597265-61.654198 61.654198-95.597265 143.621025-95.597265 230.816946s33.943067 169.172981 95.597265 230.816946
+        c61.643965 61.654198 143.621025 95.607498 230.816946 95.607498s169.172981-33.9533 230.816946-95.607498c61.654198-61.643965 95.597265-143.621025 95.597265-230.816946 
+        0-11.2973 9.168824-20.466124 20.466124-20.466124C885.322567 485.261009 894.481158 494.429833 894.481158 505.727133z</Geometry>
     <Geometry x:Key="IconExplode">M768 796.444c-45.511 0-85.333-39.822-85.333-85.333s39.822-85.333 85.333-85.333 85.333 39.822 85.333 85.333-39.822 85.333-85.333 85.333z
         M426.667 512c-45.511 0-85.334-39.822-85.334-85.333s39.823-85.334 85.334-85.334S512 381.156 512 426.667 472.178 512 426.667 512z 
         m256-227.556c-34.134 0-56.89-22.755-56.89-56.888s22.756-56.89 56.89-56.89 56.889 22.756 56.889 56.89-22.756 56.888-56.89 56.888z 
@@ -32,6 +168,11 @@
         M682.667 512c-34.134 0-56.89-22.756-56.89-56.889s22.756-56.889 56.89-56.889 56.889 22.756 56.889 56.89S716.8 512 682.666 512z
         M284.444 796.444c-34.133 0-56.888-22.755-56.888-56.888s22.755-56.89 56.888-56.89 56.89 22.756 56.89 56.89-22.756 56.888-56.89 56.888z
         M56.89 938.667V56.889h56.889v853.333H967.11v56.89H56.89v-28.445z</Geometry>
+    <Geometry x:Key="IconSFilter">M947.904 210.816c0-64.96-52.736-117.76-117.632-117.76L193.92 93.056c-64.96 0-117.76 52.8-117.76 117.76 0 28.544 10.624 55.552 29.248 76.992 1.152 1.6 1.792 
+        3.456 3.264 4.928l261.056 260.992 0 273.856c0 18.24 14.784 33.088 33.088 33.088s33.088-14.784 33.088-33.088L435.904 540.032c0-8.832-3.52-17.216-9.664-23.36L157.76 248.32
+        c-0.512-0.576-0.64-1.344-1.216-1.856C147.392 236.8 142.272 224.128 142.272 210.816c0-28.48 23.104-51.648 51.648-51.648l636.352 0
+        c28.352 0 51.52 23.104 51.52 51.648 0 13.248-4.992 25.792-14.144 35.456-0.256 0.256-0.384 0.576-0.512 0.832L589.12 525.056c-6.272 6.208-9.6 14.656-9.6 23.36l0 349.504
+        c0 18.24 14.72 33.024 33.024 33.024s33.024-14.72 33.024-33.024L645.568 562.112l269.76-269.696c0.384-0.384 0.512-0.96 0.896-1.344C936.512 269.248 947.904 240.768 947.904 210.816z</Geometry>
     <Geometry x:Key="IconWrite">M678.140413 828.647777 289.596166 828.647777c-53.759391 0-97.482195-43.742247-97.482195-97.500615L192.113971 342.620311c0-53.759391 43.722804-97.501638 
         97.482195-97.501638l194.281845 0c11.493775 0 20.807908 9.314133 20.807908 20.807908 0 11.494799-9.314133 20.807908-20.807908 20.807908L289.596166 286.73449
         c-30.806633 0-55.866379 25.077142-55.866379 55.884798l0 388.525827c0 30.80561 25.059745 55.883775 55.866379 55.883775l388.544247 0c30.80561 0 55.884798-25.078165 55.884798-55.883775
@@ -472,15 +613,23 @@
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.Setters>
+                                <Setter Property="Foreground" Value="DarkGreen" />
+                            </Trigger.Setters>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Trigger.Setters>
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter TargetName="Border" Property="Background" Value="DarkGreen" />
+                            </Trigger.Setters>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Trigger.Setters>
-                    <Setter Property="Foreground" Value="DarkGreen" />
-                </Trigger.Setters>
-            </Trigger>
             <DataTrigger Binding="{Binding Path=Tag, Converter={StaticResource PrefixConverter}, ConverterParameter=ERR }" Value="True">
                 <Setter Property="Foreground" Value="Red" />
             </DataTrigger>
@@ -522,8 +671,8 @@
         <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling" />
         <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False" />
     </Style>
-    
-    
+
+
     <!--#endregion-->
 
     <!--#region GroupBox: CommandGroup-->
@@ -1219,6 +1368,149 @@
 
     <!--#endregion-->
 
+    <!--#region ComboBox-->
+    <Style TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border Name="Border" Padding="2,1" Margin="1" BorderThickness="1" CornerRadius="0" Background="Transparent" BorderBrush="Transparent" >
+                        <TextBlock TextAlignment="Left">
+                            <ContentPresenter />
+                        </TextBlock>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="true">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="#FF80C080"/>
+                            <Setter TargetName="Border" Property="Background" Value="#5F80C080"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="15" />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="Border" Grid.Column="0" Background="Transparent" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,0,0,1" />
+                        <Path x:Name="Arrow" Grid.Column="1" Fill="{TemplateBinding BorderBrush}" StrokeThickness="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                              Width="12" Height="12" Stretch="Fill"
+                              Data="{StaticResource IconComboBoxArrow}"/>
+                        <Border Grid.Column="1" Background="{x:Static SystemColors.ControlBrush}" Opacity="0" BorderThickness="0" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Gray" />
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+        <Border x:Name="PART_ContentHost" Focusable="True" />
+    </ControlTemplate>
+
+    <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource baseStyle}">
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="BorderBrush" Value="#FF808080" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="OverridesDefaultStyle" Value="true"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="DarkGray" ShadowDepth="1" BlurRadius="10" Opacity="0.5" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid Margin="0">
+                        <ToggleButton
+                            Name="ToggleButton"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Style="{StaticResource ComboBoxToggleButton}"
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                            ClickMode="Press">
+                        </ToggleButton>
+                        <ContentPresenter
+                            Name="ContentSite"
+                            IsHitTestVisible="False"
+                            Content="{TemplateBinding SelectionBoxItem}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            Margin="10,0,20,0"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Left" />
+                        <TextBox
+                            x:Name="PART_EditableTextBox"
+                            Template="{StaticResource ComboBoxTextBox}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Margin="0"
+                            Focusable="True"
+                            Visibility="Hidden"
+                            IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                        <Popup
+                            Name="Popup"
+                            Placement="Bottom"
+                            IsOpen="{TemplateBinding IsDropDownOpen}"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            PopupAnimation="Slide" 
+                            VerticalOffset="2">
+                            <Grid Name="DropDown" MinWidth="{TemplateBinding FrameworkElement.ActualWidth}" MaxHeight="{TemplateBinding ComboBox.MaxDropDownHeight}">
+                                <Border x:Name="DropDownBorder" Background="{x:Static SystemColors.ControlBrush}" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}" />
+                                <ScrollViewer Margin="5">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter TargetName="DropDownBorder" Property="MinHeight" Value="95"/>
+                        </Trigger>
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                        <Trigger SourceName="Popup" Property="Popup.AllowsTransparency" Value="true">
+                            <Setter TargetName="DropDownBorder" Property="CornerRadius" Value="0"/>
+                            <Setter TargetName="DropDownBorder" Property="Margin" Value="0,1,0,0"/>
+                        </Trigger>
+                        <Trigger Property="IsEditable" Value="true">
+                            <Setter Property="IsTabStop" Value="false"/>
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility"    Value="Visible"/>
+                            <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+        </Style.Triggers>
+    </Style>
+    <!--#endregion-->
+
     <!--#region CheckBox & RadioButton-->
     <Style x:Key="CheckBaseStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
@@ -1372,25 +1664,27 @@
                                 </Border>
                             </Grid>
                         </BulletDecorator.Bullet>
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked">
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckMark" Duration="0:0:0.2" To="0.5" />
-                                        <ColorAnimation Storyboard.TargetProperty="(TextElement.Foreground).Color"  Storyboard.TargetName="BulletText" Duration="0:0:0.2" 
-                                                        From="#C0C0C0" To="#3babe3" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Unchecked" >
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Storyboard.TargetName="CheckMark" Duration="0:0:0.2" To="0" />
-                                        <ColorAnimation Storyboard.TargetProperty="(TextElement.Foreground).Color"  Storyboard.TargetName="BulletText" Duration="0:0:0.2" 
-                                                        From="#3babe3" To="#C0C0C0" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
                     </BulletDecorator>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0.5" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#3babe3" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#c0c0c0" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"  Value="True">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0.5" />
+                            <Setter Property="Fill" TargetName="CheckMark" Value="#106010" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#106010" />
+                        </Trigger>
+                        <Trigger Property="IsPressed"  Value="True">
+                            <Setter Property="Opacity" TargetName="CheckMark" Value="0.5" />
+                            <Setter Property="Fill" TargetName="CheckMark" Value="#30c030" />
+                            <Setter Property="TextElement.Foreground" TargetName="BulletText" Value="#30c030" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1467,7 +1761,7 @@
     <!--#endregion-->
 
     <!--#region PathButton-->
-    <Style x:Key="IconPathButton" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
+    <Style x:Key="IconPathButtonBase" TargetType="{x:Type ContentControl}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
         <Setter Property="Background" Value="Transparent" />
@@ -1484,7 +1778,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
+                <ControlTemplate TargetType="{x:Type ContentControl}">
                     <Grid >
                         <Border BorderThickness="0" Background="{x:Static SystemColors.ControlBrush}" Opacity="0" Margin="0"  />
                         <Path x:Name="BookShape"
@@ -1501,14 +1795,13 @@
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="{StaticResource CyanBrush}" />
                         </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Foreground" Value="{StaticResource CyanBrush}"/>
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="IconPathButton" TargetType="{x:Type Button}" BasedOn="{StaticResource IconPathButtonBase}" />
+    <Style x:Key="IconPath20ToggleButton" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource IconPathButtonBase}" />
 
     <Style x:Key="IconText30PathButton" TargetType="{x:Type Button}" BasedOn="{StaticResource baseStyle}">
         <Setter Property="SnapsToDevicePixels" Value="true" />

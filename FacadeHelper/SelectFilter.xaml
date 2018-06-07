@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="FacadeHelper.SelectFilter" x:Name="ProcSF"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FacadeHelper"
+             mc:Ignorable="d" 
+             d:DesignHeight="850" d:DesignWidth="800">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <local:IntToBoolConverter x:Key="I2BConverter" />
+            <local:VarToBoolConverter x:Key="VarConverter" />
+            <local:BoolToVisibilityConverter x:Key="B2VConverter" />
+            <local:NegateBoolConverter x:Key="NeBConverter" />
+            <local:MultiValueElementClassConverter x:Key="MvECConverter" />
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes\DataGridStyle.xaml" />
+                <ResourceDictionary Source="Themes\ControlStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="20,10" UseLayoutRounding="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Label Style="{DynamicResource TagLable}" Tag="保存" Content="选择集" Margin="0,0,20,0" />
+            <TextBox x:Name="txtSelectFilterName" Width="200" Text="{Binding Path=CurrentSharedParamFile.Filename, StringFormat={}{0}}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <Label Style="{DynamicResource TagLable}" Tag="过滤" Content="类型限定" Margin="0,0,20,0" />
+            <CheckBox x:Name="chk1" Content="墙" IsChecked="{Binding Path=IsFilterWall, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chk2" Content="幕墙系统" IsChecked="{Binding Path=IsFilterCurtainSystem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chk3" Content="幕墙网格" IsChecked="{Binding Path=IsFilterCurtainGrid, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chk4" Content="幕墙嵌板" IsChecked="{Binding Path=IsFilterCurtainPanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chk5" Content="常规模型" IsChecked="{Binding Path=IsFilterGenericModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+            <CheckBox x:Name="chk6" Content="幕墙竖梃" IsChecked="{Binding Path=IsFilterCurtainWallMullion, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="3">
+            <Label Style="{DynamicResource TagLable}" Tag="过滤" Content="参数限定" Margin="0,0,20,0" />
+        </StackPanel>
+        <StackPanel Grid.Row="4">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="500" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="5">
+                    <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconRefresh}" Content="过滤所选构件" x:Name="bnParamsRefresh" Height="27" Padding="5,0" Margin="10,0" />
+                    <ListBox x:Name="Lst1" Grid.Column="1" Margin="0,5" MaxHeight="300" MinHeight="200" SelectionMode="Multiple"
+                             ItemsSource="{Binding Path=ParamListSource}"
+                             Style="{DynamicResource MonitorScreen}" 
+                             ItemContainerStyle="{StaticResource MonitorScreenItem13}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding}" 
+                                          Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=DataContext.CmdSelectParam}" 
+                                          CommandParameter="{Binding}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="5">
+                    <Label Content="过滤参数列表" Foreground="#FF80A080" />
+                    <ListBox x:Name="Lst2" Grid.Column="1" Margin="0,5" MaxHeight="300" MinHeight="200"
+                             ItemsSource="{Binding Path=ParamListFiltered}" 
+                             Style="{DynamicResource MonitorScreen}"
+                             ItemContainerStyle="{StaticResource MonitorScreenItem13}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <WrapPanel>
+                                    <Label Content="{Binding}" />
+                                    <Label Content="[等于]" Foreground="DimGray" />
+                                    <TextBox x:Name="txtValue" MinWidth="200" Text="=" Style="{DynamicResource LabelTextBoxStyle}" />
+                                </WrapPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                </StackPanel>
+            </Grid>
+            <ItemsControl Background="{x:Static SystemColors.WindowBrush}">
+            </ItemsControl>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="5" Margin="10,20" VerticalAlignment="Bottom">
+            <Button Style="{DynamicResource IconText20HPathButton}" Tag="{StaticResource IconFilter}" Content="过滤所选构件" x:Name="bnApplySelection" Height="30" Padding="5,0" Margin="10,0" />
+            <Label x:Name="lblApplied" Content="设置已应用。" Margin="10,0" VerticalAlignment="Bottom" Visibility="Collapsed" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="6" Margin="10,20" VerticalAlignment="Stretch">
+            <ListBox x:Name="listInformation" Width="740" MinHeight="80" Margin="0,5" SelectionChanged="listInformation_SelectionChanged"
+                             Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
+        </StackPanel>
+    </Grid>
+</UserControl>
