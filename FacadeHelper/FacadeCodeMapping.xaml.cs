@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -102,8 +103,11 @@ namespace FacadeHelper
                 }
             }
 
-
             if (CurrentZoneList.Count == 0) ZoneListSource.ForEach(z => CurrentZoneList.Add(z));
+
+            ParamValueList.Items.Clear();
+            var mru = Global.GetAppConfig("ParamValueMRU")?.Split('|');
+            if (mru != null) foreach (string v in mru) ParamValueList.Items.Add(v);
 
             InitializeCommand();
 
@@ -198,6 +202,7 @@ namespace FacadeHelper
         private RoutedCommand cmdInitZone = new RoutedCommand();
 
         private RoutedCommand cmdLoadOrder = new RoutedCommand();
+        private RoutedCommand cmdApplyMapping = new RoutedCommand();
 
         private void InitializeCommand()
         {
@@ -265,6 +270,9 @@ namespace FacadeHelper
                     barStatusApplyParams.Value = 100;
                 }
 
+                if (!ParamValueList.Items.Contains(ParamValueList.Text)) ParamValueList.Items.Add(ParamValueList.Text);
+                Global.UpdateAppConfig("ParamValueMRU", string.Join("|", ParamValueList.Items.Cast<string>()));
+
             }, (sender, e) =>
             {
                 if (ParamNameList.SelectedIndex >= 0)
@@ -331,6 +339,9 @@ namespace FacadeHelper
                     trans.Commit();
                 }
 
+                if (!ZoneListSource.Contains("Z-00-00-00-00")) ZoneListSource.Add("Z-00-00-00-00");
+                if (!CurrentZoneList.Contains("Z-00-00-00-00")) CurrentZoneList.Add("Z-00-00-00-00");
+
                 #endregion
             }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
@@ -345,20 +356,63 @@ namespace FacadeHelper
                 if (ofd.ShowDialog() == true)
                 {
                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - READ: DATA, {ofd.FileName}");
-                    using (StreamReader reader = new StreamReader(ofd.FileName))
+                    //CurrentFabricationList.Clear();
+                    foreach (var fn in ofd.FileNames)
                     {
-
-                        string dataline;
-                        reader.ReadLine();
-                        string linezonecode = string.Empty;
-                        while ((dataline = reader.ReadLine()) != null)
+                        using (StreamReader reader = new StreamReader(ofd.FileName, Encoding.Default))
                         {
-                            string[] rowdata = dataline.Split(',');
-                            CurrentFabricationList.Add(new ElementFabricationInfo() { ElementCode = rowdata[0], FabrQuantity = int.Parse(rowdata[1]), OrderCode = rowdata[2] });
+                            string dataline;
+                            reader.ReadLine();
+                            string linezonecode = string.Empty;
+                            string _oc = "";
+                            while ((dataline = reader.ReadLine()) != null)
+                            {
+                                string[] rowdata = dataline.Split(',');
+                                if (dataline.Contains("文件编号")) _oc = Regex.Match(dataline, "文件编号:(.*?),").Groups[1].Value;
+                                if (int.TryParse(rowdata[0], out int _oid) && int.TryParse(rowdata[10], out int _qty) && rowdata[1] != "")
+                                    CurrentFabricationList.Add(new ElementFabricationInfo() { ElementCode = rowdata[1], FabrQuantity = _qty, OrderCode = _oc });
+                            }
                         }
                     }
+
+                    var flist = CurrentFabricationList.GroupBy(f => f.ElementCode).Select(g => (new { ECode = g.Key, ICount = g.Count(), FQty = g.Sum(f => f.FabrQuantity), OCode = g.First().OrderCode }));
+
+                    Lst2.ItemsSource = flist;
+                    Lst3.ItemsSource = CurrentFabricationList_OrderCode;
                 }
             }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
+            CommandBinding cbApplyMapping = new CommandBinding(cmdApplyMapping, (sender, e) =>
+            {
+                Element ele = null;
+                using (Transaction trans = new Transaction(doc, "Apply Fabrication Information"))
+                {
+                    trans.Start();
+                    int _iam = 0;
+                    foreach (var ei in Lst1.SelectedItems.Cast<ScheduleElementInfo>())
+                    {
+                        double v = _iam++ * 1.0 / Lst1.SelectedItems.Count;
+                        lblStatusMapping.Content = string.Format("{0:F2}%", v * 100);
+                        barStatusMapping.Value = v * 100;
+                        System.Windows.Forms.Application.DoEvents();
+
+                        ele = doc.GetElement(new ElementId(ei.INF_ElementId));
+                        var item = Lst2.SelectedItem;
+                        ele.get_Parameter("加工编号")?.Set((string)item.GetType().GetProperty("ECode").GetValue(item, null));
+                        ele.get_Parameter("材料单号")?.Set(Lst3.SelectedValue as string);
+                    }
+                    listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - MAP: ELE/{Lst1.SelectedItems.Count}.");
+                    trans.Commit();
+                    lblStatusMapping.Content = string.Format("{0:F0}%", 100);
+                    barStatusMapping.Value = 100;
+                }
+            }, (sender, e) =>
+            {
+                if (Lst1.SelectedIndex != -1 && Lst2.SelectedIndex != -1 && Lst3.SelectedIndex != -1)
+                {
+                    e.CanExecute = true; e.Handled = true;
+                }
+            });
 
             CommandBinding cbZPopClear = new CommandBinding(cmdZPopClear, (sender, e) => { LstZone.SelectedIndex = -1; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
             CommandBinding cbZPopClose = new CommandBinding(cmdZPopClose, (sender, e) => { bnAddZone.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
@@ -371,6 +425,7 @@ namespace FacadeHelper
             bnZPopClear.Command = cmdZPopClear;
             bnLoadOrder.Command = cmdLoadOrder;
             bnInitZone.Command = cmdInitZone;
+            bnApplyMapping.Command = cmdApplyMapping;
 
             ProcFCM.CommandBindings.AddRange(new CommandBinding[]
             {
@@ -381,7 +436,8 @@ namespace FacadeHelper
                 cbZPopClear,
                 cbZPopClose,
                 cbInitZone,
-                cbLoadOrder
+                cbLoadOrder,
+                cbApplyMapping
             });
         }
 

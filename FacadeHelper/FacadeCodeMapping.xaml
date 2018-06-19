@@ -150,9 +150,10 @@
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,50,0,0" VerticalAlignment="Top">
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconHLink}" Content="编号关联" x:Name="bnApplyMapping" Width="30" Height="30" Padding="5,0" Margin="10" />
+                    <ProgressBar x:Name="barStatusMapping" Width="30" Value="0" HorizontalAlignment="Center" />
+                    <Label x:Name="lblStatusMapping" Content="0%" HorizontalAlignment="Center" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSelect}" Content="选定构件" x:Name="bnApplySelection" Width="30" Height="30" Padding="5,0" Margin="10" />
                     <ProgressBar x:Name="barStatusSelection" Width="30" Value="0" HorizontalAlignment="Center" />
-                    
                     <Label x:Name="lblStatusSelection" Content="0%" HorizontalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Grid.Column="2" Margin="5">
@@ -161,11 +162,14 @@
                              ItemsSource="{Binding Path=CurrentFabricationList_ElementCode}"
                              Style="{DynamicResource MonitorScreen}"
                              ItemContainerStyle="{StaticResource MonitorScreenItem13}">
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" Margin="2" />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="2">
+                                    <TextBlock Text="{Binding Path=ECode}" />
+                                    <TextBlock Text="{Binding Path=FQty, StringFormat=({0:N0})}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
                     </ListBox>
                     <ProgressBar x:Name="barStatusRefreshList2" Width="190" Value="0" HorizontalAlignment="Center" />
                 </StackPanel>
@@ -182,11 +186,6 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                        <ListBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel />
-                            </ItemsPanelTemplate>
-                        </ListBox.ItemsPanel>
                     </ListBox>
                     <ProgressBar x:Name="barStatusRefreshList3" Width="190" Value="0" HorizontalAlignment="Center" />
                 </StackPanel>
