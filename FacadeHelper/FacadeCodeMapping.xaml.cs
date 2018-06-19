@@ -61,7 +61,7 @@ namespace FacadeHelper
             get { return _currentFabricationList; }
             set
             {
-                _currentFabricationList = value;                
+                _currentFabricationList = value;
                 OnPropertyChanged(nameof(CurrentFabricationList));
                 OnPropertyChanged(nameof(CurrentFabricationList_ElementCode));
                 OnPropertyChanged(nameof(CurrentFabricationList_OrderCode));
@@ -125,6 +125,15 @@ namespace FacadeHelper
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: ELE/NONE(SET TO ALL).");
                 var pwlist = new FilteredElementCollector(doc).WherePasses(P_InstancesFilter)
                     .Union(new FilteredElementCollector(doc).WherePasses(W_InstancesFilter));
+                foreach (Element ele in pwlist)
+                {
+                    var subids = (ele as FamilyInstance).GetSubComponentIds();
+                    foreach (var eid in subids)
+                    {
+                        var e = doc.GetElement(eid);
+                        listselected.Add(e);
+                    }
+                }
                 foreach (Element ele in pwlist) listselected.AddRange((ele as FamilyInstance).GetSubComponentIds().Select(pwid => doc.GetElement(pwid)));
             }
             else
@@ -137,8 +146,14 @@ namespace FacadeHelper
             uidoc.Selection.Elements.Clear();
             Parameter _parameter_type;
             Parameter _parameter_zone;
+            int _i = 0;
             listselected.ForEach(ele =>
             {
+                double v = _i++ * 1.0 / listselected.Count;
+                lblStatus1.Content = string.Format("{0:F2}%", v * 100);
+                barStatusRefreshList1.Value = v * 100;
+                System.Windows.Forms.Application.DoEvents();
+
                 _parameter_type = ele.get_Parameter("分项");
                 _parameter_zone = ele.get_Parameter("分区区号");
                 if (_parameter_type?.HasValue == true && _parameter_zone?.HasValue == true && int.TryParse(_parameter_type?.AsString(), out int _type))
@@ -158,13 +173,15 @@ namespace FacadeHelper
                             INF_System = ele.get_Parameter("立面系统")?.AsString() ?? "",
                             INF_Level = ele.get_Parameter("立面楼层")?.AsInteger() ?? 0,
                             INF_ZoneCode = ele.get_Parameter("分区区号")?.AsString() ?? "",
-                            INF_Code = ele.get_Parameter("分区编码")?.AsString() ?? ""
+                            INF_Code = ele.get_Parameter("分区编码")?.AsString() ?? ele.Id.ToString()
                         };
                         CurrentElementInfoList.Add(ei);
                     }
                 }
             });
 
+            lblStatus1.Content = string.Format("{0:F2}%", 100);
+            barStatusRefreshList1.Value = 100;
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - FILTERED: ELE/{uidoc.Selection.Elements.Size}/{CurrentElementList.Count}.");
             #endregion
 
@@ -178,6 +195,7 @@ namespace FacadeHelper
         private RoutedCommand cmdZPopApply = new RoutedCommand();
         private RoutedCommand cmdZPopClose = new RoutedCommand();
         private RoutedCommand cmdZPopClear = new RoutedCommand();
+        private RoutedCommand cmdInitZone = new RoutedCommand();
 
         private RoutedCommand cmdLoadOrder = new RoutedCommand();
 
@@ -200,8 +218,14 @@ namespace FacadeHelper
                 using (Transaction trans = new Transaction(doc, "Apply Params"))
                 {
                     trans.Start();
+                    int _iae = 0;
                     foreach (var ei in AppliedElementInfoList)
                     {
+                        double v = _iae++ * 1.0 / AppliedElementInfoList.Count;
+                        lblStatusApplyParams.Content = string.Format("{0:F2}%", v * 100);
+                        barStatusApplyParams.Value = v * 100;
+                        System.Windows.Forms.Application.DoEvents();
+
                         ele = doc.GetElement(new ElementId(ei.INF_ElementId));
                         Parameter pa = ele.get_Parameter((string)ParamNameList.SelectedValue);
                         if (pa == null)
@@ -237,6 +261,8 @@ namespace FacadeHelper
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: ELE/[{ei.INF_ElementId}]/[{ei.INF_Code}], {(string)ParamNameList.SelectedValue}: {(string)ParamValueList.Text}.");
                     }
                     trans.Commit();
+                    lblStatusApplyParams.Content = string.Format("{0:F0}%", 100);
+                    barStatusApplyParams.Value = 100;
                 }
 
             }, (sender, e) =>
@@ -268,6 +294,46 @@ namespace FacadeHelper
                 bnAddZone.IsChecked = false;
             }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
+            CommandBinding cbInitZone = new CommandBinding(cmdInitZone, (sender, e) =>
+            {
+                var pwlist = new FilteredElementCollector(doc)
+                .WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels)))
+                    .Union(new FilteredElementCollector(doc)
+                    .WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_Windows))));
+
+                #region 设置分区区号参数
+                using (Transaction trans = new Transaction(doc, "CreateZoneParameter"))
+                {
+                    trans.Start();
+                    CategorySet _catset = new CategorySet();
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_Windows));
+                    ParameterHelper.RawCreateProjectParameter(doc.Application, "分区区号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
+                    trans.Commit();
+                }
+
+                using (Transaction trans = new Transaction(doc, "SetZoneParameter"))
+                {
+                    trans.Start();
+                    Parameter _parameter_zone;
+                    foreach (var pw in pwlist)
+                    {
+                        _parameter_zone = pw.get_Parameter("分区区号");
+                        if (_parameter_zone?.HasValue == false) _parameter_zone.Set("Z-00-00-00-00");
+                        var eles = (pw as FamilyInstance).GetSubComponentIds().Select(eid => doc.GetElement(eid));
+                        foreach (var ele in eles)
+                        {
+                            _parameter_zone = ele.get_Parameter("分区区号");
+                            if (_parameter_zone?.HasValue == false) _parameter_zone.Set("Z-00-00-00-00");
+                        }
+                    }
+                    trans.Commit();
+                }
+
+                #endregion
+            }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+
             CommandBinding cbLoadOrder = new CommandBinding(cmdLoadOrder, (sender, e) =>
             {
                 Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
@@ -288,7 +354,7 @@ namespace FacadeHelper
                         while ((dataline = reader.ReadLine()) != null)
                         {
                             string[] rowdata = dataline.Split(',');
-                            CurrentFabricationList.Add(new ElementFabricationInfo() { ElementCode=rowdata[0], FabrQuantity=int.Parse(rowdata[1]), OrderCode=rowdata[2] });
+                            CurrentFabricationList.Add(new ElementFabricationInfo() { ElementCode = rowdata[0], FabrQuantity = int.Parse(rowdata[1]), OrderCode = rowdata[2] });
                         }
                     }
                 }
@@ -304,6 +370,7 @@ namespace FacadeHelper
             bnZPopClose.Command = cmdZPopClose;
             bnZPopClear.Command = cmdZPopClear;
             bnLoadOrder.Command = cmdLoadOrder;
+            bnInitZone.Command = cmdInitZone;
 
             ProcFCM.CommandBindings.AddRange(new CommandBinding[]
             {
@@ -313,6 +380,7 @@ namespace FacadeHelper
                 cbZPopApply,
                 cbZPopClear,
                 cbZPopClose,
+                cbInitZone,
                 cbLoadOrder
             });
         }
@@ -326,8 +394,14 @@ namespace FacadeHelper
             uidoc.Selection.Elements.Clear();
 
             //初始化列表选择项数据
+            int _isel = 0;
             foreach (var ei in Lst1.SelectedItems.Cast<ScheduleElementInfo>())
             {
+                double v = _isel++ * 1.0 / Lst1.SelectedItems.Count;
+                lblStatusSelection.Content = string.Format("{0:F0}%", v * 100);
+                barStatusSelection.Value = v * 100;
+                System.Windows.Forms.Application.DoEvents();
+
                 AppliedElementInfoList.Add(ei);
                 Element ele = doc.GetElement(new ElementId(ei.INF_ElementId));
                 ParameterSet parameters = ele.Parameters;
@@ -341,6 +415,8 @@ namespace FacadeHelper
             ParamListSource.Clear();
             hs.ToList().ForEach(d => ParamListSource.Add(d));
 
+            lblStatusSelection.Content = string.Format("{0:F0}%", 100);
+            barStatusSelection.Value = 100;
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECTED: ELE/{uidoc.Selection.Elements.Size}/{CurrentElementList.Count}.");
             #endregion
         }

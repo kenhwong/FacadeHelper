@@ -35,6 +35,7 @@
             <Label Content="选择分区：" Margin="0" Height="35" VerticalContentAlignment="Center" />
             <Label x:Name="txtSelectedZoneList" Content="所有分区" Margin="0" MaxWidth="450" Height="35" VerticalContentAlignment="Center" Foreground="{StaticResource CyanBrush}" />
             <ToggleButton x:Name="bnAddZone" Style="{DynamicResource IconPath20ToggleButton}" Tag="{DynamicResource IconAdd}" Margin="20,0" Width="20" Height="20" VerticalAlignment="Center" />
+            <Button x:Name="bnInitZone" Style="{DynamicResource IconPathButton}" Tag="{DynamicResource IconInit}" Margin="0" Width="20" Height="20" VerticalAlignment="Center" />
             <Popup x:Name="popAZ" Width="220" Height="340" HorizontalOffset="0" VerticalOffset="10" 
                AllowsTransparency="True" PopupAnimation="Fade"  HorizontalAlignment="Left"
                StaysOpen="True" IsOpen="{Binding ElementName=bnAddZone, Path=IsChecked}" 
@@ -95,6 +96,8 @@
                         <RadioButton Content="21 [窗扇]" GroupName="gType" IsChecked="{Binding Path=CurrentSelectedType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 21}" />
                         <RadioButton Content="22 [门扇]" GroupName="gType" IsChecked="{Binding Path=CurrentSelectedType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 22}" />
                         <RadioButton Content="24 [百叶扇]" GroupName="gType" IsChecked="{Binding Path=CurrentSelectedType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 24}" />
+                        <RadioButton Content="27 [窗框]" GroupName="gType" IsChecked="{Binding Path=CurrentSelectedType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 27}" />
+                        <RadioButton Content="28 [门框]" GroupName="gType" IsChecked="{Binding Path=CurrentSelectedType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter ={StaticResource I2BConverter}, ConverterParameter= 28}" />
                     </StackPanel>
                     <StackPanel Margin="0" Orientation="Horizontal" Visibility="Visible">
                         <Label Content="线材" Margin="0,0,10,0" Height="35" VerticalContentAlignment="Center" />
@@ -129,7 +132,7 @@
                 <StackPanel Grid.Column="0" Margin="5">
                     <WrapPanel>
                         <Button x:Name="bnRefreshList1" Style="{DynamicResource IconText20HPathButton}" Content="  构件编号列表：" Tag="{StaticResource IconRefresh}" />
-                        <Label Content="未选择" Foreground="#FF80A080" />
+                        <Label x:Name="lblStatus1" Content="未选择" Foreground="#FF80A080" />
                     </WrapPanel>
                     <ListBox x:Name="Lst1" Grid.Column="1" Margin="0,5" Height="250" SelectionMode="Extended"
                              ItemsSource="{Binding Path=CurrentElementInfoList}"
@@ -143,10 +146,14 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+                    <ProgressBar x:Name="barStatusRefreshList1" Width="190" Value="0" HorizontalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,50,0,0" VerticalAlignment="Top">
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconHLink}" Content="编号关联" x:Name="bnApplyMapping" Width="30" Height="30" Padding="5,0" Margin="10" />
                     <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSelect}" Content="选定构件" x:Name="bnApplySelection" Width="30" Height="30" Padding="5,0" Margin="10" />
+                    <ProgressBar x:Name="barStatusSelection" Width="30" Value="0" HorizontalAlignment="Center" />
+                    
+                    <Label x:Name="lblStatusSelection" Content="0%" HorizontalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Grid.Column="2" Margin="5">
                     <Label Content="加工编号列表" Foreground="#FF80A080" />
@@ -160,6 +167,7 @@
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                     </ListBox>
+                    <ProgressBar x:Name="barStatusRefreshList2" Width="190" Value="0" HorizontalAlignment="Center" />
                 </StackPanel>
                 <StackPanel Grid.Column="4" Margin="5">
                     <Label Content="加工料单列表" Foreground="#FF80A080" />
@@ -180,6 +188,7 @@
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                     </ListBox>
+                    <ProgressBar x:Name="barStatusRefreshList3" Width="190" Value="0" HorizontalAlignment="Center" />
                 </StackPanel>
             </Grid>
             <ItemsControl Background="{x:Static SystemColors.WindowBrush}">
@@ -190,10 +199,14 @@
             <Label Content="参数：" Margin="0,0,10,0" Height="35" VerticalContentAlignment="Center" />
             <ComboBox x:Name="ParamNameList" Width="150" Height="20" ItemsSource="{Binding Path=ParamListSource}" />
             <Label Content="参数值：" Margin="20,0,10,0" Height="35" VerticalContentAlignment="Center" />
-            <ComboBox x:Name="ParamValueList" Width="250" Height="20" IsEditable="True"  />
-            <Button x:Name="bnApplyParam" Style="{DynamicResource IconText20HPathButton}" Tag="{DynamicResource IconApplyParamData}" Content="  应用" Margin="20,0" Height="20" VerticalAlignment="Center" />
+            <ComboBox x:Name="ParamValueList" Width="200" Height="20" IsEditable="True"  />
+            <Button x:Name="bnApplyParam" Style="{DynamicResource IconText20HPathButton}" Tag="{DynamicResource IconApplyParamData}" Content="  应用" Margin="20,0,0,0" Height="20" VerticalAlignment="Center" />
+            <Label x:Name="lblStatusApplyParams" Content="0.00%" Margin="5,0" Height="35" VerticalContentAlignment="Center" />
         </StackPanel>
-        <StackPanel Orientation="Horizontal" Grid.Row="6" Margin="10,20" VerticalAlignment="Stretch">
+        <StackPanel Orientation="Horizontal" Grid.Row="6" Margin="10,5" VerticalAlignment="Stretch">
+            <ProgressBar x:Name="barStatusApplyParams" Width="730" Value="0" HorizontalAlignment="Center" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="7" Margin="10,20" VerticalAlignment="Stretch">
             <ListBox x:Name="listInformation" Width="740" Height="100" Margin="0,5" SelectionChanged="listInformation_SelectionChanged"
                              Style="{DynamicResource MonitorScreen}" ItemContainerStyle="{StaticResource MonitorScreenItem}" />
         </StackPanel>
