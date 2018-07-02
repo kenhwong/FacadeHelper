@@ -13,16 +13,16 @@ Revit model helper for facade elements.
 
 #### ScreenShots:
 + Main UI
-![](https://github.com/kenhwong/FacadeHelper/Refs/Capture1.PNG)
+![](https://github.com/kenhwong/FacadeHelper/raw/master/FacadeHelper/Refs/Capture1.PNG)
 
 + Zone Definition Module
-![](https://github.com/kenhwong/FacadeHelper/Refs/Capture2.PNG)
+![](https://github.com/kenhwong/FacadeHelper/raw/master/FacadeHelper/Refs/Capture2.PNG)
 
 + Addin Configuration Module
-![](https://github.com/kenhwong/FacadeHelper/Refs/Capture3.PNG)
+![](https://github.com/kenhwong/FacadeHelper/raw/master/FacadeHelper/Refs/Capture3.PNG)
 
 + Material Order Mapping Module
-![](https://github.com/kenhwong/FacadeHelper/Refs/Capture4.PNG)
+![](https://github.com/kenhwong/FacadeHelper/raw/master/FacadeHelper/Refs/Capture4.PNG)
 
 ---
 #### 功能：
