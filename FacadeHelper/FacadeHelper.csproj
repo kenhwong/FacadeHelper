@@ -243,6 +243,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Refs\Capture1.PNG" />
+    <Content Include="Refs\Capture2.PNG" />
+    <Content Include="Refs\Capture3.PNG" />
+    <Content Include="Refs\Capture4.PNG" />
     <Content Include="Resources\code128.png" />
     <Content Include="Resources\code16.png" />
     <Content Include="Resources\code32.png" />
