@@ -34,9 +34,9 @@
             <StackPanel DockPanel.Dock="Left" Margin="20,10,20,10">
                 <WrapPanel>
                     <ToggleButton Style="{DynamicResource IconText30PathToggleButton}" x:Name="bnQuickStart" Tag="{StaticResource IconHelp}" IsChecked="False" 
-                                  Content="操作指南" DockPanel.Dock="Left" Margin="0,0,10,0" Padding="0,5,0,0" />
+                                  Content="{DynamicResource StringGuide}" DockPanel.Dock="Left" Margin="0,0,10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconInit}" x:Name="bnModelInit" 
-                            Content="模型初始" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
+                            Content="{DynamicResource StringModelInitialize}" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                     <ToggleButton Style="{DynamicResource IconText30PathToggleButton}" Tag="{StaticResource IconClassify}" IsChecked="False" x:Name="bnOnElementClassify" 
                                   Content="分区划定" DockPanel.Dock="Left" Width="50" Margin="10,0" Padding="0,5,0,0" />
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconLink}" x:Name="bnElementLink" 
@@ -60,6 +60,20 @@
                     <Button Style="{DynamicResource IconText30PathButton}" Tag="{StaticResource IconExportData}" x:Name="bnExportElementSchedule" 
                             Content="导出计划" DockPanel.Dock="Left" Margin="10,0" Padding="0,5,0,0" />
                 </WrapPanel>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Right" Margin="20,10">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox x:Name="chkLangEnUS"
+                          Style="{DynamicResource IconPath20ToggleButton}"
+                          Tag="{StaticResource IconLangEnUS}"
+                          IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Width="20" Height="20" Margin="0,2" Padding="0" />
+                    <CheckBox x:Name="chkLangZhCN"
+                          Style="{DynamicResource IconPath20ToggleButton}"
+                          Tag="{StaticResource IconLangZhCN}"
+                          IsChecked="{Binding Path=IsRealTimeProgress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Width="20" Height="20" Margin="0,2" Padding="0" />
+                </StackPanel>
             </StackPanel>
             <StackPanel DockPanel.Dock="Right" Margin="20,10">
                 <WrapPanel DockPanel.Dock="Right">

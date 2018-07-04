@@ -74,6 +74,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
@@ -168,66 +169,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\level128.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\se16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\se32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\se48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\se64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\se128.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wall16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wall32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wall48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wall64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\wall128.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\cs16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\cs32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\cs48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\cs64.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\cs128.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\level16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\level32.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\level48.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\level64.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
@@ -247,17 +188,44 @@
     <Content Include="Refs\Capture2.PNG" />
     <Content Include="Refs\Capture3.PNG" />
     <Content Include="Refs\Capture4.PNG" />
-    <Content Include="Resources\code128.png" />
-    <Content Include="Resources\code16.png" />
-    <Content Include="Resources\code32.png" />
-    <Content Include="Resources\code48.png" />
-    <Content Include="Resources\code64.png" />
-    <Content Include="Resources\config32.png" />
-    <Content Include="Resources\id32.png" />
-    <Content Include="Resources\sv16.png" />
-    <Content Include="Resources\sv32.png" />
-    <Content Include="Resources\sv48.png" />
-    <Content Include="Resources\sv64.png" />
+    <None Include="Resources\wall128.png" />
+    <None Include="Resources\wall64.png" />
+    <None Include="Resources\wall48.png" />
+    <None Include="Resources\wall32.png" />
+    <None Include="Resources\wall16.png" />
+    <None Include="Resources\sv64.png" />
+    <None Include="Resources\sv48.png" />
+    <None Include="Resources\sv32.png" />
+    <None Include="Resources\sv16.png" />
+    <None Include="Resources\se128.png" />
+    <None Include="Resources\se64.png" />
+    <None Include="Resources\se48.png" />
+    <None Include="Resources\se32.png" />
+    <None Include="Resources\se16.png" />
+    <None Include="Resources\level128.png" />
+    <None Include="Resources\level64.png" />
+    <None Include="Resources\level48.png" />
+    <None Include="Resources\level32.png" />
+    <None Include="Resources\level16.png" />
+    <None Include="Resources\id32.png" />
+    <None Include="Resources\filter128.png" />
+    <None Include="Resources\filter48.png" />
+    <None Include="Resources\filter32.png" />
+    <None Include="Resources\filter16.png" />
+    <None Include="Resources\cs128.png" />
+    <None Include="Resources\cs64.png" />
+    <None Include="Resources\cs48.png" />
+    <None Include="Resources\cs32.png" />
+    <None Include="Resources\cs16.png" />
+    <None Include="Resources\config32.png" />
+    <None Include="Resources\code128.png" />
+    <None Include="Resources\code64.png" />
+    <None Include="Resources\code48.png" />
+    <None Include="Resources\code32.png" />
+    <None Include="Resources\code16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\Langs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

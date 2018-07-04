@@ -82,6 +82,9 @@ namespace FacadeHelper
         private int _countExteriorDataLinked = 0;
         public int CountExteriorDataLinked { get { return _countExteriorDataLinked; } set { _countExteriorDataLinked = value; OnPropertyChanged(nameof(CountExteriorDataLinked)); } }
 
+        private int _currentCultureIndex = System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
+        public int CurrentCultureIndex { get { return _currentCultureIndex; } set { _currentCultureIndex = value; OnPropertyChanged(nameof(CurrentCultureIndex)); } }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
@@ -1208,6 +1211,7 @@ namespace FacadeHelper
             return value.Equals(true) ? parameter : System.Windows.Data.Binding.DoNothing;
         }
     }
+
 
     public class PrefixConverter : IValueConverter
     {

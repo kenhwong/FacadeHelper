@@ -22,23 +22,27 @@ namespace FacadeHelper
         // Both OnStartup and OnShutdown must be implemented as public method
         public Result OnStartup(UIControlledApplication application)
         {
+            Global.UpdateAppConfig("lang_2052", "/Resources/Langs/2052.xaml");
+            Global.UpdateAppConfig("lang_1033", "/Resources/Langs/1033.xaml");
+            
+            //Global.SetCurrentLanguage(System.Threading.Thread.CurrentThread.CurrentCulture.LCID);
 
             application.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(Application_DocumentOpened);
             RibbonPanel rpanel = application.CreateRibbonPanel("Facade Helper");
 
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
-            PushButtonData bndata_appconfig = new PushButtonData("cmdConfig", "全局设定", thisAssemblyPath, "FacadeHelper.Config_Command");
+            PushButtonData bndata_appconfig = new PushButtonData("cmdConfig", "全局设置", thisAssemblyPath, "FacadeHelper.Config_Command");
             PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
             PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
             PushButtonData bndata_family_param = new PushButtonData("cmdFamilyParam", "族参初始", thisAssemblyPath, "FacadeHelper.ICommand_Document_AddFamilyParameters");
             PushButtonData bndata_selectfilter = new PushButtonData("cmdSelectFilter", "选择过滤", thisAssemblyPath, "FacadeHelper.ICommand_Document_SelectFilter");
             PushButtonData bndata_CodeMapping = new PushButtonData("cmdCodeMapping", "编码映射", thisAssemblyPath, "FacadeHelper.ICommand_Document_CodeMapping");
-            bndata_appconfig.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "config32.png")));
-            bndata_process_elements.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "level32.png")));
-            bndata_zone.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "se32.png")));
-            bndata_family_param.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "sv32.png")));
-            bndata_selectfilter.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "filter32.png")));
-            bndata_CodeMapping.LargeImage = new BitmapImage(new Uri(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources", "code32.png")));
+            bndata_appconfig.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.config32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndata_process_elements.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.level32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndata_zone.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.se32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndata_family_param.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.sv32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndata_selectfilter.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.filter32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndata_CodeMapping.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.code32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             rpanel.AddItem(bndata_appconfig);
             rpanel.AddItem(bndata_zone);
             rpanel.AddSeparator();
@@ -106,10 +110,10 @@ namespace FacadeHelper
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiapp = commandData.Application;
-              UIDocument uidoc = uiapp.ActiveUIDocument;
+            UIDocument uidoc = uiapp.ActiveUIDocument;
             var app = uiapp.Application;
             Document doc = uidoc.Document;
-            
+
             using (Transaction trans = new Transaction(doc, "CreateProjectParameters"))
             {
                 trans.Start();
@@ -175,6 +179,8 @@ namespace FacadeHelper
             try
             {
                 FacadeCodeMapping ucpe = new FacadeCodeMapping(commandData);
+                ucpe.Resources.MergedDictionaries.Where(d => d.Source.OriginalString.Contains("Langs")).ToList().ForEach(d => ucpe.Resources.MergedDictionaries.Remove(d));
+                ucpe.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri(ConfigurationManager.AppSettings.Get($"lang_{System.Threading.Thread.CurrentThread.CurrentCulture.LCID}"), UriKind.RelativeOrAbsolute) });
                 Window winaddin = new Window();
                 ucpe.ParentWin = winaddin;
                 winaddin.Content = ucpe;

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
 using System.Linq;
+using System.Windows;
 using System.Windows.Interop;
 using System.Xml.Serialization;
 
@@ -272,6 +273,7 @@ namespace FacadeHelper
             Global.ElementIndexRangeList.RemoveAll(r => r.ZoneCode.Equals(zonecode, StringComparison.CurrentCultureIgnoreCase) && r.ElementType == etype);
             Global.ElementIndexRangeList.Add(new ElementIndexRange(zonecode, etype, max));
         }
+        
     }
 
 
