@@ -92,6 +92,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeFix.xaml.cs">
+      <DependentUpon>CodeFix.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DocumentContext.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="FacadeConfig.xaml.cs">
@@ -129,6 +132,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="CodeFix.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="FacadeConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -188,6 +195,10 @@
     <Content Include="Refs\Capture2.PNG" />
     <Content Include="Refs\Capture3.PNG" />
     <Content Include="Refs\Capture4.PNG" />
+    <None Include="Resources\btn-fix %283%29.png" />
+    <None Include="Resources\btn-fix %282%29.png" />
+    <None Include="Resources\btn-fix %281%29.png" />
+    <None Include="Resources\btn-fix.png" />
     <None Include="Resources\wall128.png" />
     <None Include="Resources\wall64.png" />
     <None Include="Resources\wall48.png" />

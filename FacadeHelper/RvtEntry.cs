@@ -31,24 +31,27 @@ namespace FacadeHelper
             RibbonPanel rpanel = application.CreateRibbonPanel("Facade Helper");
 
             string thisAssemblyPath = Assembly.GetExecutingAssembly().Location;
-            PushButtonData bndata_appconfig = new PushButtonData("cmdConfig", "全局设置", thisAssemblyPath, "FacadeHelper.Config_Command");
-            PushButtonData bndata_process_elements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
-            PushButtonData bndata_zone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
-            PushButtonData bndata_family_param = new PushButtonData("cmdFamilyParam", "族参初始", thisAssemblyPath, "FacadeHelper.ICommand_Document_AddFamilyParameters");
-            PushButtonData bndata_selectfilter = new PushButtonData("cmdSelectFilter", "选择过滤", thisAssemblyPath, "FacadeHelper.ICommand_Document_SelectFilter");
-            PushButtonData bndata_CodeMapping = new PushButtonData("cmdCodeMapping", "编码映射", thisAssemblyPath, "FacadeHelper.ICommand_Document_CodeMapping");
-            bndata_appconfig.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.config32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            bndata_process_elements.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.level32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            bndata_zone.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.se32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            bndata_family_param.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.sv32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            bndata_selectfilter.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.filter32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            bndata_CodeMapping.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.code32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            rpanel.AddItem(bndata_appconfig);
-            rpanel.AddItem(bndata_zone);
+            PushButtonData bndataAppconfig = new PushButtonData("cmdConfig", "全局设置", thisAssemblyPath, "FacadeHelper.Config_Command");
+            PushButtonData bndataProcessElements = new PushButtonData("cmdProcessElements", "构件处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Process_Elements");
+            PushButtonData bndataZone = new PushButtonData("cmdZone", "分区处理", thisAssemblyPath, "FacadeHelper.ICommand_Document_Zone");
+            PushButtonData bndataFixzone = new PushButtonData("cmdFixZone", "分区修复", thisAssemblyPath, "FacadeHelper.ICommand_Document_FixZone");
+            PushButtonData bndataFamilyParam = new PushButtonData("cmdFamilyParam", "族参初始", thisAssemblyPath, "FacadeHelper.ICommand_Document_AddFamilyParameters");
+            PushButtonData bndataSelectfilter = new PushButtonData("cmdSelectFilter", "选择过滤", thisAssemblyPath, "FacadeHelper.ICommand_Document_SelectFilter");
+            PushButtonData bndataCodeMapping = new PushButtonData("cmdCodeMapping", "编码映射", thisAssemblyPath, "FacadeHelper.ICommand_Document_CodeMapping");
+            bndataAppconfig.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.config32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndataProcessElements.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.level32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndataZone.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.se32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndataFixzone.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.fix32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndataFamilyParam.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.sv32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndataSelectfilter.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.filter32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            bndataCodeMapping.LargeImage = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(Properties.Resources.code32.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            rpanel.AddItem(bndataAppconfig);
+            rpanel.AddItem(bndataZone);
+            rpanel.AddItem(bndataFixzone);
             rpanel.AddSeparator();
-            rpanel.AddItem(bndata_family_param);
-            rpanel.AddItem(bndata_selectfilter);
-            rpanel.AddItem(bndata_CodeMapping);
+            rpanel.AddItem(bndataFamilyParam);
+            rpanel.AddItem(bndataSelectfilter);
+            rpanel.AddItem(bndataCodeMapping);
             return Result.Succeeded;
         }
 
@@ -179,8 +182,8 @@ namespace FacadeHelper
             try
             {
                 FacadeCodeMapping ucpe = new FacadeCodeMapping(commandData);
-                ucpe.Resources.MergedDictionaries.Where(d => d.Source.OriginalString.Contains("Langs")).ToList().ForEach(d => ucpe.Resources.MergedDictionaries.Remove(d));
-                ucpe.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri(ConfigurationManager.AppSettings.Get($"lang_{System.Threading.Thread.CurrentThread.CurrentCulture.LCID}"), UriKind.RelativeOrAbsolute) });
+                //ucpe.Resources.MergedDictionaries.Where(d => d.Source.OriginalString.Contains("Langs")).ToList().ForEach(d => ucpe.Resources.MergedDictionaries.Remove(d));
+                //ucpe.Resources.MergedDictionaries.Add(new ResourceDictionary() { Source = new Uri(ConfigurationManager.AppSettings.Get($"lang_{System.Threading.Thread.CurrentThread.CurrentCulture.LCID}"), UriKind.RelativeOrAbsolute) });
                 Window winaddin = new Window();
                 ucpe.ParentWin = winaddin;
                 winaddin.Content = ucpe;
@@ -260,6 +263,32 @@ namespace FacadeHelper
         }
     }
 
+    public class ICommand_Document_FixZone : IExternalCommand
+    {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            UIApplication uiapp = commandData.Application;
+
+            try
+            {
+                CodeFix ucpe = new CodeFix(commandData);
+                Window winaddin = new Window();
+                ucpe.ParentWin = winaddin;
+                winaddin.Content = ucpe;
+                //winaddin.WindowStyle = WindowStyle.None;
+                winaddin.Padding = new Thickness(0);
+                Global.winhelper = new System.Windows.Interop.WindowInteropHelper(winaddin);
+                winaddin.ShowDialog();
+            }
+            catch (Exception e)
+            {
+                TaskDialog.Show("Error", e.ToString());
+                return Result.Failed;
+            }
+
+            return Result.Succeeded;
+        }
+    }
 
 
 }

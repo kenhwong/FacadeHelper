@@ -1,26 +1,17 @@
-﻿using System;
+﻿using AqlaSerializer;
+using Autodesk.Revit.DB;
+using Autodesk.Revit.UI;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Autodesk.Revit.DB;
-using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Selection;
-using System.IO;
-using AqlaSerializer;
-using System.Globalization;
-using System.ComponentModel;
-using System.Collections;
-using System.Collections.ObjectModel;
 
 namespace FacadeHelper
 {
@@ -29,61 +20,61 @@ namespace FacadeHelper
     /// </summary>
     public partial class Zone : UserControl, INotifyPropertyChanged
     {
-        private UIApplication uiapp;
-        private UIDocument uidoc;
-        private Document doc;
-        private ExternalCommandData cdata;
-        private List<CurtainPanelInfo> SelectedCurtainPanelList = new List<CurtainPanelInfo>();
-        private ZoneInfoBase CurrentZoneInfo;
+        private UIApplication _uiapp;
+        private UIDocument _uidoc;
+        private Document _doc;
+        private ExternalCommandData _cdata;
+        private List<CurtainPanelInfo> _selectedCurtainPanelList = new List<CurtainPanelInfo>();
+        private ZoneInfoBase _currentZoneInfo;
 
-        private List<ZoneInfoBase> ResultZoneInfo = new List<ZoneInfoBase>();
-        private List<CurtainPanelInfo> ResultPanelInfo = new List<CurtainPanelInfo>();
-        private List<ScheduleElementInfo> ResultElementInfo = new List<ScheduleElementInfo>();
+        private List<ZoneInfoBase> _resultZoneInfo = new List<ZoneInfoBase>();
+        private List<CurtainPanelInfo> _resultPanelInfo = new List<CurtainPanelInfo>();
+        private List<ScheduleElementInfo> _resultElementInfo = new List<ScheduleElementInfo>();
 
         public Window ParentWin { get; set; }
 
-        private string _currentProjectID;
-        public string CurrentProjectID { get { return _currentProjectID; } set { _currentProjectID = value; OnPropertyChanged(nameof(CurrentProjectID)); } }
+        private string _currentProjectId;
+        public string CurrentProjectID { get => _currentProjectId; set { _currentProjectId = value; OnPropertyChanged(nameof(CurrentProjectID)); } }
 
         private int _currentZonePanelType = 51;
-        public int CurrentZonePanelType { get { return _currentZonePanelType; } set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
+        public int CurrentZonePanelType { get => _currentZonePanelType; set { _currentZonePanelType = value; OnPropertyChanged(nameof(CurrentZonePanelType)); } }
         private int _currentZoneLevel = 1;
         private string _currentZoneDirection = "S";
         private string _currentZoneSystem = "A";
         private int _currentZoneIndex = 1;
         private string _currentZoneCode = "Z-00-01-SA-01";
-        public int CurrentZoneLevel { get { return _currentZoneLevel; } set { _currentZoneLevel = value; OnPropertyChanged(nameof(CurrentZoneLevel)); } }
-        public string CurrentZoneDirection { get { return _currentZoneDirection; } set { _currentZoneDirection = value; OnPropertyChanged(nameof(CurrentZoneDirection)); } }
-        public string CurrentZoneSystem { get { return _currentZoneSystem; } set { _currentZoneSystem = value; OnPropertyChanged(nameof(CurrentZoneSystem)); } }
-        public int CurrentZoneIndex { get { return _currentZoneIndex; } set { _currentZoneIndex = value; OnPropertyChanged(nameof(CurrentZoneIndex)); } }
-        public string CurrentZoneCode { get { return _currentZoneCode; } set { _currentZoneCode = value; OnPropertyChanged(nameof(CurrentZoneCode)); } }
+        public int CurrentZoneLevel { get => _currentZoneLevel; set { _currentZoneLevel = value; OnPropertyChanged(nameof(CurrentZoneLevel)); } }
+        public string CurrentZoneDirection { get => _currentZoneDirection; set { _currentZoneDirection = value; OnPropertyChanged(nameof(CurrentZoneDirection)); } }
+        public string CurrentZoneSystem { get => _currentZoneSystem; set { _currentZoneSystem = value; OnPropertyChanged(nameof(CurrentZoneSystem)); } }
+        public int CurrentZoneIndex { get => _currentZoneIndex; set { _currentZoneIndex = value; OnPropertyChanged(nameof(CurrentZoneIndex)); } }
+        public string CurrentZoneCode { get => _currentZoneCode; set { _currentZoneCode = value; OnPropertyChanged(nameof(CurrentZoneCode)); } }
 
         private bool _isSearchRangeZone = true;
         private bool _isSearchRangePanel = true;
         private bool _isSearchRangeElement = true;
         private bool? _isSearchRangeAll = true;
-        public bool IsSearchRangeZone { get { return _isSearchRangeZone; } set { _isSearchRangeZone = value; OnPropertyChanged(nameof(IsSearchRangeZone)); } }
-        public bool IsSearchRangePanel { get { return _isSearchRangePanel; } set { _isSearchRangePanel = value; OnPropertyChanged(nameof(IsSearchRangePanel)); } }
-        public bool IsSearchRangeElement { get { return _isSearchRangeElement; } set { _isSearchRangeElement = value; OnPropertyChanged(nameof(IsSearchRangeElement)); } }
-        public bool? IsSearchRangeAll { get { return _isSearchRangeAll; } set { _isSearchRangeAll = value; OnPropertyChanged(nameof(IsSearchRangeAll)); } }
+        public bool IsSearchRangeZone { get => _isSearchRangeZone; set { _isSearchRangeZone = value; OnPropertyChanged(nameof(IsSearchRangeZone)); } }
+        public bool IsSearchRangePanel { get => _isSearchRangePanel; set { _isSearchRangePanel = value; OnPropertyChanged(nameof(IsSearchRangePanel)); } }
+        public bool IsSearchRangeElement { get => _isSearchRangeElement; set { _isSearchRangeElement = value; OnPropertyChanged(nameof(IsSearchRangeElement)); } }
+        public bool? IsSearchRangeAll { get => _isSearchRangeAll; set { _isSearchRangeAll = value; OnPropertyChanged(nameof(IsSearchRangeAll)); } }
 
         private bool _isRealTimeProgress = true;
-        public bool IsRealTimeProgress { get { return _isRealTimeProgress; } set { _isRealTimeProgress = value; OnPropertyChanged(nameof(IsRealTimeProgress)); } }
-        private bool _isPIDInitialized = false;
-        public bool IsPIDInitialized { get { return _isPIDInitialized; } set { _isPIDInitialized = value; OnPropertyChanged(nameof(IsPIDInitialized)); } }
+        public bool IsRealTimeProgress { get => _isRealTimeProgress; set { _isRealTimeProgress = value; OnPropertyChanged(nameof(IsRealTimeProgress)); } }
+        private bool _isPidInitialized = false;
+        public bool IsPidInitialized { get => _isPidInitialized; set { _isPidInitialized = value; OnPropertyChanged(nameof(IsPidInitialized)); } }
         private bool _isElementIndexRangeInitialized = false;
-        public bool IsElementIndexRangeInitialized { get { return _isElementIndexRangeInitialized; } set { _isElementIndexRangeInitialized = value; OnPropertyChanged(nameof(IsElementIndexRangeInitialized)); } }
+        public bool IsElementIndexRangeInitialized { get => _isElementIndexRangeInitialized; set { _isElementIndexRangeInitialized = value; OnPropertyChanged(nameof(IsElementIndexRangeInitialized)); } }
         private bool _isZoneLayerInitialized = false;
-        public bool IsZoneLayerInitialized { get { return _isZoneLayerInitialized; } set { _isZoneLayerInitialized = value; OnPropertyChanged(nameof(IsZoneLayerInitialized)); } }
+        public bool IsZoneLayerInitialized { get => _isZoneLayerInitialized; set { _isZoneLayerInitialized = value; OnPropertyChanged(nameof(IsZoneLayerInitialized)); } }
         private bool _isElementClassInitialized = false;
-        public bool IsElementClassInitialized { get { return _isElementClassInitialized; } set { _isElementClassInitialized = value; OnPropertyChanged(nameof(IsElementClassInitialized)); } }
+        public bool IsElementClassInitialized { get => _isElementClassInitialized; set { _isElementClassInitialized = value; OnPropertyChanged(nameof(IsElementClassInitialized)); } }
         private bool _isExteriorDataLinked = false;
-        public bool IsExteriorDataLinked { get { return _isExteriorDataLinked; } set { _isExteriorDataLinked = value; OnPropertyChanged(nameof(IsExteriorDataLinked)); } }
+        public bool IsExteriorDataLinked { get => _isExteriorDataLinked; set { _isExteriorDataLinked = value; OnPropertyChanged(nameof(IsExteriorDataLinked)); } }
         private int _countExteriorDataLinked = 0;
-        public int CountExteriorDataLinked { get { return _countExteriorDataLinked; } set { _countExteriorDataLinked = value; OnPropertyChanged(nameof(CountExteriorDataLinked)); } }
+        public int CountExteriorDataLinked { get => _countExteriorDataLinked; set { _countExteriorDataLinked = value; OnPropertyChanged(nameof(CountExteriorDataLinked)); } }
 
         private int _currentCultureIndex = System.Threading.Thread.CurrentThread.CurrentCulture.LCID;
-        public int CurrentCultureIndex { get { return _currentCultureIndex; } set { _currentCultureIndex = value; OnPropertyChanged(nameof(CurrentCultureIndex)); } }
+        public int CurrentCultureIndex { get => _currentCultureIndex; set { _currentCultureIndex = value; OnPropertyChanged(nameof(CurrentCultureIndex)); } }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -93,22 +84,22 @@ namespace FacadeHelper
             InitializeComponent();
             DataContext = this;
             InitializeCommand();
-
-            cdata = commandData;
-            uiapp = commandData.Application;
-            uidoc = uiapp.ActiveUIDocument;
-            doc = uidoc.Document;
+            
+            _cdata = commandData;
+            _uiapp = commandData.Application;
+            _uidoc = _uiapp.ActiveUIDocument;
+            _doc = _uidoc.Document;
 
             string cid = Global.GetAppConfig("CurrentProjectID");
             if (cid is null)
             {
                 CurrentProjectID = "NOT INITIALIZED.";
-                IsPIDInitialized = false;
+                IsPidInitialized = false;
             }
             else
             {
                 CurrentProjectID = cid;
-                IsPIDInitialized = true;
+                IsPidInitialized = true;
             }
 
             #region 检测 ElementIndexRange 是否加载
@@ -146,9 +137,9 @@ namespace FacadeHelper
             #endregion
 
             //确认PID/分区表/类型表都已加载才可允许工具条
-            if (!(IsPIDInitialized && IsZoneLayerInitialized && IsElementClassInitialized)) panelCommandBar.IsEnabled = false;
+            if (!(IsPidInitialized && IsZoneLayerInitialized && IsElementClassInitialized)) panelCommandBar.IsEnabled = false;
 
-            Global.DataFile = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.data");
+            Global.DataFile = System.IO.Path.Combine(path1: Path.GetDirectoryName(_doc.PathName) ?? throw new InvalidOperationException(), path2: $"{System.IO.Path.GetFileNameWithoutExtension(_doc.PathName)}.data");
             if (Global.DocContent is null)
             {
                 Global.DocContent = new DocumentContent();
@@ -161,7 +152,7 @@ namespace FacadeHelper
                 }
             }
 
-            Global.DocContent.ParameterInfoList = ParameterHelper.RawGetProjectParametersInfo(doc);
+            Global.DocContent.ParameterInfoList = ParameterHelper.RawGetProjectParametersInfo(_doc);
 
             navZone.ItemsSource = Global.DocContent.ZoneList;
             datagridZones.ItemsSource = Global.DocContent.ZoneList;
@@ -169,6 +160,8 @@ namespace FacadeHelper
 
 
         }
+
+        public Zone(){}
 
 
         #region 初始化 Command
@@ -209,12 +202,12 @@ namespace FacadeHelper
 
                 Global.DocContent.CurtainPanelList.ForEach(p =>
                 {
-                    Autodesk.Revit.DB.Panel _cp = (doc.GetElement(new ElementId(p.INF_ElementId))) as Autodesk.Revit.DB.Panel;
+                    Autodesk.Revit.DB.Panel _cp = (_doc.GetElement(new ElementId(p.INF_ElementId))) as Autodesk.Revit.DB.Panel;
                     var p_subs = _cp.GetSubComponentIds();
                     foreach (ElementId eid in p_subs)
                     {
                         ScheduleElementInfo _sei = new ScheduleElementInfo();
-                        Element __element = (doc.GetElement(eid));
+                        Element __element = (_doc.GetElement(eid));
                         _sei.INF_ElementId = eid.IntegerValue;
                         _sei.INF_Name = __element.Name;
                         _sei.INF_ZoneCode = p.INF_ZoneCode;
@@ -323,7 +316,7 @@ namespace FacadeHelper
 
                     foreach (var zn in Global.DocContent.FullZoneList.GroupBy(z => z.ZoneCode))
                     {
-                        ZoneHelper.FnResolveZone(uidoc, zn.ElementAt(0),
+                        ZoneHelper.FnResolveZone(_uidoc, zn.ElementAt(0),
                             ref txtCurrentProcessElement,
                             ref txtCurrentProcessOperation,
                             ref progbarCurrentProcess,
@@ -349,7 +342,7 @@ namespace FacadeHelper
 
                     _ele_asm.ForEach(ae =>
                     {
-                        var _ae = doc.GetElement(new ElementId(ae.INF_ElementId));
+                        var _ae = _doc.GetElement(new ElementId(ae.INF_ElementId));
                         var _deepids = ((FamilyInstance)_ae).GetSubComponentIds();
                         if (_deepids != null && _deepids.Count > 0)
                         {
@@ -360,7 +353,7 @@ namespace FacadeHelper
                                 txtCurrentProcessOperation.Content = "RESOLVE-DEEP/E";
                                 System.Windows.Forms.Application.DoEvents();
 
-                                Element __element = (doc.GetElement(sid));
+                                Element __element = (_doc.GetElement(sid));
                                 XYZ _xyzOrigin = ((FamilyInstance)__element).GetTotalTransform().Origin;
                                 ScheduleElementInfo _sei = new ScheduleElementInfo()
                                 {
@@ -407,7 +400,7 @@ namespace FacadeHelper
                                             _haserror = true;
                                             _sei.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
                                             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
-                                            uidoc.Selection.Elements.Add(__element);
+                                            _uidoc.Selection.Elements.Add(__element);
                                             continue;
                                         }
                                     }
@@ -417,7 +410,7 @@ namespace FacadeHelper
                                         _haserror = true;
                                         _sei.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
                                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
-                                        uidoc.Selection.Elements.Add(__element);
+                                        _uidoc.Selection.Elements.Add(__element);
                                         continue;
                                     }
                                 }
@@ -427,7 +420,7 @@ namespace FacadeHelper
                                     _haserror = true;
                                     _sei.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
                                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
-                                    uidoc.Selection.Elements.Add(__element);
+                                    _uidoc.Selection.Elements.Add(__element);
                                     continue;
                                 }
                                 #endregion
@@ -472,7 +465,7 @@ namespace FacadeHelper
 
                     _ele_asm.ForEach(ae =>
                     {
-                        var _ae = doc.GetElement(new ElementId(ae.INF_ElementId));
+                        var _ae = _doc.GetElement(new ElementId(ae.INF_ElementId));
                         var _deepids = ((FamilyInstance)_ae).GetSubComponentIds();
                         if (_deepids != null && _deepids.Count > 0)
                         {
@@ -483,7 +476,7 @@ namespace FacadeHelper
                                 txtCurrentProcessOperation.Content = "RESOLVE-DEEP/E";
                                 System.Windows.Forms.Application.DoEvents();
 
-                                Element __element = (doc.GetElement(sid));
+                                Element __element = (_doc.GetElement(sid));
                                 XYZ _xyzOrigin = ((FamilyInstance)__element).GetTotalTransform().Origin;
                                 DeepElementInfo _sei = new DeepElementInfo()
                                 {
@@ -531,7 +524,7 @@ namespace FacadeHelper
                                             _haserror = true;
                                             _sei.INF_ErrorInfo = "构件[分项]参数错误(INF_Type)(非整数值)";
                                             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
-                                            uidoc.Selection.Elements.Add(__element);
+                                            _uidoc.Selection.Elements.Add(__element);
                                             continue;
                                         }
                                     }
@@ -541,7 +534,7 @@ namespace FacadeHelper
                                         _haserror = true;
                                         _sei.INF_ErrorInfo = "构件[分项]参数无参数值(INF_Type)";
                                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NO VALUE TYPE, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, E/{_sei.INF_ElementId}, {_sei.INF_Name}.");
-                                        uidoc.Selection.Elements.Add(__element);
+                                        _uidoc.Selection.Elements.Add(__element);
                                         continue;
                                     }
                                 }
@@ -551,7 +544,7 @@ namespace FacadeHelper
                                     _haserror = true;
                                     _sei.INF_ErrorInfo = "构件[分项]参数项未设置(INF_Type)";
                                     listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: PARAM NOTSET, PARAM/TYPE, P/{_sei.INF_HostCurtainPanel.INF_ElementId}, {_sei.INF_ElementId}.");
-                                    uidoc.Selection.Elements.Add(__element);
+                                    _uidoc.Selection.Elements.Add(__element);
                                     continue;
                                 }
                                 #endregion
@@ -629,21 +622,21 @@ namespace FacadeHelper
                 {
                     #region 數據檢索
                     if (!IsSearchRangeZone && !IsSearchRangePanel && !IsSearchRangeElement) return;
-                    ResultZoneInfo.Clear();
-                    ResultPanelInfo.Clear();
-                    ResultElementInfo.Clear();
+                    _resultZoneInfo.Clear();
+                    _resultPanelInfo.Clear();
+                    _resultElementInfo.Clear();
 
-                    ZoneHelper.FnSearch(uidoc,
+                    ZoneHelper.FnSearch(_uidoc,
                         txtSearchKeyword.Text.Trim(),
-                        ref ResultZoneInfo, ref ResultPanelInfo, ref ResultElementInfo,
+                        ref _resultZoneInfo, ref _resultPanelInfo, ref _resultElementInfo,
                         IsSearchRangeZone, IsSearchRangePanel, IsSearchRangeElement,
                         ref listInformation);
                     if (IsSearchRangeZone)
                     {
-                        txtResultZone.Content = $"Z/{ResultZoneInfo.Count}; ";
+                        txtResultZone.Content = $"Z/{_resultZoneInfo.Count}; ";
                         datagridZones.ItemsSource = null;
-                        datagridZones.ItemsSource = ResultZoneInfo;
-                        tabZone.Content = $"分区 / {ResultZoneInfo.Count}";
+                        datagridZones.ItemsSource = _resultZoneInfo;
+                        tabZone.Content = $"分区 / {_resultZoneInfo.Count}";
                     }
                     else
                     {
@@ -653,10 +646,10 @@ namespace FacadeHelper
                     }
                     if (IsSearchRangePanel)
                     {
-                        txtResultPanel.Content = $"P/{ResultPanelInfo.Count}; ";
+                        txtResultPanel.Content = $"P/{_resultPanelInfo.Count}; ";
                         datagridPanels.ItemsSource = null;
-                        datagridPanels.ItemsSource = ResultPanelInfo;
-                        tabPanel.Content = $"嵌板 / {ResultPanelInfo.Count}";
+                        datagridPanels.ItemsSource = _resultPanelInfo;
+                        tabPanel.Content = $"嵌板 / {_resultPanelInfo.Count}";
                     }
                     else
                     {
@@ -666,10 +659,10 @@ namespace FacadeHelper
                     }
                     if (IsSearchRangeElement)
                     {
-                        txtResultElement.Content = $"E/{ResultElementInfo.Count}; ";
+                        txtResultElement.Content = $"E/{_resultElementInfo.Count}; ";
                         datagridScheduleElements.ItemsSource = null;
-                        datagridScheduleElements.ItemsSource = ResultElementInfo;
-                        tabElement.Content = $"构件 / {ResultElementInfo.Count}";
+                        datagridScheduleElements.ItemsSource = _resultElementInfo;
+                        tabElement.Content = $"构件 / {_resultElementInfo.Count}";
                     }
                     else
                     {
@@ -717,7 +710,7 @@ namespace FacadeHelper
                     #region 參數寫入
                     //try
                     {
-                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_CurtainPanels"))
+                        using (Transaction trans = new Transaction(_doc, "Apply_Parameters_CurtainPanels"))
                         {
                             trans.Start();
                             progbarGlobalProcess.Maximum = 100;
@@ -727,7 +720,7 @@ namespace FacadeHelper
 
                             Global.DocContent.CurtainPanelList.ForEach(p =>
                             {
-                                Element _element = doc.GetElement(new ElementId(p.INF_ElementId));
+                                Element _element = _doc.GetElement(new ElementId(p.INF_ElementId));
                                 if (_element != null)
                                 {
                                     _element.get_Parameter("立面朝向").Set(p.INF_Direction);
@@ -754,7 +747,7 @@ namespace FacadeHelper
                         }
                         listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, P/{Global.DocContent.CurtainPanelList.Count}, Param#{Global.DocContent.CurtainPanelList.Count * 7}");
 
-                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_ScheduleElements"))
+                        using (Transaction trans = new Transaction(_doc, "Apply_Parameters_ScheduleElements"))
                         {
                             trans.Start();
                             //progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
@@ -765,7 +758,7 @@ namespace FacadeHelper
 
                             Global.DocContent.ScheduleElementList.ForEach(ele =>
                             {
-                                Element _element = doc.GetElement(new ElementId(ele.INF_ElementId));
+                                Element _element = _doc.GetElement(new ElementId(ele.INF_ElementId));
                                 if (_element != null)
                                 {
                                     _element.get_Parameter("立面朝向").Set(ele.INF_Direction);
@@ -791,7 +784,7 @@ namespace FacadeHelper
                             trans.Commit();
                         }
 
-                        using (Transaction trans = new Transaction(doc, "Apply_Parameters_DeepElements"))
+                        using (Transaction trans = new Transaction(_doc, "Apply_Parameters_DeepElements"))
                         {
                             trans.Start();
                             //progbarElement.Maximum = Global.DocContent.ScheduleElementList.Count;
@@ -804,14 +797,14 @@ namespace FacadeHelper
                             if (!Global.DocContent.ParameterInfoList.Exists(x => x.Name == "组件编码"))
                             {
                                 CategorySet _catset = new CategorySet();
-                                _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
-                                ParameterHelper.RawCreateProjectParameter(doc.Application, "组件编码", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
+                                _catset.Insert(_doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                                ParameterHelper.RawCreateProjectParameter(_doc.Application, "组件编码", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                             }
                             #endregion
 
                             Global.DocContent.DeepElementList.ForEach(ele =>
                             {
-                                Element _element = doc.GetElement(new ElementId(ele.INF_ElementId));
+                                Element _element = _doc.GetElement(new ElementId(ele.INF_ElementId));
                                 _element.get_Parameter("立面朝向").Set(ele.INF_Direction);
                                 _element.get_Parameter("立面系统").Set(ele.INF_System);
                                 _element.get_Parameter("立面楼层").Set(ele.INF_Level);
@@ -849,7 +842,7 @@ namespace FacadeHelper
             CommandBinding cbExportElementSchedule = new CommandBinding(cmdExportElementSchedule,
                 (sender, e) =>
                 {
-                    using (StreamWriter writer = new StreamWriter(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(doc.PathName)}.4dzone.csv"), false))
+                    using (StreamWriter writer = new StreamWriter(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(_doc.PathName), $"{System.IO.Path.GetFileNameWithoutExtension(_doc.PathName)}.4dzone.csv"), false))
                     {
                         int idtask = 0;
                         writer.WriteLine($"Id,Name,Start,Finish,Outline Level");
@@ -930,7 +923,7 @@ namespace FacadeHelper
             bnOnElementClassify.IsChecked = false;
             popZC.IsOpen = false;
 
-            CurrentZoneInfo = new ZoneInfoBase()
+            _currentZoneInfo = new ZoneInfoBase()
             {
                 ZoneLevel = CurrentZoneLevel,
                 ZoneDirection = CurrentZoneDirection,
@@ -938,9 +931,9 @@ namespace FacadeHelper
                 ZoneIndex = CurrentZoneIndex,
                 ZoneCode = CurrentZoneCode = (txtZoneCode.Content as TextBlock).Text
             };
-            Global.DocContent.CurrentZoneInfo = CurrentZoneInfo;
+            Global.DocContent.CurrentZoneInfo = _currentZoneInfo;
 
-            ICollection<ElementId> ids = uidoc.Selection.GetElementIds();
+            ICollection<ElementId> ids = _uidoc.Selection.GetElementIds();
             if (ids.Count == 0)
             {
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - ERR: NONE SELECTED, E/ALL.");
@@ -956,14 +949,14 @@ namespace FacadeHelper
                 new LogicalAndFilter(
                     new ElementClassFilter(typeof(FamilyInstance)),
                     new ElementCategoryFilter(BuiltInCategory.OST_Windows));
-            var panels = new FilteredElementCollector(doc, ids).WherePasses(cwpanel_InstancesFilter)
+            var panels = new FilteredElementCollector(_doc, ids).WherePasses(cwpanel_InstancesFilter)
                 .Where(x =>
                 (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" &&
                 (x as FamilyInstance).Symbol.Family.Name != "空嵌板" &&
                 (x as FamilyInstance).Symbol.Family.Name != "空系统嵌板" &&
                 (x as FamilyInstance).Symbol.Name != "NULL")
                 .ToList();
-            var wins = new FilteredElementCollector(doc, ids).WherePasses(win_InstancesFilter).ToList();
+            var wins = new FilteredElementCollector(_doc, ids).WherePasses(win_InstancesFilter).ToList();
 
             if (panels.Count == 0 && wins.Count == 0)
             {
@@ -971,7 +964,7 @@ namespace FacadeHelper
                 return;
             }
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: P/{panels.Count()}, W/{wins.Count()}.");
-            SelectedCurtainPanelList.Clear();
+            _selectedCurtainPanelList.Clear();
             var pw = panels.Union(wins).ToList();
 
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - LIST: P/{panels.Count()}/E, W/{wins.Count()}/E.");
@@ -984,7 +977,7 @@ namespace FacadeHelper
                     INF_Type = CurrentZonePanelType,
                     INF_HostZoneInfo = Global.DocContent.CurrentZoneInfo
                 };
-                SelectedCurtainPanelList.Add(_gp);
+                _selectedCurtainPanelList.Add(_gp);
 
                 //確定嵌板內明細構件數據
                 progbarCurrentProcess.Maximum = panels.Count();
@@ -999,7 +992,7 @@ namespace FacadeHelper
                     System.Windows.Forms.Application.DoEvents();
 
                     ScheduleElementInfo _sei = new ScheduleElementInfo();
-                    Element __element = (doc.GetElement(eid));
+                    Element __element = (_doc.GetElement(eid));
                     _sei.INF_ElementId = eid.IntegerValue;
                     _sei.INF_Name = __element.Name;
                     _sei.INF_ZoneCode = Global.DocContent.CurrentZoneInfo.ZoneCode;
@@ -1081,25 +1074,25 @@ namespace FacadeHelper
             listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: PARAM, ZONECODE, Z/{Global.DocContent.CurrentZoneInfo.ZoneCode}, P/{panels.Count()}.");
 
             datagridPanels.ItemsSource = null;
-            datagridPanels.ItemsSource = SelectedCurtainPanelList;
-            tabPanel.Content = $"嵌板 / {SelectedCurtainPanelList.Count}";
+            datagridPanels.ItemsSource = _selectedCurtainPanelList;
+            tabPanel.Content = $"嵌板 / {_selectedCurtainPanelList.Count}";
 
-            using (Transaction trans = new Transaction(doc, "CreatePanelGroup"))
+            using (Transaction trans = new Transaction(_doc, "CreatePanelGroup"))
             {
                 trans.Start();
-                FilteredElementCollector collector = new FilteredElementCollector(doc);
+                FilteredElementCollector collector = new FilteredElementCollector(_doc);
                 ICollection<Element> typecollection = collector.OfClass(typeof(SelectionFilterElement)).ToElements();
-                SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == CurrentZoneInfo.ZoneCode);
+                SelectionFilterElement selectset = typecollection.Cast<SelectionFilterElement>().FirstOrDefault(ele => ele.Name == _currentZoneInfo.ZoneCode);
                 if (selectset != null) selectset.Clear();
-                else selectset = SelectionFilterElement.Create(doc, CurrentZoneInfo.ZoneCode);
+                else selectset = SelectionFilterElement.Create(_doc, _currentZoneInfo.ZoneCode);
                 panels.ForEach(p => selectset.AddSingle(p.Id));
-                doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
+                _doc.ActiveView.HideElementsTemporary(selectset.GetElementIds());
                 trans.Commit();
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: SECECTSET, SSET/{CurrentZoneInfo.FilterName}, P/{selectset.GetElementIds().Count}");
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - WRITE: SECECTSET, SSET/{_currentZoneInfo.FilterName}, P/{selectset.GetElementIds().Count}");
             }
 
-            Global.DocContent.ZoneList.Add(CurrentZoneInfo);
-            Global.DocContent.CurtainPanelList.AddRange(SelectedCurtainPanelList);
+            Global.DocContent.ZoneList.Add(_currentZoneInfo);
+            Global.DocContent.CurtainPanelList.AddRange(_selectedCurtainPanelList);
 
             ZoneHelper.FnContentSerialize();
         }
@@ -1116,17 +1109,17 @@ namespace FacadeHelper
         #region Function 初始化模型数据
         private void InitModelData()
         {
-            ParameterHelper.InitProjectParameters(ref doc);
+            ParameterHelper.InitProjectParameters(ref _doc);
 
             //统计 
             LogicalAndFilter cwpanel_InstancesFilter =
                 new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels));
             LogicalAndFilter win_InstancesFilter =
                 new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_Windows));
-            var panels = new FilteredElementCollector(doc).WherePasses(cwpanel_InstancesFilter)
+            var panels = new FilteredElementCollector(_doc).WherePasses(cwpanel_InstancesFilter)
                 .Where(x => (x as FamilyInstance).Symbol.Family.Name != "系统嵌板" && (x as FamilyInstance).Symbol.Name != "空嵌板" && (x as FamilyInstance).Symbol.Name != "空系统嵌板");
-            var wins = new FilteredElementCollector(doc).WherePasses(win_InstancesFilter).ToElements();
-            var syspanels = new FilteredElementCollector(doc).WherePasses(cwpanel_InstancesFilter).Where(x => (x as FamilyInstance).Symbol.Family.Name == "系统嵌板");
+            var wins = new FilteredElementCollector(_doc).WherePasses(win_InstancesFilter).ToElements();
+            var syspanels = new FilteredElementCollector(_doc).WherePasses(cwpanel_InstancesFilter).Where(x => (x as FamilyInstance).Symbol.Family.Name == "系统嵌板");
 
             int nele = 0;
             int nwele = 0;
@@ -1143,7 +1136,7 @@ namespace FacadeHelper
 
         private void listInformation_SelectionChanged(object sender, SelectionChangedEventArgs e) { var lb = sender as ListBox; lb.ScrollIntoView(lb.Items[lb.Items.Count - 1]); }
 
-        private void chkbox_Checked(object sender, RoutedEventArgs e)
+        private void Chkbox_Checked(object sender, RoutedEventArgs e)
         {
             if (((CheckBox)sender).Name == "chkSearchRangeAll")
             {
@@ -1244,6 +1237,26 @@ namespace FacadeHelper
             else return false;
         }
     }
+
+    public class ParamName2ValueMultiValueConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            int eleid = (int)values[0]; //INF_ElementId
+            string pname = (string)values[1]; //ParamName
+            Document doc = (Document) values[2];
+            if (pname is null)
+                return string.Empty;
+            else
+                return  doc.GetElement(new ElementId(eleid)).get_Parameter(pname).AsValueString();
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 
     public class NegateBoolConverter : IValueConverter
     {

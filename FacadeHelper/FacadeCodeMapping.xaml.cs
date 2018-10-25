@@ -20,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ComboBox = Autodesk.Revit.UI.ComboBox;
 
 namespace FacadeHelper
 {
@@ -35,11 +36,12 @@ namespace FacadeHelper
         private int _currentSelectedType = 1;
         public int CurrentSelectedType { get { return _currentSelectedType; } set { _currentSelectedType = value; OnPropertyChanged(nameof(CurrentSelectedType)); } }
 
-        private UIApplication uiapp;
-        private UIDocument uidoc;
-        private Document doc;
-        private ExternalCommandData cdata;
-        private ICollection<ElementId> sids;
+        private UIApplication _uiapp;
+        private UIDocument _uidoc;
+        private Document _doc;
+        private ExternalCommandData _cdata;
+        private ICollection<ElementId> _sids;
+        public Document Doc { get => _doc; set { _doc = value; OnPropertyChanged(nameof(Doc)); } }
 
         private List<Element> _currentElementList = new List<Element>();
         private ObservableCollection<ScheduleElementInfo> _currentElementInfoList = new ObservableCollection<ScheduleElementInfo>();
@@ -78,11 +80,11 @@ namespace FacadeHelper
             InitializeComponent();
             this.DataContext = this;
 
-            cdata = commandData;
-            uiapp = commandData.Application;
-            uidoc = uiapp.ActiveUIDocument;
-            doc = uidoc.Document;
-            sids = uidoc.Selection.Elements.Cast<Element>().Select(e => e.Id).ToList<ElementId>();
+            _cdata = commandData;
+            _uiapp = commandData.Application;
+            _uidoc = _uiapp.ActiveUIDocument;
+            _doc = _uidoc.Document;
+            _sids = _uidoc.Selection.Elements.Cast<Element>().Select(e => e.Id).ToList<ElementId>();
 
             /**
             if (Global.ZoneLayerList.Count == 0) Global.ZoneLayerList = ZoneHelper.FnZoneDataDeserialize();
@@ -90,8 +92,8 @@ namespace FacadeHelper
             **/
 
             //分区统计2
-            var pwlist = new FilteredElementCollector(doc).WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels)))
-                .Union(new FilteredElementCollector(doc).WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_Windows))));
+            var pwlist = new FilteredElementCollector(_doc).WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels)))
+                .Union(new FilteredElementCollector(_doc).WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_Windows))));
             Parameter _parameter_zone;
             foreach (var pw in pwlist)
             {
@@ -124,30 +126,30 @@ namespace FacadeHelper
             CurrentElementList.Clear();
             CurrentElementInfoList.Clear();
 
-            if (sids.Count == 0)
+            if (_sids.Count == 0)
             {
                 listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: ELE/NONE(SET TO ALL).");
-                var pwlist = new FilteredElementCollector(doc).WherePasses(P_InstancesFilter)
-                    .Union(new FilteredElementCollector(doc).WherePasses(W_InstancesFilter));
+                var pwlist = new FilteredElementCollector(_doc).WherePasses(P_InstancesFilter)
+                    .Union(new FilteredElementCollector(_doc).WherePasses(W_InstancesFilter));
                 foreach (Element ele in pwlist)
                 {
                     var subids = (ele as FamilyInstance).GetSubComponentIds();
                     foreach (var eid in subids)
                     {
-                        var e = doc.GetElement(eid);
+                        var e = _doc.GetElement(eid);
                         listselected.Add(e);
                     }
                 }
-                foreach (Element ele in pwlist) listselected.AddRange((ele as FamilyInstance).GetSubComponentIds().Select(pwid => doc.GetElement(pwid)));
+                foreach (Element ele in pwlist) listselected.AddRange((ele as FamilyInstance).GetSubComponentIds().Select(pwid => _doc.GetElement(pwid)));
             }
             else
             {
-                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: ELE/{sids.Count}.");
-                var pwlist = new FilteredElementCollector(doc, sids).WherePasses(P_InstancesFilter).Union((new FilteredElementCollector(doc, sids)).WherePasses(W_InstancesFilter));
-                foreach (Element ele in pwlist) listselected.AddRange((ele as FamilyInstance).GetSubComponentIds().Select(pwid => doc.GetElement(pwid)));
+                listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECT: ELE/{_sids.Count}.");
+                var pwlist = new FilteredElementCollector(_doc, _sids).WherePasses(P_InstancesFilter).Union((new FilteredElementCollector(_doc, _sids)).WherePasses(W_InstancesFilter));
+                foreach (Element ele in pwlist) listselected.AddRange((ele as FamilyInstance).GetSubComponentIds().Select(pwid => _doc.GetElement(pwid)));
             }
 
-            uidoc.Selection.Elements.Clear();
+            _uidoc.Selection.Elements.Clear();
             Parameter _parameter_type;
             Parameter _parameter_zone;
             int _i = 0;
@@ -165,7 +167,7 @@ namespace FacadeHelper
                     string _zone = _parameter_zone?.AsString();
                     if (_type == CurrentSelectedType && CurrentZoneList.Contains(_zone.ToUpper()))
                     {
-                        uidoc.Selection.Elements.Add(ele);
+                        _uidoc.Selection.Elements.Add(ele);
                         CurrentElementList.Add(ele);
                         ScheduleElementInfo ei = new ScheduleElementInfo()
                         {
@@ -186,29 +188,30 @@ namespace FacadeHelper
 
             lblStatus1.Content = string.Format("{0:F2}%", 100);
             barStatusRefreshList1.Value = 100;
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - FILTERED: ELE/{uidoc.Selection.Elements.Size}/{CurrentElementList.Count}.");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - FILTERED: ELE/{_uidoc.Selection.Elements.Size}/{CurrentElementList.Count}.");
             #endregion
 
 
             return;
         }
 
-        private RoutedCommand cmdRefreshList1 = new RoutedCommand();
-        private RoutedCommand cmdApplySelection = new RoutedCommand();
-        private RoutedCommand cmdApplyParam = new RoutedCommand();
-        private RoutedCommand cmdZPopApply = new RoutedCommand();
-        private RoutedCommand cmdZPopClose = new RoutedCommand();
-        private RoutedCommand cmdZPopClear = new RoutedCommand();
-        private RoutedCommand cmdInitZone = new RoutedCommand();
+        private readonly RoutedCommand _cmdRefreshList1 = new RoutedCommand();
+        private readonly RoutedCommand _cmdApplySelection = new RoutedCommand();
+        private readonly RoutedCommand _cmdApplyParam = new RoutedCommand();
+        private readonly RoutedCommand _cmdApplyGridValue = new RoutedCommand();
+        private readonly RoutedCommand _cmdZPopApply = new RoutedCommand();
+        private readonly RoutedCommand _cmdZPopClose = new RoutedCommand();
+        private readonly RoutedCommand _cmdZPopClear = new RoutedCommand();
+        private readonly RoutedCommand _cmdInitZone = new RoutedCommand();
 
-        private RoutedCommand cmdLoadOrder = new RoutedCommand();
-        private RoutedCommand cmdApplyMapping = new RoutedCommand();
+        private readonly RoutedCommand _cmdLoadOrder = new RoutedCommand();
+        private readonly RoutedCommand _cmdApplyMapping = new RoutedCommand();
 
         private void InitializeCommand()
         {
-            CommandBinding cbRefreshList1 = new CommandBinding(cmdRefreshList1, (sender, e) => FuncProcessPreSelection(), (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbRefreshList1 = new CommandBinding(_cmdRefreshList1, (sender, e) => FuncProcessPreSelection(), (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
-            CommandBinding cbApplySelection = new CommandBinding(cmdApplySelection, (sender, e) => FuncApplySelection(), (sender, e) =>
+            CommandBinding cbApplySelection = new CommandBinding(_cmdApplySelection, (sender, e) => FuncApplySelection(), (sender, e) =>
             {
                 if (Lst1.SelectedItems.Count > 0)
                 {
@@ -217,10 +220,10 @@ namespace FacadeHelper
                 }
             });
 
-            CommandBinding cbApplyParam = new CommandBinding(cmdApplyParam, (sender, e) =>
+            CommandBinding cbApplyParam = new CommandBinding(_cmdApplyParam, (sender, e) =>
             {
                 Element ele = null;
-                using (Transaction trans = new Transaction(doc, "Apply Params"))
+                using (Transaction trans = new Transaction(_doc, "Apply Params"))
                 {
                     trans.Start();
                     int _iae = 0;
@@ -231,7 +234,7 @@ namespace FacadeHelper
                         barStatusApplyParams.Value = v * 100;
                         System.Windows.Forms.Application.DoEvents();
 
-                        ele = doc.GetElement(new ElementId(ei.INF_ElementId));
+                        ele = _doc.GetElement(new ElementId(ei.INF_ElementId));
                         Parameter pa = ele.get_Parameter((string)ParamNameList.SelectedValue);
                         if (pa == null)
                         {
@@ -282,7 +285,19 @@ namespace FacadeHelper
                 }
             });
 
-            CommandBinding cbZPopApply = new CommandBinding(cmdZPopApply, (sender, e) =>
+            CommandBinding cbApplyGridValue = new CommandBinding(_cmdApplyGridValue, (sender, e) =>
+            {
+
+            }, (sender, e) =>
+            {
+                if (ParamNameList.SelectedIndex >= 0)
+                {
+                    e.CanExecute = true;
+                    e.Handled = true;
+                }
+            });
+
+            CommandBinding cbZPopApply = new CommandBinding(_cmdZPopApply, (sender, e) =>
             {
                 CurrentZoneList.Clear();
                 if (LstZone.SelectedIndex != -1) foreach (var z in LstZone.SelectedItems) CurrentZoneList.Add((string)z);
@@ -302,26 +317,26 @@ namespace FacadeHelper
                 bnAddZone.IsChecked = false;
             }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
-            CommandBinding cbInitZone = new CommandBinding(cmdInitZone, (sender, e) =>
+            CommandBinding cbInitZone = new CommandBinding(_cmdInitZone, (sender, e) =>
             {
-                var pwlist = new FilteredElementCollector(doc)
+                var pwlist = new FilteredElementCollector(_doc)
                 .WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_CurtainWallPanels)))
-                    .Union(new FilteredElementCollector(doc)
+                    .Union(new FilteredElementCollector(_doc)
                     .WherePasses(new LogicalAndFilter(new ElementClassFilter(typeof(FamilyInstance)), new ElementCategoryFilter(BuiltInCategory.OST_Windows))));
 
                 #region 设置分区区号参数
-                using (Transaction trans = new Transaction(doc, "CreateZoneParameter"))
+                using (Transaction trans = new Transaction(_doc, "CreateZoneParameter"))
                 {
                     trans.Start();
                     CategorySet _catset = new CategorySet();
-                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
-                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
-                    _catset.Insert(doc.Settings.Categories.get_Item(BuiltInCategory.OST_Windows));
-                    ParameterHelper.RawCreateProjectParameter(doc.Application, "分区区号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
+                    _catset.Insert(_doc.Settings.Categories.get_Item(BuiltInCategory.OST_CurtainWallPanels));
+                    _catset.Insert(_doc.Settings.Categories.get_Item(BuiltInCategory.OST_GenericModel));
+                    _catset.Insert(_doc.Settings.Categories.get_Item(BuiltInCategory.OST_Windows));
+                    ParameterHelper.RawCreateProjectParameter(_doc.Application, "分区区号", ParameterType.Text, true, _catset, BuiltInParameterGroup.PG_DATA, true);
                     trans.Commit();
                 }
 
-                using (Transaction trans = new Transaction(doc, "SetZoneParameter"))
+                using (Transaction trans = new Transaction(_doc, "SetZoneParameter"))
                 {
                     trans.Start();
                     Parameter _parameter_zone;
@@ -329,7 +344,7 @@ namespace FacadeHelper
                     {
                         _parameter_zone = pw.get_Parameter("分区区号");
                         if (_parameter_zone?.HasValue == false) _parameter_zone.Set("Z-00-00-00-00");
-                        var eles = (pw as FamilyInstance).GetSubComponentIds().Select(eid => doc.GetElement(eid));
+                        var eles = (pw as FamilyInstance).GetSubComponentIds().Select(eid => _doc.GetElement(eid));
                         foreach (var ele in eles)
                         {
                             _parameter_zone = ele.get_Parameter("分区区号");
@@ -345,11 +360,11 @@ namespace FacadeHelper
                 #endregion
             }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
-            CommandBinding cbLoadOrder = new CommandBinding(cmdLoadOrder, (sender, e) =>
+            CommandBinding cbLoadOrder = new CommandBinding(_cmdLoadOrder, (sender, e) =>
             {
                 Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog()
                 {
-                    InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile),
+                    InitialDirectory = System.IO.Path.GetDirectoryName(Global.DataFile) ?? throw new InvalidOperationException(),
                     DefaultExt = "*.csv",
                     Filter = "订单交换文件(*.csv)|*.csv|All(*.*)|*.*"
                 };
@@ -382,10 +397,10 @@ namespace FacadeHelper
                 }
             }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
-            CommandBinding cbApplyMapping = new CommandBinding(cmdApplyMapping, (sender, e) =>
+            CommandBinding cbApplyMapping = new CommandBinding(_cmdApplyMapping, (sender, e) =>
             {
                 Element ele = null;
-                using (Transaction trans = new Transaction(doc, "Apply Fabrication Information"))
+                using (Transaction trans = new Transaction(_doc, "Apply Fabrication Information"))
                 {
                     trans.Start();
                     int _iam = 0;
@@ -396,7 +411,7 @@ namespace FacadeHelper
                         barStatusMapping.Value = v * 100;
                         System.Windows.Forms.Application.DoEvents();
 
-                        ele = doc.GetElement(new ElementId(ei.INF_ElementId));
+                        ele = _doc.GetElement(new ElementId(ei.INF_ElementId));
                         var item = Lst2.SelectedItem;
                         ele.get_Parameter("加工编号")?.Set((string)item.GetType().GetProperty("ECode").GetValue(item, null));
                         ele.get_Parameter("材料单号")?.Set(Lst3.SelectedValue as string);
@@ -414,24 +429,26 @@ namespace FacadeHelper
                 }
             });
 
-            CommandBinding cbZPopClear = new CommandBinding(cmdZPopClear, (sender, e) => { LstZone.SelectedIndex = -1; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
-            CommandBinding cbZPopClose = new CommandBinding(cmdZPopClose, (sender, e) => { bnAddZone.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbZPopClear = new CommandBinding(_cmdZPopClear, (sender, e) => { LstZone.SelectedIndex = -1; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
+            CommandBinding cbZPopClose = new CommandBinding(_cmdZPopClose, (sender, e) => { bnAddZone.IsChecked = false; }, (sender, e) => { e.CanExecute = true; e.Handled = true; });
 
-            bnRefreshList1.Command = cmdRefreshList1;
-            bnApplySelection.Command = cmdApplySelection;
-            bnApplyParam.Command = cmdApplyParam;
-            bnZPopApply.Command = cmdZPopApply;
-            bnZPopClose.Command = cmdZPopClose;
-            bnZPopClear.Command = cmdZPopClear;
-            bnLoadOrder.Command = cmdLoadOrder;
-            bnInitZone.Command = cmdInitZone;
-            bnApplyMapping.Command = cmdApplyMapping;
+            bnRefreshList1.Command = _cmdRefreshList1;
+            bnApplySelection.Command = _cmdApplySelection;
+            bnApplyParam.Command = _cmdApplyParam;
+            BnApplyGridValue.Command = _cmdApplyGridValue;
+            bnZPopApply.Command = _cmdZPopApply;
+            bnZPopClose.Command = _cmdZPopClose;
+            bnZPopClear.Command = _cmdZPopClear;
+            bnLoadOrder.Command = _cmdLoadOrder;
+            bnInitZone.Command = _cmdInitZone;
+            bnApplyMapping.Command = _cmdApplyMapping;
 
             ProcFCM.CommandBindings.AddRange(new CommandBinding[]
             {
                 cbRefreshList1,
                 cbApplySelection,
                 cbApplyParam,
+                cbApplyGridValue,
                 cbZPopApply,
                 cbZPopClear,
                 cbZPopClose,
@@ -447,23 +464,23 @@ namespace FacadeHelper
             AppliedElementInfoList.Clear();
             ParamListSource.Clear();
             List<Element> listappliedselection = new List<Element>();
-            uidoc.Selection.Elements.Clear();
+            _uidoc.Selection.Elements.Clear();
 
             //初始化列表选择项数据
-            int _isel = 0;
+            int isel = 0;
             foreach (var ei in Lst1.SelectedItems.Cast<ScheduleElementInfo>())
             {
-                double v = _isel++ * 1.0 / Lst1.SelectedItems.Count;
-                lblStatusSelection.Content = string.Format("{0:F0}%", v * 100);
+                double v = isel++ * 1.0 / Lst1.SelectedItems.Count;
+                lblStatusSelection.Content = $"{v * 100:F0}%";
                 barStatusSelection.Value = v * 100;
                 System.Windows.Forms.Application.DoEvents();
 
                 AppliedElementInfoList.Add(ei);
-                Element ele = doc.GetElement(new ElementId(ei.INF_ElementId));
+                Element ele = _doc.GetElement(new ElementId(ei.INF_ElementId));
                 ParameterSet parameters = ele.Parameters;
                 foreach (Parameter parameter in parameters) if (!parameter.IsReadOnly) ParamListSource.Add(parameter.Definition.Name);
                 listappliedselection.Add(ele);
-                uidoc.Selection.Elements.Add(ele);
+                _uidoc.Selection.Elements.Add(ele);
             }
 
             //清理重复参数
@@ -471,9 +488,9 @@ namespace FacadeHelper
             ParamListSource.Clear();
             hs.ToList().ForEach(d => ParamListSource.Add(d));
 
-            lblStatusSelection.Content = string.Format("{0:F0}%", 100);
+            lblStatusSelection.Content = $"{100:F0}%";
             barStatusSelection.Value = 100;
-            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECTED: ELE/{uidoc.Selection.Elements.Size}/{CurrentElementList.Count}.");
+            listInformation.SelectedIndex = listInformation.Items.Add($"{DateTime.Now:HH:mm:ss} - SELECTED: ELE/{_uidoc.Selection.Elements.Size}/{CurrentElementList.Count}.");
             #endregion
         }
 
@@ -482,8 +499,7 @@ namespace FacadeHelper
         private void chkbox_Checked(object sender, RoutedEventArgs e)
         {
 
-
-            ((CheckBox)sender).GetBindingExpression(CheckBox.IsCheckedProperty).UpdateTarget();
+            ((CheckBox)sender).GetBindingExpression(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty)?.UpdateTarget();
         }
 
     }

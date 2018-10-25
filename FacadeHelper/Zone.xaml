@@ -103,7 +103,7 @@
                     Margin="0,5,0,0" 
                     FontFamily="Consolas" 
                     Content="{Binding Path=CurrentProjectID, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ContentStringFormat="PID: {0}"
-                    IsEnabled="{Binding Path=IsPIDInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    IsEnabled="{Binding Path=IsPidInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <DockPanel Grid.Row="2" Grid.Column="0" LastChildFill="False" Margin="0,0,0,5">
                     <Label DockPanel.Dock="Left" Content="分区信息" Style="{DynamicResource CCyanLabel}" IsEnabled="{Binding Path=IsZoneLayerInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <Label DockPanel.Dock="Right" Content="构件筛选" Style="{DynamicResource CCyanLabel}" IsEnabled="{Binding Path=IsElementClassInitialized, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -331,10 +331,10 @@
             <StackPanel Orientation="Horizontal" Margin="20,10,20,5">
                 <TextBox x:Name="txtSearchKeyword" Width="500" />
                 <Button Style="{DynamicResource IconPathButton}" Tag="{StaticResource IconSearch}" x:Name="bnSearch" ToolTip="搜素嵌板和构件" DockPanel.Dock="Left" Width="30" Height="30" Margin="20,0" />
-                <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
-                <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="chkbox_Checked" Unchecked="chkbox_Checked" />
+                <CheckBox x:Name="chkSearchRangeAll" Content="全部" IsChecked="{Binding Path=IsSearchRangeAll, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsThreeState="True" Checked="Chkbox_Checked" Unchecked="Chkbox_Checked" />
+                <CheckBox x:Name="chkSearchRangeZone" Content="分區" IsChecked="{Binding Path=IsSearchRangeZone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="Chkbox_Checked" Unchecked="Chkbox_Checked" />
+                <CheckBox x:Name="chkSearchRangePanel" Content="嵌板" IsChecked="{Binding Path=IsSearchRangePanel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="Chkbox_Checked" Unchecked="Chkbox_Checked" />
+                <CheckBox x:Name="chkSearchRangeElement" Content="構件" IsChecked="{Binding Path=IsSearchRangeElement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Checked="Chkbox_Checked" Unchecked="Chkbox_Checked" />
             </StackPanel>
             <DockPanel x:Name="spSearchResult" LastChildFill="False" Margin="20,5,20,10" Visibility="Visible">
                 <Label Content="搜索结果：" DockPanel.Dock="Left" />

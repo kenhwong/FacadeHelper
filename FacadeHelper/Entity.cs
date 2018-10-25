@@ -257,6 +257,47 @@ namespace FacadeHelper
     }
 
     [SerializableType]
+    public class HostInfo : INotifyPropertyChanged
+    {
+        private int _infElementId;
+        private int _infHostType = 1; //1:Wall, 2:CurtainSystem
+        private bool _infIsPlane = true;
+        private XYZ _infLeftBottomXyz;
+        private XYZ _infRightTopXyz;
+        public int InfElementId { get { return _infElementId; } set { _infElementId = value; OnPropertyChanged(nameof(InfElementId)); } }
+        public int InfHostType { get { return _infHostType; } set { _infHostType = value; OnPropertyChanged(nameof(InfHostType)); } }
+        public bool InfIsPlane { get { return _infIsPlane; } set { _infIsPlane = value; OnPropertyChanged(nameof(InfIsPlane)); } }
+        public XYZ InfLeftBottomXyz { get { return _infLeftBottomXyz; } set { _infLeftBottomXyz = value; OnPropertyChanged(nameof(InfLeftBottomXyz)); } }
+        public XYZ InfRightTopXyz { get { return _infRightTopXyz; } set { _infRightTopXyz = value; OnPropertyChanged(nameof(InfRightTopXyz)); } }
+
+        public HostInfo(int infElementId, int infHostType, bool infIsPlane, XYZ infLeftBottomXyz, XYZ infRightTopXyz)
+        {
+            InfElementId = infElementId;
+            InfHostType = infHostType;
+            InfIsPlane = infIsPlane;
+            InfLeftBottomXyz = infLeftBottomXyz ?? throw new ArgumentNullException(nameof(infLeftBottomXyz));
+            InfRightTopXyz = infRightTopXyz ?? throw new ArgumentNullException(nameof(infRightTopXyz));
+        }
+
+        public HostInfo(int infElementId, XYZ infLeftBottomXyz, XYZ infRightTopXyz) 
+        {
+            InfElementId = infElementId;
+            InfLeftBottomXyz = infLeftBottomXyz ?? throw new ArgumentNullException(nameof(infLeftBottomXyz));
+            InfRightTopXyz = infRightTopXyz ?? throw new ArgumentNullException(nameof(infRightTopXyz));
+        }
+
+        public HostInfo()
+        {
+            InfHostType = 1;
+            InfIsPlane = true;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    [SerializableType]
     public class LevelInfo : INotifyPropertyChanged
     {
         private int _inf_ElementId;
